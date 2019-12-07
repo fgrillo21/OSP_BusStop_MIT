@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/OTP-Android.iml" filepath="$PROJECT_DIR$/OTP-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OSP_BusStop_MIT.iml" filepath="$PROJECT_DIR$/OSP_BusStop_MIT.iml" />
       <module fileurl="file://$PROJECT_DIR$/opentripplanner-android/opentripplanner-android.iml" filepath="$PROJECT_DIR$/opentripplanner-android/opentripplanner-android.iml" />
     </modules>
   </component>
