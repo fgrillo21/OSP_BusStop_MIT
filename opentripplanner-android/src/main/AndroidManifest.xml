@@ -30,21 +30,30 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
         <activity
-            android:name=".RouteActivity"
-            android:label="@string/busStop"
-            android:theme="@style/Theme.AppCompat">
+        android:name=".RouteActivity"
+        android:label="@string/busStop"
+        android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".CustomActivity"
+            android:label="@string/custom"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+        <activity
+            android:name=".PresetActivity"
+            android:label="@string/preset"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+        <activity
             android:name=".MyActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/MyTheme"
-            android:windowSoftInputMode="stateHidden">
-        </activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".SettingsActivity"
             android:theme="@style/MyTheme"
@@ -57,6 +66,7 @@
             android:name=".AboutPlayServicesActivity"
             android:theme="@style/MyTheme"
             android:windowSoftInputMode="stateHidden" />
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD5XadJhAK7jIKFz5TcT7t-gsWw_OTvlBI" />

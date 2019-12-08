@@ -14,7 +14,8 @@
         android:layout_marginTop="192dp"
         android:textAlignment="center"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="128dp">
 
         <Button
             android:id="@+id/preset"
