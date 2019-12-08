@@ -46,13 +46,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
 
     defaultConfig {
         versionCode 18
         versionName "2.1.5"
-        minSdkVersion 9
-        targetSdkVersion 26
+        minSdkVersion 14
+        targetSdkVersion 28
     }
 
     // http://stackoverflow.com/questions/20673625/gradle-0-7-0-duplicate-files-during-packaging-of-apk
@@ -119,7 +119,6 @@ tasks.whenTaskAdded { theTask ->
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:21.0.0'
     // Only include Google Play Services maps and location libraries
     implementation 'com.google.android.gms:play-services-maps:7.8.0'
     implementation 'com.google.android.gms:play-services-location:7.8.0'
@@ -133,4 +132,8 @@ dependencies {
     implementation 'net.sf.opencsv:opencsv:2.3'
     // Map util (point in bounding box)
     implementation 'com.google.maps.android:android-maps-utils:0.4'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:design:28.0.0'
 }
