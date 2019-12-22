@@ -33,7 +33,7 @@ public class PresetActivity extends AppCompatActivity {
 
         CustomPagerAdapter pagerAdapter = new CustomPagerAdapter(getApplicationContext(), arrayList);
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setPageMargin(20);
+        viewPager.setPageMargin(60);
         addDot(0);
 
         // whenever the page changes
