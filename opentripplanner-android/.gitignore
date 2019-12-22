@@ -2,7 +2,8 @@
 /secure.properties
 /gradle.properties
 # Intellij
-.idea/
+./.idea/
 *.iml
 *.iws
 *.ipr
+./local.properties
