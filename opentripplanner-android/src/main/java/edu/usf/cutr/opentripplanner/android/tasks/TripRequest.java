@@ -118,6 +118,8 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                 response = requestPlan(req, prefix, baseURL);
             }
         }
+
+
         return totalSize;
     }
 
