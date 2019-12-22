@@ -1,9 +1,11 @@
-package edu.usf.cutr.opentripplanner.android;
+package busstop.customtrip.ui;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import edu.usf.cutr.opentripplanner.android.R;
 
 public class RouteActivity extends AppCompatActivity {
 
