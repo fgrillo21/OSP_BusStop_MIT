@@ -1,4 +1,4 @@
-package customtrip;
+package busstop.customtrip.util;
 
 import nice.fontaine.overpass.models.response.OverpassResponse;
 import retrofit2.Call;

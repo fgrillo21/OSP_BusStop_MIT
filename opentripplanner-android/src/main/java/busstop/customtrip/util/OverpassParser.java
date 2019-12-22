@@ -15,8 +15,9 @@
  *
  */
 
-package customtrip;
+package busstop.customtrip.util;
 
+import busstop.customtrip.model.FeaturesCount;
 import nice.fontaine.overpass.models.response.geometries.Element;
 
 /**

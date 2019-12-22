@@ -1,4 +1,4 @@
-package customtrip;
+package busstop.customtrip.model;
 
 public class FeaturesCount {
 
@@ -18,7 +18,7 @@ public class FeaturesCount {
         return nodes;
     }
 
-    FeaturesCount(int n, int w, int r) {
+    public FeaturesCount(int n, int w, int r) {
         nodes     = n;
         ways      = w;
         relations = r;

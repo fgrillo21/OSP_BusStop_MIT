@@ -1,10 +1,11 @@
-package customtrip;
+package busstop.customtrip.util;
 
 import com.squareup.moshi.Moshi;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import busstop.customtrip.model.Query;
 import nice.fontaine.overpass.models.response.OverpassResponse;
 import nice.fontaine.overpass.models.response.adapters.ElementAdapter;
 import nice.fontaine.overpass.models.response.adapters.Iso8601Adapter;

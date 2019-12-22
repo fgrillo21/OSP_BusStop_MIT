@@ -1,4 +1,4 @@
-package customtrip;
+package busstop.customtrip.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
