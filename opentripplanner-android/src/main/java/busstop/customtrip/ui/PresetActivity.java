@@ -1,70 +1,68 @@
 package busstop.customtrip.ui;
 
-
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.text.Html;
-import android.widget.TextView;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class PresetActivity extends AppCompatActivity {
 
     ViewPager viewPager;
-    ArrayList<Integer> arrayList;
     LinearLayout layout_dot;
-    TextView[] dot;
+    List<Integer> imageId = Arrays.asList(R.drawable.monuments, R.drawable.greenareas, R.drawable.openspaces);
+
+    private int dotscount;
+    private ImageView[] dots;
 
     @Override
-    protected void onCreate (Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preset);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        layout_dot = (LinearLayout) findViewById(R.id.layout_dot);
-        arrayList = new ArrayList<>();
-
-        arrayList.add(R.color.red);
-        arrayList.add(R.color.green);
-        arrayList.add(R.color.colorPrimaryDark);
-
-        CustomPagerAdapter pagerAdapter = new CustomPagerAdapter(getApplicationContext(), arrayList);
-        viewPager.setAdapter(pagerAdapter);
+        layout_dot = findViewById(R.id.layout_dot);
+        viewPager = findViewById(R.id.viewpager);
+        CustomPagerAdapter adapter = new CustomPagerAdapter(getApplicationContext(),imageId);
+        viewPager.setAdapter(adapter);
         viewPager.setPageMargin(60);
-        addDot(0);
+        dotscount = adapter.getCount();
+        dots = new ImageView[dotscount];
 
-        // whenever the page changes
+        for(int i = 0; i < dotscount; i++){
+            dots[i] = new ImageView(this);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(8, 0, 8, 0);
+            layout_dot.addView(dots[i], params);
+
+        }
+        dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
             @Override
-            public void onPageScrolled(int i, float v, int i1) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
+
             @Override
-            public void onPageSelected(int i) {
-                addDot(i);
+            public void onPageSelected(int position) {
+                for(int i = 0; i< dotscount; i++){
+                    dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                }
+                dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+
             }
+
             @Override
-            public void onPageScrollStateChanged(int i) {
+            public void onPageScrollStateChanged(int state) {
 
             }
         });
-
-    }
-    public void addDot(int page_position) {
-        dot = new TextView[arrayList.size()];
-        layout_dot.removeAllViews();
-
-        for (int i = 0; i < dot.length; i++) {;
-            dot[i] = new TextView(this);
-            dot[i].setText(Html.fromHtml("&#9673;"));
-            dot[i].setTextSize(35);
-            dot[i].setTextColor(getResources().getColor(R.color.darker_gray));
-            layout_dot.addView(dot[i]);
-        }
-        //active dot
-        dot[page_position].setTextColor(getResources().getColor(R.color.red));
     }
 }

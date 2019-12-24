@@ -6,23 +6,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import java.util.ArrayList;
+import java.util.List;
 
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class CustomPagerAdapter extends PagerAdapter {
 
-    Context context;
-    ArrayList<Integer> pager;
+    private Context context;
+    private List<Integer> imagesArray;
 
-    public CustomPagerAdapter(Context context, ArrayList<Integer> pager) {
+    CustomPagerAdapter(Context context, List<Integer> imagesArray){
+
         this.context = context;
-        this.pager = pager;
+        this.imagesArray = imagesArray;
     }
 
     @Override
     public int getCount() {
-        return pager.size();
+        return imagesArray.size();
     }
 
     @Override
@@ -31,12 +32,16 @@ public class CustomPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public  Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, int position) {
+        //creating  xml file for custom viewpager
         View view = LayoutInflater.from(context).inflate(R.layout.pager_item, container, false);
-        ImageView imageView = (ImageView) view.findViewById(R.id.image);
-        imageView.setBackgroundResource(pager.get(position));
-        container.addView(view);
 
+        //finding id
+        ImageView imageView =  view.findViewById(R.id.image);
+        //setting data
+        imageView.setBackgroundResource(imagesArray.get(position));
+
+        container.addView(view);
         return view;
     }
 
