@@ -575,5 +575,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."</strin
     <!-- Used to introduce route names in itineraries drop down (map view and step-by-step) and map mode markers popups -->
     <string name="connector_before_route">Route</string>
     <string name="choose">Scegli</string>
+    <string name="map">Mappa</string>
 
 </resources>

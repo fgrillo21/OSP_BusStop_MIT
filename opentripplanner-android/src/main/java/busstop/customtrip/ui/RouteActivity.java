@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import edu.usf.cutr.opentripplanner.android.MyActivity;
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class RouteActivity extends AppCompatActivity {
@@ -22,6 +23,11 @@ public class RouteActivity extends AppCompatActivity {
 
     public void custom(View view) {
         Intent intent = new Intent(RouteActivity.this, CustomActivity.class);
+        startActivity(intent);
+    }
+
+    public void map(View view) {
+        Intent intent = new Intent(RouteActivity.this, MyActivity.class);
         startActivity(intent);
     }
 }
