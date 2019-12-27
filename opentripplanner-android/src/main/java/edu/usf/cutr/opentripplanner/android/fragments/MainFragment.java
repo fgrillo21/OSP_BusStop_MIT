@@ -197,6 +197,8 @@ public class MainFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleMap.OnCameraChangeListener {
 
+    private final String tripTag = "TRQ_TriggerRequest";
+
     private static LocationManager sLocationManager;
 
     private OTPApp mOTPApp;
@@ -647,6 +649,7 @@ public class MainFragment extends Fragment implements
                 } else {
                     setMarker(false, latlng, true, true);
                 }
+                Log.d(tripTag, "onMapClickListener");
                 processRequestTrip();
             }
         };
@@ -708,6 +711,7 @@ public class MainFragment extends Fragment implements
                             setMarker(true, markerLatlng, false, true);
                         }
                         mStartMarkerPosition = markerLatlng;
+                        Log.d(tripTag, "onMarkerDragEnd_start");
                         processRequestTrip();
                     } else if ((mEndMarker != null) && (marker.hashCode() == mEndMarker
                             .hashCode())) {
@@ -720,6 +724,7 @@ public class MainFragment extends Fragment implements
                             setMarker(false, markerLatlng, false, true);
                         }
                         mEndMarkerPosition = markerLatlng;
+                        Log.d(tripTag, "onMarkerDragEnd_End");
                         processRequestTrip();
                     }
                 } else {
@@ -769,6 +774,7 @@ public class MainFragment extends Fragment implements
                         } else {
                             setMarker(false, latLngFinal, true, true);
                         }
+                        Log.d(tripTag, "onMapLongClickListener");
                         processRequestTrip();
                     }
                 });
@@ -848,6 +854,7 @@ public class MainFragment extends Fragment implements
                 boolean sameBikeTriangle = previousBikeTriangleMinValue == mBikeTriangleMinValue
                         && previousBikeTriangleMaxValue == mBikeTriangleMaxValue;
                 if (!sameOptimization || !sameTraverseMode || !sameBikeTriangle){
+                    Log.d(tripTag, "onDrawerClosed");
                     processRequestTrip();
                 }
             }
@@ -899,6 +906,7 @@ public class MainFragment extends Fragment implements
 
                                 prefsEditor.commit();
                                 mIsStartLocationGeocodingCompleted = true;
+                                Log.d(tripTag, "onDrawableTouch_Start");
                                 processRequestTrip();
                             } else {
                                 Toast.makeText(MainFragment.this.mApplicationContext,
@@ -971,6 +979,7 @@ public class MainFragment extends Fragment implements
 
                                 prefsEditor.commit();
                                 mIsEndLocationGeocodingCompleted = true;
+                                Log.d(tripTag, "onDrawableTouch_End");
                                 processRequestTrip();
                             } else {
                                 Toast.makeText(MainFragment.this.mApplicationContext,
@@ -1119,6 +1128,7 @@ public class MainFragment extends Fragment implements
                                                 + "obtain start/end textbox text");
                             }
                         }
+                        Log.d(tripTag, "tbLocationOnEditorActionListener");
                         processRequestTrip();
                     }
                 }
@@ -1275,6 +1285,7 @@ public class MainFragment extends Fragment implements
                         mTbEndLocation.setHint(getResources()
                                 .getString(R.string.text_box_end_location_hint));
                     }
+                    Log.d(tripTag, "oclSwapOriginDestination");
                     processRequestTrip();
                 }
             }
@@ -1517,6 +1528,7 @@ public class MainFragment extends Fragment implements
      * necessary.
      */
     public void processRequestTrip() {
+        Log.d(tripTag, Boolean.toString(mIsStartLocationGeocodingCompleted) + Boolean.toString(mIsEndLocationGeocodingCompleted));
         if (mIsStartLocationGeocodingCompleted && mIsEndLocationGeocodingCompleted){
             requestTrip();
         }
@@ -2276,6 +2288,7 @@ public class MainFragment extends Fragment implements
                     updateMarkerPosition(latlng, true);
                 } else {
                     mIsStartLocationGeocodingCompleted = true;
+                    Log.d(tripTag, "setMarker_Start");
                     processRequestTrip();
                 }
             } else {
@@ -2293,6 +2306,7 @@ public class MainFragment extends Fragment implements
                     updateMarkerPosition(latlng, false);
                 } else {
                     mIsEndLocationGeocodingCompleted = true;
+                    Log.d(tripTag, "setMarker_End");
                     processRequestTrip();
                 }
             }
@@ -3501,6 +3515,7 @@ public class MainFragment extends Fragment implements
         } else {
             moveMarker(isStartTextbox, newAddress);
         }
+        Log.d(tripTag, "useNewAddress: " + newAddress.toString());
         processRequestTrip();
         changingTextBoxWithAutocomplete = false;
     }
@@ -3831,6 +3846,7 @@ public class MainFragment extends Fragment implements
         this.mTripDate = tripDate;
         this.mArriveBy = arriveBy;
         String tripTime = tripDate.toString() + arriveBy;
+        Log.d(tripTag, "onDateComplete");
         processRequestTrip();
         Log.d(OTPApp.TAG, tripTime);
     }
