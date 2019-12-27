@@ -16,6 +16,8 @@
 
 package edu.usf.cutr.opentripplanner.android.tasks;
 
+import org.opentripplanner.api.model.Leg;
+import org.opentripplanner.api.model.TripPlan;
 import org.opentripplanner.api.model.error.PlannerError;
 import org.opentripplanner.api.ws.Message;
 import org.opentripplanner.api.ws.Request;
@@ -36,20 +38,31 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.PolyUtil;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import busstop.customtrip.model.FeaturesCount;
+import busstop.customtrip.model.Query;
+import busstop.customtrip.util.Overpass;
+import busstop.customtrip.util.OverpassParser;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
 import edu.usf.cutr.opentripplanner.android.listeners.TripRequestCompleteListener;
 import edu.usf.cutr.opentripplanner.android.model.Server;
+import edu.usf.cutr.opentripplanner.android.util.ConversionUtils;
 import edu.usf.cutr.opentripplanner.android.util.JacksonConfig;
+import nice.fontaine.overpass.models.response.OverpassResponse;
+import retrofit2.Call;
 
 /**
  * AsyncTask that invokes a trip planning request to the OTP Server
@@ -59,6 +72,8 @@ import edu.usf.cutr.opentripplanner.android.util.JacksonConfig;
  */
 
 public class TripRequest extends AsyncTask<Request, Integer, Long> {
+
+    final String TAG = "TRQ_Filter";
 
     private Response response;
 
@@ -76,6 +91,14 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
     private TripRequestCompleteListener callback;
 
+    private TripPlan tPlan = null;
+
+    private List<LatLng> legsDecoded = new ArrayList<>();
+
+    private Query countFeaturesQuery;
+
+    static int tripRequest = 0;
+
     public TripRequest(WeakReference<Activity> activity, Context context, Resources resources,
                        Server selectedServer, TripRequestCompleteListener callback) {
         this.activity = activity;
@@ -87,6 +110,25 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             Activity activityRetrieved = activity.get();
             progressDialog = new ProgressDialog(activityRetrieved);
         }
+
+        // OpenStreetMap features for itinerary filtering
+        this.countFeaturesQuery = new Query();
+
+        countFeaturesQuery.addHistoricTag("historic", "");
+        countFeaturesQuery.addHistoricTag("amenity", "arts_centre");
+        countFeaturesQuery.addHistoricTag("amenity", "fountain");
+        countFeaturesQuery.addHistoricTag("tourism", "attraction");
+        countFeaturesQuery.addHistoricTag("tourism", "artwork");
+        countFeaturesQuery.addHistoricTag("tourism", "gallery");
+        countFeaturesQuery.addHistoricTag("covered", "arcade");
+        countFeaturesQuery.addHistoricTag("covered", "colonnade");
+
+        countFeaturesQuery.addGreenTag("leisure", "park");
+        countFeaturesQuery.addGreenTag("landuse", "grass");
+        countFeaturesQuery.addGreenTag("leisure", "garden");
+
+        countFeaturesQuery.addPanoramicTag("amenity", "marketplace");
+        countFeaturesQuery.addPanoramicTag("highway", "marketplace");
     }
 
     protected void onPreExecute() {
@@ -119,6 +161,95 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             }
         }
 
+        Log.d(TAG, "********  " + tripRequest + " ********");
+
+        if (response != null && response.getPlan() != null
+                && response.getPlan().getItinerary().get(0) != null) {
+
+            List<Itinerary> itineraries = response.getPlan().getItinerary();
+
+            // ******** Begin Filtering ********
+            // Itinerary comparison based on feature selection
+
+            Log.d(TAG, "******** Start filtering " + itineraries.size() + " itineraries. ********");
+
+            tPlan = response.getPlan();
+
+            int i = 1;
+            StringBuilder strLog;
+
+            String busName = "";
+            List<LatLng> legPoints;
+            List<List<LatLng>> itinerariesDecoded = new ArrayList<>();
+
+            for (Itinerary it : itineraries) {
+
+                strLog = new StringBuilder();
+                legsDecoded.clear();
+
+                for (Leg leg : it.legs) {
+
+                    TraverseMode traverseMode = TraverseMode.valueOf(leg.mode);
+
+                    if (traverseMode.isTransit()) {
+                        busName = ConversionUtils.getRouteShortNameSafe(leg.routeShortName,leg.routeLongName, context);
+                    }
+
+                    strLog.append("\n" + "Itinerary [" + i + "] -> Leg: " + leg.legGeometry.getPoints());
+
+                    legPoints = PolyUtil.decode(leg.legGeometry.getPoints());
+
+                    legsDecoded.addAll(legPoints);
+                }
+
+                Log.d(TAG, "** Itinerary [" + i + "] -> From {"
+                        + tPlan.from.getLat() + ", " + tPlan.from.getLon() + "} to {"
+                        + tPlan.to.getLat()   + ", " + tPlan.to.getLon()   + "}"
+                        + " -- {" + busName + "} **");
+//                        + strLog.toString().replace("\\", "\\\\") + "\n");
+
+                itinerariesDecoded.add(legsDecoded);
+
+                i += 1;
+            }
+
+//            Query query = new Query();
+
+            for (List<LatLng> itinerary : itinerariesDecoded) {
+
+                countFeaturesQuery.setAroundFilter(30, itinerary);
+                countFeaturesQuery.build();
+
+                Log.d("OSM_Filter", countFeaturesQuery.toString());
+
+                Call<OverpassResponse> call = Overpass.ask(countFeaturesQuery);
+
+                retrofit2.Response<OverpassResponse> responseR = null;
+
+                try {
+
+                    responseR = call.execute();
+
+                    OverpassResponse body = responseR.body();
+
+                    FeaturesCount historicCount  = OverpassParser.parseHistoricToCount(body.elements);
+                    FeaturesCount greenCount     = OverpassParser.parseGreenToCount(body.elements);
+                    FeaturesCount panoramicCount = OverpassParser.parsePanoramicToCount(body.elements);
+
+                    Log.d("OSM_Filter", historicCount.toString());
+                    Log.d("OSM_Filter", greenCount.toString());
+                    Log.d("OSM_Filter", panoramicCount.toString());
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                    if (responseR != null)
+                        Log.d("OSM_Filter", responseR.errorBody().toString());
+                }
+            }
+        }
+
+        tripRequest += 1;
 
         return totalSize;
     }
@@ -248,6 +379,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
     }
 
     protected Response requestPlan(Request requestParams, String prefix, String baseURL) {
+        String str;
         HashMap<String, String> tmp = requestParams.getParameters();
 
         Collection c = tmp.entrySet();
