@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -39,8 +40,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.prefs.PreferenceChangeEvent;
 
+import busstop.customtrip.model.CustomTrip;
 import edu.usf.cutr.opentripplanner.android.fragments.DirectionListFragment;
 import edu.usf.cutr.opentripplanner.android.fragments.MainFragment;
 import edu.usf.cutr.opentripplanner.android.listeners.DateCompleteListener;
@@ -81,9 +82,25 @@ public class MyActivity extends FragmentActivity implements OtpFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //	bundle = (OTPBundle)getLastCustomNonConfigurationInstance();
         setContentView(R.layout.activity);
+
+        /* Get here the info about custom trip*/
+        Intent i = getIntent();
+        CustomTrip customTrip = (CustomTrip)i.getSerializableExtra("customTrip");
+        final TextView myTitleText = findViewById(R.id.choosinginfo);
+        if(customTrip != null) {
+            if((customTrip.getMonuments() == 100) && (customTrip.getGreenAreas() == 0) && (customTrip.getOpenSpaces() == 0)) {
+                myTitleText.setText("Hai scelto un percorso con soli monumenti");
+            } else if((customTrip.getMonuments() == 0) && (customTrip.getGreenAreas() == 100) && (customTrip.getOpenSpaces() == 0)) {
+                myTitleText.setText("Hai scelto un percorso con sole aree verdi");
+            } else if((customTrip.getMonuments() == 0) && (customTrip.getGreenAreas() == 0) && (customTrip.getOpenSpaces() == 100)) {
+                myTitleText.setText("Hai scelto un percorso con soli spazi aperti");
+            } else {
+                myTitleText.setText("Hai scelto un percorso custom");
+            }
+        } else {
+            myTitleText.setText("Info sul percorso da definire");
+        }
 
         if (savedInstanceState != null) {
             mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(

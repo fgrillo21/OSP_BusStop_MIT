@@ -57,6 +57,7 @@
             android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center"
+            android:onClick="choose"
             android:text="@string/choose" />
     </LinearLayout>
 
