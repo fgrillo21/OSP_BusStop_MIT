@@ -574,7 +574,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."</strin
 
     <!-- Used to introduce route names in itineraries drop down (map view and step-by-step) and map mode markers popups -->
     <string name="connector_before_route">Route</string>
+
+    <!-- BusStop new labels -->
     <string name="choose">Scegli</string>
     <string name="map">Mappa</string>
-
+    <string name="description_monuments">Un percorso che comprende la vista di tutti i monumenti più famosi di Bologna.</string>
+    <string name="description_greenareas">Un percorso che comprende la vista di tutti i parchi più famosi di Bologna.</string>
+    <string name="description_openspaces">Un percorso che comprende la vista di tutte gli spazi aperti di Bologna.</string>
 </resources>

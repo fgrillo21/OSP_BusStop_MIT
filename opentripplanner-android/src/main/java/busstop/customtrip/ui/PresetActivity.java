@@ -6,6 +6,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,6 +59,23 @@ public class PresetActivity extends AppCompatActivity {
                 }
                 dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
+                /* Initialization different descriptions related to different sections */
+                final TextView myTitleText = findViewById(R.id.myTitle);
+                switch (position) {
+                    default:
+                    case 0: {
+                        myTitleText.setText(R.string.description_monuments);
+                        break;
+                    }
+                    case 1: {
+                        myTitleText.setText(R.string.description_greenareas);
+                        break;
+                    }
+                    case 2: {
+                        myTitleText.setText(R.string.description_openspaces);
+                        break;
+                    }
+                }
             }
 
             @Override
