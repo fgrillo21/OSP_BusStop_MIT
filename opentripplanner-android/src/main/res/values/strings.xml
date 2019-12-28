@@ -580,5 +580,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."</strin
     <string name="map">Mappa</string>
     <string name="description_monuments">Un percorso che comprende la vista di tutti i monumenti più famosi di Bologna.</string>
     <string name="description_greenareas">Un percorso che comprende la vista di tutti i parchi più famosi di Bologna.</string>
-    <string name="description_openspaces">Un percorso che comprende la vista di tutte gli spazi aperti di Bologna.</string>
+    <string name="description_openspaces">Un percorso che comprende la vista di tutti gli spazi aperti di Bologna.</string>
 </resources>
