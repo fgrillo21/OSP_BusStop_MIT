@@ -16,39 +16,6 @@
 
 package edu.usf.cutr.opentripplanner.android.fragments;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.TileOverlay;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-
-import org.opentripplanner.api.model.Itinerary;
-import org.opentripplanner.api.model.Leg;
-import org.opentripplanner.api.ws.GraphMetadata;
-import org.opentripplanner.api.ws.Request;
-import org.opentripplanner.index.model.TripTimeShort;
-import org.opentripplanner.routing.bike_rental.BikeRentalStation;
-import org.opentripplanner.routing.bike_rental.BikeRentalStationList;
-import org.opentripplanner.routing.core.OptimizeType;
-import org.opentripplanner.routing.core.TraverseMode;
-import org.opentripplanner.routing.core.TraverseModeSet;
-
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -87,15 +54,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -107,7 +71,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.inputmethod.EditorInfo;
@@ -116,16 +79,44 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+
+import org.opentripplanner.api.model.Itinerary;
+import org.opentripplanner.api.model.Leg;
+import org.opentripplanner.api.ws.GraphMetadata;
+import org.opentripplanner.api.ws.Request;
+import org.opentripplanner.index.model.TripTimeShort;
+import org.opentripplanner.routing.bike_rental.BikeRentalStationList;
+import org.opentripplanner.routing.core.OptimizeType;
+import org.opentripplanner.routing.core.TraverseMode;
+import org.opentripplanner.routing.core.TraverseModeSet;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -213,7 +204,6 @@ public class MainFragment extends Fragment implements
 
     private SharedPreferences mPrefs;
 
-
     private boolean mAppStarts = true;
 
     private Boolean mNeedToUpdateServersList = false;
@@ -226,34 +216,6 @@ public class MainFragment extends Fragment implements
 
     private ImageButton mBtnMyLocation;
 
-    private ImageButton mBtnHandle;
-
-    private DrawerLayout mDrawerLayout;
-
-    private ViewGroup mNavigationDrawerLeftPane;
-
-    private ListView mDdlOptimization;
-
-    private CheckBox mBtnModeBus;
-
-    private CheckBox mBtnModeTrain;
-
-    private CheckBox mBtnModeFerry;
-
-    private CheckBox mBtnModeRentedBike;
-
-    private RadioButton mBtnModeWalk;
-
-    private RadioButton mBtnModeBike;
-
-    private double mBikeTriangleMinValue = OTPApp.BIKE_PARAMETERS_QUICK_DEFAULT_VALUE;
-
-    private double mBikeTriangleMaxValue = OTPApp.BIKE_PARAMETERS_FLAT_DEFAULT_VALUE;
-
-    private RangeSeekBar<Double> mBikeTriangleParameters;
-
-    private ViewGroup mBikeTriangleParametersLayout;
-
     private View mPanelDisplayDirection;
 
     private Spinner mItinerarySelectionSpinner;
@@ -261,7 +223,6 @@ public class MainFragment extends Fragment implements
     private ImageButton mBtnDisplayDirection;
 
     private MenuItem mGPS;
-
 
     private GoogleMap mMap;
 
@@ -276,7 +237,6 @@ public class MainFragment extends Fragment implements
     private LatLng mSavedLastLocationCheckedForServer;
 
     private Polyline mBoundariesPolyline;
-
 
     private AutoCompleteTextView mTbStartLocation;
 
@@ -311,8 +271,6 @@ public class MainFragment extends Fragment implements
     private List<Polyline> mRoute;
 
     private Map<Marker, BikeRentalStationInfo> mBikeRentalStations;
-
-    private int mOptimizationValueToRestoreWhenNoBike;
 
     private Date mTripDate;
 
@@ -355,12 +313,6 @@ public class MainFragment extends Fragment implements
     boolean changingTextBoxWithAutocomplete = false;
 
     private OptimizeType previousOptimization;
-
-    private TraverseModeSet previousModes;
-
-    private double previousBikeTriangleMinValue;
-
-    private double previousBikeTriangleMaxValue;
 
     private GraphMetadata mCustomServerMetadata = null;
 
@@ -452,15 +404,11 @@ public class MainFragment extends Fragment implements
                         int locationItinerarySelectionSpinner[] = new int[2];
                         mItinerarySelectionSpinner
                                 .getLocationInWindow(locationItinerarySelectionSpinner);
-                        int locationBtnHandle[] = new int[2];
-                        mBtnHandle.getLocationInWindow(locationBtnHandle);
                         DisplayMetrics metrics = MainFragment.this.getResources()
                                 .getDisplayMetrics();
                         int windowHeight = metrics.heightPixels;
                         int paddingMargin = MainFragment.this.getResources()
                                 .getInteger(R.integer.map_padding_margin);
-                        mMapPaddingLeft = locationBtnHandle[0] + mBtnHandle.getWidth() / 2
-                                + paddingMargin;
                         mMapPaddingTop = locationTbEndLocation[1] + mTbEndLocation.getHeight() / 2
                                 + paddingMargin;
                         mMapPaddingRight = 0;
@@ -483,44 +431,14 @@ public class MainFragment extends Fragment implements
             mTbEndLocation = (AutoCompleteTextView) mainView.findViewById(R.id.tbEndLocation);
 
             mBtnSwapOriginDestination = (ImageButton) mainView.findViewById(R.id.btnSwapOriginDestination);
-            mDdlOptimization = (ListView) mainView
-                    .findViewById(R.id.spinOptimization);
-
-            mBtnModeWalk = (RadioButton) mainView.findViewById(R.id.btnModeWalk);
-            mBtnModeBike = (RadioButton) mainView.findViewById(R.id.btnModeBike);
-            mBtnModeBus = (CheckBox) mainView.findViewById(R.id.btnModeBus);
-            mBtnModeTrain = (CheckBox) mainView.findViewById(R.id.btnModeTrain);
-            mBtnModeFerry = (CheckBox) mainView.findViewById(R.id.btnModeFerry);
-            mBtnModeRentedBike = (CheckBox) mainView.findViewById(R.id.btnModeRentedBike);
-
-            mBikeTriangleParameters = new RangeSeekBar<Double>(OTPApp.BIKE_PARAMETERS_MIN_VALUE,
-                    OTPApp.BIKE_PARAMETERS_MAX_VALUE, this.getActivity().getApplicationContext(),
-                    R.color.sysRed, R.color.sysGreen, R.color.sysBlue, R.drawable.seek_thumb_normal,
-                    R.drawable.seek_thumb_pressed);
-
-            // add RangeSeekBar to pre-defined layout
-            mBikeTriangleParametersLayout = (ViewGroup) mainView
-                    .findViewById(R.id.bikeParametersLayout);
-
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.BELOW, R.id.bikeParametersTags);
-
-            mBikeTriangleParametersLayout.addView(mBikeTriangleParameters, params);
 
             mBtnMyLocation = (ImageButton) mainView.findViewById(R.id.btnMyLocation);
 
             mBtnDateDialog = (ImageButton) mainView.findViewById(R.id.btnDateDialog);
 
-            mBtnDisplayDirection = (ImageButton) mainView
-                    .findViewById(R.id.btnDisplayDirection);
+            mBtnDisplayDirection = (ImageButton) mainView.findViewById(R.id.btnDisplayDirection);
 
-            mNavigationDrawerLeftPane = (ViewGroup) mainView
-                    .findViewById(R.id.navigationDrawerLeftPane);
             mPanelDisplayDirection = mainView.findViewById(R.id.panelDisplayDirection);
-
-            mBtnHandle = (ImageButton) mainView.findViewById(R.id.btnHandle);
-            mDrawerLayout = (DrawerLayout) mainView.findViewById(R.id.drawerLayout);
 
             mTbStartLocation.setImeOptions(EditorInfo.IME_ACTION_NEXT);
             mTbEndLocation.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -586,7 +504,6 @@ public class MainFragment extends Fragment implements
         checkAppVersion();
 
         if (savedInstanceState == null) {
-            restorePanelUI();
             mArriveBy = false;
             setTextBoxLocation(getResources().getString(R.string.text_box_my_location), true);
         }
@@ -793,15 +710,6 @@ public class MainFragment extends Fragment implements
         };
         mMap.setOnMapLongClickListener(onMapLongClickListener);
 
-        OnClickListener onClickListener = new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(Gravity.LEFT);
-            }
-        };
-        mBtnHandle.setOnClickListener(onClickListener);
-
         OnInfoWindowClickListener onInfoWindowClickListener = new OnInfoWindowClickListener() {
 
             @Override
@@ -827,49 +735,6 @@ public class MainFragment extends Fragment implements
             }
         };
         mMap.setOnInfoWindowClickListener(onInfoWindowClickListener);
-
-
-
-        DrawerListener dl = new DrawerListener() {
-
-            @Override
-            public void onDrawerStateChanged(int arg0) {
-            }
-
-            @Override
-            public void onDrawerSlide(View arg0, float arg1) {
-                InputMethodManager imm = (InputMethodManager) MainFragment.this.getActivity()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mTbEndLocation.getWindowToken(), 0);
-                imm.hideSoftInputFromWindow(mTbStartLocation.getWindowToken(), 0);
-            }
-
-            @Override
-            public void onDrawerOpened(View arg0) {
-                previousOptimization = ((OptimizeSpinnerItem) mDdlOptimization
-                        .getItemAtPosition(mDdlOptimization.getCheckedItemPosition())).getOptimizeType();
-                previousModes = getSelectedTraverseModeSet();
-                previousBikeTriangleMinValue = mBikeTriangleMinValue;
-                previousBikeTriangleMaxValue = mBikeTriangleMaxValue;
-            }
-
-            @Override
-            public void onDrawerClosed(View arg0) {
-                TraverseModeSet newModes = getSelectedTraverseModeSet();
-                OptimizeType newOptimization = ((OptimizeSpinnerItem) mDdlOptimization
-                        .getItemAtPosition(mDdlOptimization.getCheckedItemPosition())).getOptimizeType();
-                boolean sameOptimization = previousOptimization.equals(newOptimization);
-                boolean sameTraverseMode = previousModes.getModes().equals(newModes.getModes());
-                boolean sameBikeTriangle = previousBikeTriangleMinValue == mBikeTriangleMinValue
-                        && previousBikeTriangleMaxValue == mBikeTriangleMaxValue;
-                if (!sameOptimization || !sameTraverseMode || !sameBikeTriangle){
-                    Log.d(tripTag, "onDrawerClosed");
-                    processRequestTrip();
-                }
-            }
-        };
-        mDrawerLayout.setDrawerListener(dl);
-
 
         startLocationPlacesAutoCompleteAdapter = new PlacesAutoCompleteAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
                 mOTPApp.getSelectedServer());
@@ -1322,214 +1187,6 @@ public class MainFragment extends Fragment implements
 
         mItinerarySelectionSpinner.setSelection(currentItineraryIndex);
         mItinerarySelectionSpinner.setOnItemSelectedListener(itinerarySpinnerListener);
-
-        mBikeTriangleParameters
-                .setOnRangeSeekBarChangeListener(new OnRangeSeekBarChangeListener<Double>() {
-                    @Override
-                    public void onRangeSeekBarValuesChanged(RangeSeekBar<?> rangeSeekBar,
-                            Double minValue, Double maxValue) {
-                        // handle changed range values
-                        Log.i(OTPApp.TAG,
-                                "User selected new range values: MIN=" + minValue + ", MAX="
-                                        + maxValue);
-                    }
-             });
-
-
-        mBtnModeWalk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateModes(getSelectedTraverseModeSet());
-            }
-        });
-
-        mBtnModeBike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setBikeOptimizationAdapter(isChecked, true);
-                showBikeParameters(isChecked);
-                mBtnModeRentedBike.setEnabled(!isChecked);
-                updateModes(getSelectedTraverseModeSet());
-            }
-        });
-
-        mBtnModeRentedBike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setBikeOptimizationAdapter(isChecked, true);
-                showBikeParameters(isChecked);
-                mBtnModeBike.setEnabled(!isChecked);
-                updateModes(getSelectedTraverseModeSet());
-                if (mOTPApp.getSelectedServer().getOffersBikeRental() && isChecked){
-                    BikeRentalLoad bikeRentalGetStations = new BikeRentalLoad(mApplicationContext, true,
-                            MainFragment.this);
-                    bikeRentalGetStations.execute(mOTPApp.getSelectedServer().getBaseURL());
-                }
-                if (mBikeRentalStations != null && !isChecked){
-                    removeBikeStations();
-                }
-            }
-        });
-
-        mBtnModeBus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateModes(getSelectedTraverseModeSet());
-            }
-        });
-
-        mBtnModeTrain.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateModes(getSelectedTraverseModeSet());
-            }
-        });
-
-        mBtnModeFerry.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateModes(getSelectedTraverseModeSet());
-            }
-        });
-
-        mDdlOptimization.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                if (getSelectedTraverseModeSet().getBicycle()) {
-                    mOptimizationValueToRestoreWhenNoBike = position;
-                }
-                SharedPreferences.Editor editor = mPrefs.edit();
-                editor.putInt(OTPApp.PREFERENCE_KEY_LAST_OPTIMIZATION, position);
-                editor.commit();
-                OptimizeSpinnerItem optimizeSpinnerItem = (OptimizeSpinnerItem) mDdlOptimization
-                        .getItemAtPosition(position);
-                if (optimizeSpinnerItem != null) {
-                    showBikeParameters(
-                            optimizeSpinnerItem.getOptimizeType().equals(OptimizeType.TRIANGLE));
-                } else {
-                    Log.e(OTPApp.TAG, "Not possible to change optimization mode because selected"
-                            + "optimization is unknown");
-                }
-            }
-        });
-
-        mBikeTriangleParameters.setOnRangeSeekBarChangeListener(this);
-    }
-
-    /**
-     * Wrapper to call the functions to recover trip options (traverse mode, optimization type and
-     * bike parameters) to last state, before closing the app, if there isn't data functions set
-     * options to default value. If it's needed UI update is also processed.
-     */
-    private void restorePanelUI(){
-        restoreTraverseModes();
-        restoreBikeParameters();
-        restoreOptimization();
-    }
-
-    /**
-     * Recovers trip optimization value to last state, before closing the app, if there isn't data
-     * sets default value.
-     */
-    private void restoreOptimization(){
-        int previousOptimization;
-        if ((previousOptimization =
-                mPrefs.getInt(mOTPApp.PREFERENCE_KEY_LAST_OPTIMIZATION, -1)) != -1){
-            mDdlOptimization.setItemChecked(previousOptimization, true);
-        }
-        else{
-            SharedPreferences.Editor editor = mPrefs.edit();
-            editor.putInt(OTPApp.PREFERENCE_KEY_LAST_OPTIMIZATION, 0);
-            editor.commit();
-            mDdlOptimization.setItemChecked(0, true);
-        }
-    }
-
-    /**
-     * Recovers bike parameters to last state, before closing the app, if there isn't data sets
-     * default value.
-     */
-    private void restoreBikeParameters(){
-        double previousMinValue, previousMaxValue;
-        if ((previousMinValue = mPrefs.getFloat(OTPApp.PREFERENCE_KEY_LAST_BIKE_TRIANGLE_MIN_VALUE, -1)) != -1){
-            mBikeTriangleParameters.setSelectedMinValue(previousMinValue);
-        }
-        else {
-            mBikeTriangleParameters.setSelectedMinValue(OTPApp.BIKE_PARAMETERS_QUICK_DEFAULT_VALUE);
-        }
-        if ((previousMaxValue = mPrefs.getFloat(OTPApp.PREFERENCE_KEY_LAST_BIKE_TRIANGLE_MAX_VALUE, -1)) != -1){
-            mBikeTriangleParameters.setSelectedMaxValue(previousMaxValue);
-        }
-        else{
-            mBikeTriangleParameters.setSelectedMaxValue(OTPApp.BIKE_PARAMETERS_FLAT_DEFAULT_VALUE);
-        }
-
-    }
-
-    /**
-     * Recovers trip traverse mode to last state, before closing the app, if there isn't data
-     * sets default value. It also updates UI according to the new modes.
-     */
-    private void restoreTraverseModes(){
-        String lastTraverseModeSet;
-        if ((lastTraverseModeSet =
-                mPrefs.getString(OTPApp.PREFERENCE_KEY_LAST_TRAVERSE_MODE_SET, "")).equals("")){
-            mBtnModeWalk.setChecked(true);
-            mBtnModeBus.setChecked(true);
-            mBtnModeTrain.setChecked(true);
-            mBtnModeFerry.setChecked(true);
-            showBikeParameters(false);
-            setBikeOptimizationAdapter(false, false);
-        }
-        else {
-            TraverseModeSet traverseModeSet = new TraverseModeSet(lastTraverseModeSet);
-            if (traverseModeSet != null) {
-                mBtnModeWalk.setChecked(traverseModeSet.getWalk());
-                mBtnModeBus.setChecked(traverseModeSet.getBus());
-                mBtnModeTrain.setChecked(traverseModeSet.getRail());
-                mBtnModeFerry.setChecked(traverseModeSet.getFerry());
-                if (traverseModeSet.getWalk() && traverseModeSet.getBicycle()) {
-                    mBtnModeRentedBike.setEnabled(true);
-                    mBtnModeRentedBike.setChecked(true);
-                    mBtnModeBike.setEnabled(false);
-                } else if (!traverseModeSet.getWalk() && traverseModeSet.getBicycle()) {
-                    mBtnModeBike.setEnabled(true);
-                    mBtnModeBike.setChecked(true);
-                    mBtnModeRentedBike.setEnabled(false);
-                } else {
-                    mBtnModeBike.setEnabled(true);
-                    mBtnModeRentedBike.setEnabled(true);
-                    setBikeOptimizationAdapter(false, false);
-                    showBikeParameters(false);
-                }
-                if (traverseModeSet.getBicycle()){
-                    setBikeOptimizationAdapter(true, false);
-                    showBikeParameters(mPrefs.getInt(OTPApp.PREFERENCE_KEY_LAST_OPTIMIZATION, -1) == 2);
-                }
-            } else {
-                Log.e(OTPApp.TAG, "Traverse mode set is null, UI not updated");
-            }
-        }
-    }
-
-    private TraverseModeSet getSelectedTraverseModeSet(){
-        TraverseModeSet selectedTraverseModeSet = new TraverseModeSet();
-        selectedTraverseModeSet.setWalk(mBtnModeWalk.isChecked()
-                || mBtnModeRentedBike.isChecked());
-        selectedTraverseModeSet.setBicycle(mBtnModeBike.isChecked()
-                || mBtnModeRentedBike.isChecked());
-        selectedTraverseModeSet.setBus(mBtnModeBus.isChecked());
-        selectedTraverseModeSet.setTrainish(mBtnModeTrain.isChecked());
-        selectedTraverseModeSet.setFerry(mBtnModeFerry.isChecked());
-
-        return selectedTraverseModeSet;
-    }
-
-    private void updateModes(TraverseModeSet modeSet){
-        SharedPreferences.Editor editor = mPrefs.edit();
-        String modesString = modeSet.toString();
-        editor.putString(OTPApp.PREFERENCE_KEY_LAST_TRAVERSE_MODE_SET, modesString);
-        editor.commit();
     }
 
     /**
@@ -1556,8 +1213,6 @@ public class MainFragment extends Fragment implements
 
         this.getFragmentListener().setOTPBundle(bundle);
     }
-
-
 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -1611,8 +1266,6 @@ public class MainFragment extends Fragment implements
                 mSavedLastLocationCheckedForServer = savedInstanceState
                         .getParcelable(OTPApp.BUNDLE_KEY_SAVED_LAST_LOCATION_CHECKED_FOR_SERVER);
 
-                restorePanelUI();
-
                 OTPBundle otpBundle = (OTPBundle) savedInstanceState
                         .getSerializable(OTPApp.BUNDLE_KEY_OTP_BUNDLE);
                 if (otpBundle != null) {
@@ -1648,12 +1301,6 @@ public class MainFragment extends Fragment implements
 
                 previousOptimization = (OptimizeType) savedInstanceState
                         .getSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_OPTIMIZATION);
-                previousModes = (TraverseModeSet) savedInstanceState
-                        .getSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_MODES);
-                previousBikeTriangleMinValue = savedInstanceState
-                        .getDouble(OTPApp.BUNDLE_KEY_PREVIOUS_BIKE_TRIANGLE_MIN_VALUE);
-                previousBikeTriangleMaxValue = savedInstanceState
-                        .getDouble(OTPApp.BUNDLE_KEY_PREVIOUS_BIKE_TRIANGLE_MAX_VALUE);
                 mCustomServerMetadata = (GraphMetadata) savedInstanceState
                         .getSerializable(OTPApp.BUNDLE_KEY_CUSTOM_SERVER_METADATA);
             }
@@ -1679,7 +1326,6 @@ public class MainFragment extends Fragment implements
         mTbEndLocation.setVisibility(visibility);
         mBtnDateDialog.setVisibility(visibility);
         mBtnMyLocation.setVisibility(visibility);
-        mNavigationDrawerLeftPane.setVisibility(visibility);
         toggleItinerarySelectionSpinner(enable);
     }
 
@@ -1694,24 +1340,17 @@ public class MainFragment extends Fragment implements
     private void toggleItinerarySelectionSpinner(boolean show) {
         RelativeLayout.LayoutParams paramsMyLocation
                 = (RelativeLayout.LayoutParams) mBtnMyLocation.getLayoutParams();
-        RelativeLayout.LayoutParams paramsHandle
-                = (RelativeLayout.LayoutParams) mBtnHandle.getLayoutParams();
-        if ((paramsHandle != null) && (paramsMyLocation != null)) {
+        if (paramsMyLocation != null) {
             if (show) {
                 mPanelDisplayDirection.setVisibility(View.VISIBLE);
                 //Workaround, this value proves to be false, but is dirty. This is because removeRule is not defined in early versions of the API
                 paramsMyLocation.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 0);
-                //Workaround, this value proves to be false, but is dirty. This is because removeRule is not defined in early versions of the API
-                paramsHandle.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 0);
             } else {
                 mPanelDisplayDirection.setVisibility(View.INVISIBLE);
                 paramsMyLocation.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-                paramsHandle.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             }
             mBtnMyLocation.setLayoutParams(paramsMyLocation);
-            mBtnHandle.setLayoutParams(paramsHandle);
             mBtnMyLocation.requestLayout();
-            mBtnHandle.requestLayout();
         } else {
             Log.w(OTPApp.TAG, "Not possible to move down itineraries spinner");
         }
@@ -1826,33 +1465,7 @@ public class MainFragment extends Fragment implements
 
         request.setArriveBy(mArriveBy);
 
-        OptimizeSpinnerItem optimizeSpinnerItem = (OptimizeSpinnerItem) mDdlOptimization
-                .getItemAtPosition(mDdlOptimization.getCheckedItemPosition());
-        if (optimizeSpinnerItem == null) {
-            optimizeSpinnerItem = (OptimizeSpinnerItem) mDdlOptimization.getItemAtPosition(0);
-        }
-
-        if (optimizeSpinnerItem != null) {
-            request.setOptimize(optimizeSpinnerItem.getOptimizeType());
-            if (optimizeSpinnerItem.getOptimizeType().equals(OptimizeType.TRIANGLE)) {
-                request.setTriangleTimeFactor(mBikeTriangleMinValue);
-                request.setTriangleSlopeFactor(mBikeTriangleMaxValue - mBikeTriangleMinValue);
-                request.setTriangleSafetyFactor(1 - mBikeTriangleMaxValue);
-            }
-        } else {
-            Log.e(OTPApp.TAG,
-                    "Optimization not found, not possible to add it to the request so, most"
-                            + "likely results will be incorrect");
-        }
-
-        request.setModes(getSelectedTraverseModeSet());
-
         Server selectedServer = mOTPApp.getSelectedServer();
-        if (selectedServer != null && selectedServer.getOffersBikeRental()){
-            if (mBtnModeRentedBike.isChecked()){
-                request.setBikeRental(true);
-            }
-        }
 
         Integer defaultMaxWalkInt = mApplicationContext.getResources()
                  .getInteger(R.integer.max_walking_distance);
@@ -1933,135 +1546,6 @@ public class MainFragment extends Fragment implements
         }
 
         return mMap;
-    }
-
-    /**
-     * Wrapper to trigger functions to disable bike parameters and effectively
-     * show them as inactive (faded).
-     *
-     * @param enable when true parameters are shown
-     */
-    private void showBikeParameters(boolean enable) {
-        setRangeSeekBarStateColors(enable, mBikeTriangleParameters);
-        disableEnableControls(enable, mBikeTriangleParametersLayout);
-    }
-
-    /**
-     * Changes optimization spinner values to show ones compatible with
-     * bikes or with transit. If updateOptimizationValue is true values of the spinner are also
-     * modified to adapt to bike.
-     * <p>
-     * Replaces fewest transfers with safer trip options.
-     *
-     * @param enable when true spinner is set to bike values
-     * @param updateOptimizationValue when true optimization spinner values are modified to select
-     *                                by default "custom trip" by bike and restore previous value
-     *                                when bike mode is abandoned
-     */
-    private void setBikeOptimizationAdapter(boolean enable, boolean updateOptimizationValue) {
-        ArrayAdapter<OptimizeSpinnerItem> optimizationAdapter;
-        int newOptimizationValue;
-
-        if (updateOptimizationValue){
-            if (enable){
-                mOptimizationValueToRestoreWhenNoBike = mDdlOptimization.getCheckedItemPosition();
-            }
-        }
-
-        if (enable) {
-            optimizationAdapter = new ArrayAdapter<OptimizeSpinnerItem>(
-                    getActivity(),
-                    android.R.layout.simple_list_item_single_choice,
-                    new OptimizeSpinnerItem[]{
-                            new OptimizeSpinnerItem(
-                                    getResources().getString(R.string.left_panel_optimization_quick),
-                                    OptimizeType.QUICK),
-                            new OptimizeSpinnerItem(
-                                    getResources().getString(R.string.left_panel_optimization_safe),
-                                    OptimizeType.SAFE),
-                            new OptimizeSpinnerItem(
-                                    getResources().getString(R.string.left_panel_optimization_bike_triangle),
-                                    OptimizeType.TRIANGLE)});
-            mDdlOptimization.setAdapter(optimizationAdapter);
-        } else {
-            optimizationAdapter = new ArrayAdapter<OptimizeSpinnerItem>(
-                    getActivity(),
-                    android.R.layout.simple_list_item_single_choice,
-                    new OptimizeSpinnerItem[]{
-                            new OptimizeSpinnerItem(
-                                    getResources().getString(R.string.left_panel_optimization_quick),
-                                    OptimizeType.QUICK),
-                            new OptimizeSpinnerItem(
-                                    getResources().getString(R.string.left_panel_optimization_safe),
-                                    OptimizeType.SAFE),
-                            new OptimizeSpinnerItem(getResources()
-                                    .getString(R.string.left_panel_optimization_fewest_transfers),
-                                    OptimizeType.TRANSFERS)});
-            mDdlOptimization.setAdapter(optimizationAdapter);
-        }
-        if (updateOptimizationValue){
-            if (enable){
-                newOptimizationValue = 2;
-            }
-            else{
-                if (mOptimizationValueToRestoreWhenNoBike != -1){
-                    newOptimizationValue = mOptimizationValueToRestoreWhenNoBike;
-                }
-                else if (mPrefs.getInt(OTPApp.PREFERENCE_KEY_LAST_OPTIMIZATION, -1) != -1){
-                    newOptimizationValue = mPrefs.getInt(OTPApp.PREFERENCE_KEY_LAST_OPTIMIZATION, -1);
-                }
-                else{
-                    newOptimizationValue = 0;
-                }
-            }
-            mDdlOptimization.setItemChecked(newOptimizationValue, true);
-            SharedPreferences.Editor editor = mPrefs.edit();
-            editor.putInt(OTPApp.PREFERENCE_KEY_LAST_OPTIMIZATION, newOptimizationValue);
-            editor.commit();
-        }
-    }
-
-    /**
-     * Toggles between standard colors and faded colors for the passed seekbar
-     * to visually show that it's disabled.
-     *
-     * @param enable  when true standard colors are used
-     * @param seekBar bar that will be toggled
-     */
-    private void setRangeSeekBarStateColors(boolean enable, RangeSeekBar<Double> seekBar) {
-        if (enable) {
-            seekBar.setLeftColor(getResources().getColor(R.color.sysRed));
-            seekBar.setMiddleColor(getResources().getColor(R.color.sysGreen));
-            seekBar.setRightColor(getResources().getColor(R.color.sysBlue));
-        } else {
-            seekBar.setLeftColor(getResources().getColor(R.color.sysRedFaded));
-            seekBar.setMiddleColor(getResources().getColor(R.color.sysGreenFaded));
-            seekBar.setRightColor(getResources().getColor(R.color.sysBlueFaded));
-        }
-
-    }
-
-    /**
-     * Recursively enable/disable all the views contained in a ViewGroup and
-     * it's descendants.
-     *
-     * @param enable when true views will be disable
-     * @param vg     a ViewGroup that will be modified
-     */
-    private void disableEnableControls(boolean enable, ViewGroup vg) {
-        for (int i = 0; i < vg.getChildCount(); i++) {
-            View child = vg.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                disableEnableControls(enable, (ViewGroup) child);
-            } else {
-                if (child != null) {
-                    child.setEnabled(enable);
-                } else {
-                    Log.w(OTPApp.TAG,
-                            "Not possible to fully perform process to disable all controls");
-                }
-            }
-        }
     }
 
 
@@ -2530,9 +2014,6 @@ public class MainFragment extends Fragment implements
             bundle.putBoolean(OTPApp.BUNDLE_KEY__IS_ALARM_BIKE_RENTAL_ACTIVE, mIsAlarmBikeRentalUpdateActive);
 
             bundle.putSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_OPTIMIZATION, previousOptimization);
-            bundle.putSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_MODES, previousModes);
-            bundle.putSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_BIKE_TRIANGLE_MIN_VALUE, previousBikeTriangleMinValue);
-            bundle.putSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_BIKE_TRIANGLE_MAX_VALUE, previousBikeTriangleMaxValue);
 
             if (!mFragmentListener.getCurrentItineraryList().isEmpty()) {
                 OTPBundle otpBundle = new OTPBundle();
@@ -2719,22 +2200,6 @@ public class MainFragment extends Fragment implements
                 return;
             }
             if (server != null){
-                if (server.getOffersBikeRental()){
-                    mBtnModeRentedBike.setEnabled(true);
-                }
-                else{
-                    mBtnModeRentedBike.setChecked(false);
-                    mBtnModeRentedBike.setEnabled(false);
-                }
-                if (server.getOffersBikeRental() && mBtnModeRentedBike.isChecked()){
-                    BikeRentalLoad bikeRentalGetStations = new BikeRentalLoad(mApplicationContext, true,
-                            this);
-                    bikeRentalGetStations.execute(server.getBaseURL());
-                }
-                else{
-                    removeBikeStations();
-                    listenForBikeUpdates(false);
-                }
                 if (startLocationPlacesAutoCompleteAdapter != null
                         && endLocationPlacesAutoCompleteAdapter != null){
                     startLocationPlacesAutoCompleteAdapter.setSelectedServer(server);
@@ -3867,98 +3332,10 @@ public class MainFragment extends Fragment implements
         editor.putFloat(OTPApp.PREFERENCE_KEY_LAST_BIKE_TRIANGLE_MIN_VALUE, minValue.floatValue());
         editor.putFloat(OTPApp.PREFERENCE_KEY_LAST_BIKE_TRIANGLE_MAX_VALUE, maxValue.floatValue());
         editor.commit();
-
-        mBikeTriangleMinValue = minValue;
-        mBikeTriangleMaxValue = maxValue;
         String bikeParam = minValue.toString() + maxValue.toString();
         Log.d(OTPApp.TAG, bikeParam);
     }
 
-    @Override
-    public void onBikeRentalStationListLoad(BikeRentalStationList bikeRentalStationList) {
-        removeBikeStations();
-        if (mBtnModeRentedBike.isChecked()){
-            if (bikeRentalStationList != null){
-                List<BikeRentalStation> listOfBikeRentalStations = bikeRentalStationList.stations;
-                if ((listOfBikeRentalStations != null) && !listOfBikeRentalStations.isEmpty()){
-                    mBikeRentalStations = new HashMap<Marker, BikeRentalStationInfo>(listOfBikeRentalStations.size());
-
-                    MarkerOptions bikeRentalStationMarkerOption = new MarkerOptions();
-
-                    Drawable drawable = getResources().getDrawable(R.drawable.parking_bicycle);
-                    if (drawable != null) {
-                        BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable.getCurrent();
-                        Bitmap bitmap = bitmapDrawable.getBitmap();
-                        bikeRentalStationMarkerOption.icon(
-                                BitmapDescriptorFactory.fromBitmap(bitmap));
-                    } else {
-                        Log.e(OTPApp.TAG, "Error obtaining drawable to add bike rental icons to the map");
-                    }
-
-                    for (BikeRentalStation bikeRentalStation : listOfBikeRentalStations){
-                        LatLng position = new LatLng(bikeRentalStation.y,
-                                bikeRentalStation.x);
-                        bikeRentalStationMarkerOption.position(position);
-                        bikeRentalStationMarkerOption.title(bikeRentalStation.name);
-                        bikeRentalStationMarkerOption.snippet(getResources()
-                                .getString(R.string.map_markers_bike_rental_available_bikes) + " " +
-                                bikeRentalStation.bikesAvailable + " | " + getResources()
-                                .getString(R.string.map_markers_bike_rental_available_spaces) + " " +
-                                bikeRentalStation.spacesAvailable);
-                        if (!mMapFailed){
-                            Marker bikeRentalStationMarker = mMap.addMarker(bikeRentalStationMarkerOption);
-                            BikeRentalStationInfo bikeRentalStationInfo = new BikeRentalStationInfo(position,
-                                    bikeRentalStation.name);
-
-                            mBikeRentalStations.put(bikeRentalStationMarker, bikeRentalStationInfo);
-                        }
-                    }
-                    listenForBikeUpdates(true);
-                }
-            }
-            else{
-                Toast.makeText(mApplicationContext, mApplicationContext.getResources().getString(R.string.toast_bike_rental_load_request_error),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @Override
-    public void onBikeRentalStationListUpdate(BikeRentalStationList bikeRentalStationList) {
-        if (getActivity() != null){
-            if (bikeRentalStationList != null) {
-                List<BikeRentalStation> listOfBikeRentalStations = bikeRentalStationList.stations;
-                if ((listOfBikeRentalStations != null) && !listOfBikeRentalStations.isEmpty()
-                        && (mBikeRentalStations != null) && !mBikeRentalStations.isEmpty()) {
-                    for (BikeRentalStation bikeRentalStation : listOfBikeRentalStations) {
-                        for (Map.Entry<Marker, BikeRentalStationInfo> entry : mBikeRentalStations.entrySet()) {
-                            if (entry.getKey().getTitle().equals(bikeRentalStation.name)) {
-                                entry.getKey().setSnippet(getResources()
-                                        .getString(R.string.map_markers_bike_rental_available_bikes) + " " +
-                                        bikeRentalStation.bikesAvailable + " | " + getResources()
-                                        .getString(R.string.map_markers_bike_rental_available_spaces) + " " +
-                                        bikeRentalStation.spacesAvailable);
-                            }
-                            if (entry.getKey().isInfoWindowShown()) {
-                                entry.getKey().showInfoWindow();
-                            }
-                        }
-                    }
-                }
-            }
-            else{
-                Toast.makeText(mApplicationContext, mApplicationContext.getResources().getString(R.string.toast_bike_rental_load_request_error),
-                        Toast.LENGTH_SHORT).show();
-                listenForBikeUpdates(false);
-                removeBikeStations();
-            }
-        }
-    }
-
-    @Override
-    public void onBikeRentalStationListFail() {
-        listenForBikeUpdates(false);
-    }
 
     public void listenForBikeUpdates(boolean enable){
         if (enable){
@@ -3977,15 +3354,6 @@ public class MainFragment extends Fragment implements
                 }
             }
             mAlarmMgr.cancel(mAlarmIntentBikeRentalUpdate);
-        }
-    }
-
-    public void removeBikeStations(){
-        if (mBikeRentalStations != null) {
-            for (Map.Entry<Marker, BikeRentalStationInfo> entry : mBikeRentalStations.entrySet()) {
-                entry.getKey().remove();
-            }
-            mBikeRentalStations = null;
         }
     }
 
@@ -4312,6 +3680,21 @@ public class MainFragment extends Fragment implements
     @Override
     public void onUpdateTripTimesFail() {
         listenForTripTimeUpdates(false, 0);
+    }
+
+    @Override
+    public void onBikeRentalStationListLoad(BikeRentalStationList bikeRentalStationCollection) {
+
+    }
+
+    @Override
+    public void onBikeRentalStationListUpdate(BikeRentalStationList bikeRentalStationCollection) {
+
+    }
+
+    @Override
+    public void onBikeRentalStationListFail() {
+
     }
 
     public class AlarmReceiver extends BroadcastReceiver{
