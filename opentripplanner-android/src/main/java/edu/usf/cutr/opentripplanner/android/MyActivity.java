@@ -25,10 +25,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -60,7 +63,7 @@ import edu.usf.cutr.opentripplanner.android.tasks.ServerChecker;
  * @author Vreixo Gonz�lez (update to Google Maps API v2, UI and general app improvements)
  */
 
-public class MyActivity extends FragmentActivity implements OtpFragment {
+public class MyActivity extends AppCompatActivity implements OtpFragment {
 
     private List<Leg> currentItinerary = new ArrayList<Leg>();
 
@@ -82,6 +85,12 @@ public class MyActivity extends FragmentActivity implements OtpFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         setContentView(R.layout.activity);
 
         /* Get here the info about custom trip*/
@@ -351,4 +360,16 @@ public class MyActivity extends FragmentActivity implements OtpFragment {
         dateCompleteCallback.onDateComplete(tripDate, scheduleType);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
 }
