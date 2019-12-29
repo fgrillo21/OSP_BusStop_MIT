@@ -185,7 +185,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             for (Itinerary it : itineraries) {
 
                 strLog = new StringBuilder();
-                legsDecoded.clear();
+                legsDecoded = new ArrayList<>();
 
                 for (Leg leg : it.legs) {
 
@@ -226,25 +226,35 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
                 retrofit2.Response<OverpassResponse> responseR = null;
 
-                try {
+                final int maxTries = 3;
+                int currentTry = 0;
 
-                    responseR = call.execute();
+                while (currentTry < maxTries) {
 
-                    OverpassResponse body = responseR.body();
+                    try {
 
-                    FeaturesCount historicCount  = OverpassParser.parseHistoricToCount(body.elements);
-                    FeaturesCount greenCount     = OverpassParser.parseGreenToCount(body.elements);
-                    FeaturesCount panoramicCount = OverpassParser.parsePanoramicToCount(body.elements);
+                        responseR = call.execute();
 
-                    Log.d("OSM_Filter", historicCount.toString());
-                    Log.d("OSM_Filter", greenCount.toString());
-                    Log.d("OSM_Filter", panoramicCount.toString());
+                        OverpassResponse body = responseR.body();
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                        FeaturesCount historicCount = OverpassParser.parseHistoricToCount(body.elements);
+                        FeaturesCount greenCount = OverpassParser.parseGreenToCount(body.elements);
+                        FeaturesCount panoramicCount = OverpassParser.parsePanoramicToCount(body.elements);
 
-                    if (responseR != null)
-                        Log.d("OSM_Filter", responseR.errorBody().toString());
+                        Log.d("OSM_Filter", historicCount.toString());
+                        Log.d("OSM_Filter", greenCount.toString());
+                        Log.d("OSM_Filter", panoramicCount.toString());
+
+                        break;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+
+                        if (responseR != null)
+                            Log.d("OSM_Filter", responseR.errorBody().toString());
+                    }
+
+                    currentTry += 1;
                 }
             }
         }
