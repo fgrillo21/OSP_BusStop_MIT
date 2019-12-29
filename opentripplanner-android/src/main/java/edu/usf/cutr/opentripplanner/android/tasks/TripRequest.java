@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import busstop.customtrip.model.CustomTrip;
 import busstop.customtrip.model.FeaturesCount;
 import busstop.customtrip.model.Query;
 import busstop.customtrip.util.Overpass;
@@ -97,15 +98,19 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
     private Query countFeaturesQuery;
 
+    private CustomTrip customTrip;
+
     static int tripRequest = 0;
 
     public TripRequest(WeakReference<Activity> activity, Context context, Resources resources,
-                       Server selectedServer, TripRequestCompleteListener callback) {
+                       Server selectedServer, TripRequestCompleteListener callback, CustomTrip customTrip) {
         this.activity = activity;
         this.context = context;
         this.selectedServer = selectedServer;
         this.callback = callback;
         this.resources = resources;
+        this.customTrip = customTrip;
+
         if (activity != null) {
             Activity activityRetrieved = activity.get();
             progressDialog = new ProgressDialog(activityRetrieved);

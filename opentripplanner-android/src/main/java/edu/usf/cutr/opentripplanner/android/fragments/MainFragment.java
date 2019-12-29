@@ -50,6 +50,7 @@ import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.core.TraverseModeSet;
 
 import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -141,6 +142,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import busstop.customtrip.model.CustomTrip;
 import edu.usf.cutr.opentripplanner.android.MyActivity;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
@@ -364,6 +366,8 @@ public class MainFragment extends Fragment implements
 
     private OTPGeocoding mGeoCodingTask;
 
+    private CustomTrip customTrip;
+
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void removeOnGlobalLayoutListener(View v,
@@ -380,6 +384,10 @@ public class MainFragment extends Fragment implements
                     "Problems obtaining exact element's positions on screen, some other elements"
                             + "can be misplaced");
         }
+    }
+
+    public void setCustomTripInfo(CustomTrip customTrip) {
+        this.customTrip = customTrip;
     }
 
     public void setNeedToUpdateServersList(Boolean needToUpdateServersList) {
@@ -537,6 +545,7 @@ public class MainFragment extends Fragment implements
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.d(OTPApp.TAG, "onActivityCreated");
@@ -1880,7 +1889,7 @@ public class MainFragment extends Fragment implements
                 MainFragment.this.getActivity());
 
         new TripRequest(weakContext, MainFragment.this.mApplicationContext, getResources(), mOTPApp
-                .getSelectedServer(), MainFragment.this)
+                .getSelectedServer(), MainFragment.this, customTrip)
                 .execute(request);
 
         InputMethodManager imm = (InputMethodManager) MainFragment.this.getActivity()
