@@ -93,24 +93,6 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
 
         setContentView(R.layout.activity);
 
-        /* Get here the info about custom trip*/
-        Intent i = getIntent();
-        CustomTrip customTrip = (CustomTrip)i.getSerializableExtra("customTrip");
-        final TextView myTitleText = findViewById(R.id.choosinginfo);
-        if(customTrip != null) {
-            if((customTrip.getMonuments() == 100) && (customTrip.getGreenAreas() == 0) && (customTrip.getOpenSpaces() == 0)) {
-                myTitleText.setText("Hai scelto un percorso con soli monumenti");
-            } else if((customTrip.getMonuments() == 0) && (customTrip.getGreenAreas() == 100) && (customTrip.getOpenSpaces() == 0)) {
-                myTitleText.setText("Hai scelto un percorso con sole aree verdi");
-            } else if((customTrip.getMonuments() == 0) && (customTrip.getGreenAreas() == 0) && (customTrip.getOpenSpaces() == 100)) {
-                myTitleText.setText("Hai scelto un percorso con soli spazi aperti");
-            } else {
-                myTitleText.setText("Hai scelto un percorso custom");
-            }
-        } else {
-            myTitleText.setText("Info sul percorso da definire");
-        }
-
         if (savedInstanceState != null) {
             mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(
                     OTPApp.TAG_FRAGMENT_MAIN_FRAGMENT);//recuperar o tag adecuado e pillar ese fragment
@@ -126,6 +108,12 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
             fragmentTransaction.commit();
         }
 
+        if(mainFragment != null) {
+            /* Get here the info about custom trip*/
+            Intent i = getIntent();
+            CustomTrip customTrip = (CustomTrip)i.getSerializableExtra("customTrip");
+            mainFragment.setCustomTripInfo(customTrip);
+        }
     }
 
     @Override
