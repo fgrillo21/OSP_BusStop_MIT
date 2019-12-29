@@ -1,14 +1,23 @@
 package busstop.customtrip.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import java.util.Arrays;
 import java.util.List;
 
+import busstop.customtrip.model.CustomTrip;
+import edu.usf.cutr.opentripplanner.android.MyActivity;
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class PresetActivity extends AppCompatActivity {
@@ -20,9 +29,17 @@ public class PresetActivity extends AppCompatActivity {
     private int dotscount;
     private ImageView[] dots;
 
+    private int pageSelected = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         setContentView(R.layout.activity_preset);
 
         layout_dot = findViewById(R.id.layout_dot);
@@ -52,11 +69,30 @@ public class PresetActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                pageSelected = position;
+
                 for(int i = 0; i< dotscount; i++){
                     dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
                 }
                 dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
+                /* Initialization different descriptions related to different sections */
+                final TextView myTitleText = findViewById(R.id.myTitle);
+                switch (position) {
+                    default:
+                    case 0: {
+                        myTitleText.setText(R.string.description_monuments);
+                        break;
+                    }
+                    case 1: {
+                        myTitleText.setText(R.string.description_greenareas);
+                        break;
+                    }
+                    case 2: {
+                        myTitleText.setText(R.string.description_openspaces);
+                        break;
+                    }
+                }
             }
 
             @Override
@@ -64,5 +100,52 @@ public class PresetActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    public void choose(View view) {
+        CustomTrip customTrip;
+        switch (pageSelected) {
+            default:
+            case 0: {
+                customTrip = CustomTrip.newActivityGroup()
+                        .withMonuments(100)
+                        .withGreenAreas(0)
+                        .withOpenSpaces(0)
+                        .build();
+                break;
+            }
+            case 1: {
+                customTrip = CustomTrip.newActivityGroup()
+                        .withMonuments(0)
+                        .withGreenAreas(100)
+                        .withOpenSpaces(0)
+                        .build();
+                break;
+            }
+            case 2: {
+                customTrip = CustomTrip.newActivityGroup()
+                        .withMonuments(0)
+                        .withGreenAreas(0)
+                        .withOpenSpaces(100)
+                        .build();
+                break;
+            }
+        }
+        Intent intent = new Intent(PresetActivity.this, MyActivity.class);
+        intent.putExtra("customTrip", customTrip);
+        startActivity(intent);
     }
 }

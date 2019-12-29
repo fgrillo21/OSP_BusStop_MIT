@@ -1,6 +1,9 @@
 package busstop.customtrip.model;
 
-public class CustomTrip {
+import java.io.Serializable;
+
+@SuppressWarnings("serial") //With this annotation we are going to hide compiler warnings
+public class CustomTrip implements Serializable {
     private final int monuments;
     private final int greenAreas;
     private final int openSpaces;
