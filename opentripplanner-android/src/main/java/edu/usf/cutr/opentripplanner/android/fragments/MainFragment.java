@@ -50,6 +50,7 @@ import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.core.TraverseModeSet;
 
 import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -537,6 +538,7 @@ public class MainFragment extends Fragment implements
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.d(OTPApp.TAG, "onActivityCreated");
