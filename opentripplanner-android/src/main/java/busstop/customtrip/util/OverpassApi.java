@@ -7,7 +7,11 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
 public interface OverpassApi {
-    String BASE_URL = "http://overpass-api.de";
+
+    // OSM Overpass interpreters addresses
+    // String BASE_URL = "http://overpass-api.de/";
+    // String BASE_URL = "https://overpass-api.de/api/interpreter/";
+    String BASE_URL = "https://overpass.kumi.systems/api/interpreter/";
 
     /**
      * Returns a OverpassApi response for the given query.
