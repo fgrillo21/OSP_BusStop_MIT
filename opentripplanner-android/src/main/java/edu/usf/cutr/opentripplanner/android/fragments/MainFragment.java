@@ -80,6 +80,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -526,8 +527,8 @@ public class MainFragment extends Fragment implements
         Server selectedServer = mOTPApp.getSelectedServer();
         if (selectedServer != null) {
             if (!mMapFailed) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getServerCenter(selectedServer),
-                        getServerInitialZoom(selectedServer)));
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getServerCenter(selectedServer),getServerInitialZoom(selectedServer)));
+                setInitialCameraLocation(false, selectedServer);
             }
         }
 
@@ -571,8 +572,10 @@ public class MainFragment extends Fragment implements
                 imm.hideSoftInputFromWindow(mTbStartLocation.getWindowToken(), 0);
 
                 if (mTbStartLocation.hasFocus()) {
+                    Log.d(tripTag, "setMarker_Start addInterface");
                     setMarker(true, latlng, true, true);
                 } else {
+                    Log.d(tripTag, "setMarker_Start addInterface elkse");
                     setMarker(false, latlng, true, true);
                 }
                 Log.d(tripTag, "onMapClickListener");
@@ -634,6 +637,7 @@ public class MainFragment extends Fragment implements
                         } else {
                             mIsStartLocationGeocodingCompleted = true;
                             removeFocus(true);
+                            Log.d(tripTag, "setMarker_Start marer drag end");
                             setMarker(true, markerLatlng, false, true);
                         }
                         mStartMarkerPosition = markerLatlng;
@@ -696,6 +700,7 @@ public class MainFragment extends Fragment implements
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == 0) {
+                            Log.d(tripTag, "setMarker_Start markerdaragglong");
                             setMarker(true, latLngFinal, true, true);
                         } else {
                             setMarker(false, latLngFinal, true, true);
@@ -716,6 +721,7 @@ public class MainFragment extends Fragment implements
             public void onInfoWindowClick(Marker marker) {
                 if (mBikeRentalStations != null && mBikeRentalStations.containsKey(marker)){
                     BikeRentalStationInfo bikeRentalStationInfo = mBikeRentalStations.get(marker);
+                    Log.d(tripTag, "setMarker_Start oninfowindow");
                     setMarker(true, bikeRentalStationInfo.getLocation(), false, false);
                     setTextBoxLocation(bikeRentalStationInfo.getName(), true);
                 }
@@ -902,6 +908,7 @@ public class MainFragment extends Fragment implements
                 changingTextBoxWithAutocomplete = true;
                 boolean isStartBox = mTbStartLocation.hasFocus();
                 CustomAddress selectedAddress = (CustomAddress) adapterView.getItemAtPosition(position);
+                Log.d(tripTag, "UseNewAddress: tbAutocomplete: " + selectedAddress);
                 useNewAddress(isStartBox, selectedAddress, false);
             }
         };
@@ -1745,7 +1752,7 @@ public class MainFragment extends Fragment implements
      * @param showMessage   whether show or not informative message on success
      * @param geocode       when false, even with the preference set, geocoding won't be triggered.
      */
-    private void setMarker(boolean isStartMarker, LatLng latlng, boolean showMessage,
+        private void setMarker(boolean isStartMarker, LatLng latlng, boolean showMessage,
                            boolean geocode) {
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
 
@@ -1781,7 +1788,7 @@ public class MainFragment extends Fragment implements
                     updateMarkerPosition(latlng, true);
                 } else {
                     mIsStartLocationGeocodingCompleted = true;
-                    Log.d(tripTag, "setMarker_Start");
+                    Log.d(tripTag, "Sono dentro a setMarker_Start");
                     processRequestTrip();
                 }
             } else {
@@ -2056,6 +2063,7 @@ public class MainFragment extends Fragment implements
      */
     public void processAddress(final boolean isStartTextBox, String address, Double originalLat,
                                Double originalLon, boolean geocodingForMarker) {
+        Log.d("TRQ_TriggerGeocoding", "Geocoder");
         WeakReference<Activity> weakContext = new WeakReference<Activity>(getActivity());
 
         mGeoCodingTask = new OTPGeocoding(weakContext, mApplicationContext,
@@ -2190,6 +2198,7 @@ public class MainFragment extends Fragment implements
                     } else {
                         mMap.animateCamera(CameraUpdateFactory
                                 .newLatLngZoom(getServerCenter(server), getServerInitialZoom(server)));
+                        Log.d(tripTag, "setMarker_Start if");
                         setMarker(true, getServerCenter(server), false, true);
                     }
                 }
@@ -2936,6 +2945,7 @@ public class MainFragment extends Fragment implements
                     alert.show();
                     return;
                 } else if (addressesReturn.size() == 1) {
+                    Log.d(tripTag, "otpGeocodingComplete");
                     useNewAddress(isStartTextbox, addressesReturn.get(0), geocodingForMarker);
                     return;
                 }
@@ -2959,6 +2969,7 @@ public class MainFragment extends Fragment implements
                             public void onClick(DialogInterface dialog, int item) {
                                 CustomAddress address = addressesTemp.get(item);
                                 Log.d(OTPApp.TAG, "Chosen: " + addressesText[item]);
+                                Log.d(tripTag, "Chosen");
                                 useNewAddress(isStartTextbox, address, false);
                             }
                         });
@@ -3034,10 +3045,12 @@ public class MainFragment extends Fragment implements
                         mMap.animateCamera(CameraUpdateFactory
                                 .newLatLngZoom(mCurrentLatLng, getServerInitialZoom(selectedServer)));
                     } else {
-                        mMap.animateCamera(CameraUpdateFactory
-                                .newLatLngZoom(getServerCenter(selectedServer),
-                                        getServerInitialZoom(selectedServer)));
-                        setMarker(true, getServerCenter(selectedServer), false, true);
+                                mMap.animateCamera(CameraUpdateFactory
+                                        .newLatLngZoom(getServerCenter(selectedServer),
+                                                getServerInitialZoom(selectedServer)));
+                        Log.d(tripTag, "setMarker_Startmetadfata request com");
+                        setStartMarkerLocation(false, selectedServer);
+//                        setMarker(true, getServerCenter(selectedServer), false, true);
                     }
                 }
             }
@@ -3131,7 +3144,7 @@ public class MainFragment extends Fragment implements
     }
 
     /*
-     * Called by Location Services if the attempt to
+                             * Called by Location Services if the attempt to
      * Location Services fails.
      */
     @Override
@@ -3230,7 +3243,13 @@ public class MainFragment extends Fragment implements
                                     mMap.animateCamera(CameraUpdateFactory
                                             .newLatLngZoom(getServerCenter(selectedServer),
                                                     getServerInitialZoom(selectedServer)));
-                                    setMarker(true, getServerCenter(selectedServer), false, true);
+
+                                    Log.d(tripTag, "setMarker_Start onconnected");
+
+                                    // Originariamente usato per l'origine al centro del  confine dell'OTP Server
+//                                     setMarker(true, getServerCenter(selectedServer), false, true);
+
+                                    setStartMarkerLocation( false, selectedServer);
                                 }
                             } else if(selectedServer != null) {
                                 mMap.animateCamera(CameraUpdateFactory
@@ -3757,5 +3776,49 @@ public class MainFragment extends Fragment implements
 
     public void setmCustomServerMetadata(GraphMetadata mCustomServerMetadata) {
         this.mCustomServerMetadata = mCustomServerMetadata;
+    }
+
+    private void setStartMarkerLocation(boolean useServerCenter, Server selectedServer) {
+
+        LatLng latLng = null;
+
+        if (selectedServer != null) {
+            if (!mMapFailed) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getServerCenter(selectedServer),
+                        getServerInitialZoom(selectedServer)));
+            }
+        }
+
+        if (useServerCenter) {
+            latLng = getServerCenter(selectedServer);
+            setMarker(true, latLng, false, true);
+        }
+        else {
+            // Uso GeoCoder per trovare Bologna Centrale sulla mappa e piazzare il marker per la partenza
+            CustomAddress customAddress = LocationUtil.processGeocoding(mApplicationContext, selectedServer, false, "Bologna centrale").get(0);
+            latLng = new LatLng(customAddress.getLatitude(), customAddress.getLongitude());
+            setMarker(true, latLng, false, true);
+        }
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, getServerInitialZoom(selectedServer)));
+    }
+
+    private void setInitialCameraLocation(boolean useServerCenter, Server selectedServer) {
+
+        LatLng latLng = null;
+
+        if (selectedServer != null) {
+            if (!mMapFailed) {
+                if (useServerCenter) {
+                    latLng = getServerCenter(selectedServer);
+                }
+                else {
+                    CustomAddress customAddress = LocationUtil.processGeocoding(mApplicationContext, selectedServer, false, "Bologna centrale").get(0);
+                    latLng = new LatLng(customAddress.getLatitude(), customAddress.getLongitude());
+                }
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getServerInitialZoom(selectedServer)));
+            }
+        }
     }
 }
