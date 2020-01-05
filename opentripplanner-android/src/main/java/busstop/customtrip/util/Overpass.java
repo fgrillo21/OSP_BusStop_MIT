@@ -17,29 +17,31 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 //import nice.fontaine.overpass.OverpassApi;
 
-public final class Overpass {
-    private static String url;
-    private static OkHttpClient client;
+public class Overpass {
+    private String url;
+    private OkHttpClient client;
 
-    private Overpass() {
-        throw new IllegalStateException("Not to be initialized!");
+    public Overpass() {
+        url = null;
+        client = null;
+//        throw new IllegalStateException("Not to be initialized!");
     }
 
-    public static Call<OverpassResponse> ask(final Query query) {
+    public Call<OverpassResponse> ask(final Query query) {
         OverpassApi api = api();
         return api.ask(query.toQuery());
     }
 
-    public static void url(final String url) {
-        Overpass.url = url;
+    public void url(final String url) {
+        this.url = url;
     }
 
-    public static void client(final OkHttpClient client) {
-        Overpass.client = client;
+    public void client(final OkHttpClient client) {
+        this.client = client;
     }
 
-    public static OverpassApi api() {
-        if (client == null)
+    public OverpassApi api() {
+//        if (client == null)
             client = new OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .writeTimeout(20, TimeUnit.SECONDS)
@@ -54,7 +56,7 @@ public final class Overpass {
                 .create(OverpassApi.class);
     }
 
-    public static Moshi moshi() {
+    public Moshi moshi() {
         return new Moshi.Builder()
                 .add(new MemberAdapter())
                 .add(new ElementAdapter())
