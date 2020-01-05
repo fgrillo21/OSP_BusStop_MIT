@@ -173,6 +173,7 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
                         mainFragment.listenForTripTimeUpdates(false, 0);
                     }
                     if (changedParametersMustRequestTrip) {
+                        Log.d("TRQ_Trigger", "Case setteings_request");
                         mainFragment.processRequestTrip();
                     }
                     break;
@@ -199,6 +200,7 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
                         }
                         prefsEditor.commit();
                         mainFragment.processAddress(isButtonStartLocation, address, false);
+                        Log.d("TRQ_Trigger", "Case choose_Request");
                         mainFragment.processRequestTrip();
                     }
 
