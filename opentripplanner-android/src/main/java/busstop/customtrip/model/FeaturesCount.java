@@ -18,6 +18,8 @@ public class FeaturesCount {
         return nodes;
     }
 
+    public int aggregatedCount() { return nodes + ways + relations; }
+
     public FeaturesCount(int n, int w, int r) {
         nodes     = n;
         ways      = w;
