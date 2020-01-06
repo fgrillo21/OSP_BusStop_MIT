@@ -12,16 +12,14 @@ public class EnrichedItinerary {
 
     final Itinerary     itinerary;
     final List<LatLng>  itineraryDecoded;
-    final CustomTrip    tripPreferences;
     final FeaturesCount historicCount;
     final FeaturesCount greenCount;
     final FeaturesCount panoramicCount;
     final Element[]     elements;
 
-    public EnrichedItinerary(Itinerary itinerary, List<LatLng> itineraryDecoded, CustomTrip tripPreferences, FeaturesCount historicCount, FeaturesCount greenCount, FeaturesCount panoramicCount, Element[] elements) {
+    public EnrichedItinerary(Itinerary itinerary, List<LatLng> itineraryDecoded, FeaturesCount historicCount, FeaturesCount greenCount, FeaturesCount panoramicCount, Element[] elements) {
         this.itinerary = itinerary;
         this.itineraryDecoded = itineraryDecoded;
-        this.tripPreferences = tripPreferences;
         this.historicCount = historicCount;
         this.greenCount = greenCount;
         this.panoramicCount = panoramicCount;
@@ -36,20 +34,28 @@ public class EnrichedItinerary {
         return itineraryDecoded;
     }
 
-    public CustomTrip getTripPreferences() {
-        return tripPreferences;
-    }
-
     public FeaturesCount getHistoricCount() {
         return historicCount;
+    }
+
+    public int getHistoricAggregatedCount() {
+        return historicCount.aggregatedCount();
     }
 
     public FeaturesCount getGreenCount() {
         return greenCount;
     }
 
+    public int getGreenAggregatedCount() {
+        return greenCount.aggregatedCount();
+    }
+
     public FeaturesCount getPanoramicCount() {
         return panoramicCount;
+    }
+
+    public int getPanoramicAggregatedCount() {
+        return panoramicCount.aggregatedCount();
     }
 
     public Element[] getElements() {
