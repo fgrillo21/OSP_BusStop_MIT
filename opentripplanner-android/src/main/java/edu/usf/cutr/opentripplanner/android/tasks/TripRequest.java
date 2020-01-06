@@ -340,7 +340,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             List<Itinerary> itineraries = new ArrayList<>();
 
-            if (itinerariesToSelect != null) {
+            if (itinerariesToSelect != null && itinerariesToSelect.size() > 0) {
                 for (EnrichedItinerary itinerary : itinerariesToSelect) {
                     itineraries.add(itinerary.getItinerary());
                 }
@@ -600,7 +600,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
-                if (itinerary.getHistoricAggregatedCount() == maxHistoricFounded) {
+                if (itinerary.getHistoricAggregatedCount() == maxHistoricFounded && maxHistoricFounded > 0) {
                     toReturn.add(itinerary);
                 }
             }
@@ -609,7 +609,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
-                if (itinerary.getGreenAggregatedCount() == maxGreenFounded) {
+                if (itinerary.getGreenAggregatedCount() == maxGreenFounded && maxGreenFounded > 0) {
                     toReturn.add(itinerary);
                 }
             }
@@ -618,7 +618,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
-                if (itinerary.getPanoramicAggregatedCount() == maxPanoramicFounded) {
+                if (itinerary.getPanoramicAggregatedCount() == maxPanoramicFounded && maxPanoramicFounded > 0) {
                     toReturn.add(itinerary);
                 }
             }
