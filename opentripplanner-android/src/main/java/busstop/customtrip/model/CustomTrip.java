@@ -8,6 +8,8 @@ public class CustomTrip implements Serializable {
     private final int greenAreas;
     private final int openSpaces;
 
+    public static final int MAX = 100;
+
     public static CustomTripBuilder newActivityGroup() {
         return new CustomTripBuilder();
     }
@@ -53,5 +55,14 @@ public class CustomTrip implements Serializable {
         public CustomTrip build() {
             return new CustomTrip(monuments, greenAreas, openSpaces);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "CustomTrip{" +
+                "monuments=" + monuments +
+                ", greenAreas=" + greenAreas +
+                ", openSpaces=" + openSpaces +
+                '}';
     }
 }
