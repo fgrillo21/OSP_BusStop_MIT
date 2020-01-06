@@ -52,6 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import busstop.customtrip.model.CustomTrip;
+import busstop.customtrip.model.EnrichedItinerary;
 import busstop.customtrip.model.FeaturesCount;
 import busstop.customtrip.model.Query;
 import busstop.customtrip.util.Overpass;
@@ -74,7 +75,8 @@ import retrofit2.Call;
 
 public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
-    final String TAG = "TRQ_Filter";
+    final String filterTag = "TRQ_Filter";
+    final String osmTag    = "TRQ_OSM_Query";
 
     private Response response;
 
@@ -99,6 +101,10 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
     private Query countFeaturesQuery;
 
     private CustomTrip customTrip;
+
+    private List<EnrichedItinerary> itinerariesToSelect = null;
+
+    private List<Itinerary> itinerariesSuggestions;
 
     static int tripRequest = 0;
 
@@ -166,7 +172,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             }
         }
 
-        Log.d(TAG, "********  " + tripRequest + " ********");
+        Log.d(filterTag, "********  " + tripRequest + " ********");
 
         if (response != null && response.getPlan() != null
                 && response.getPlan().getItinerary().get(0) != null) {
@@ -176,7 +182,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             // ******** Begin Filtering ********
             // Itinerary comparison based on feature selection
 
-            Log.d(TAG, "******** Start filtering " + itineraries.size() + " itineraries. ********");
+            Log.d(filterTag, "******** Start filtering " + itineraries.size() + " itineraries. ********");
 
             tPlan = response.getPlan();
 
@@ -188,6 +194,8 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             List<List<LatLng>> itinerariesDecoded = new ArrayList<>();
 
             for (Itinerary it : itineraries) {
+
+                Log.d(filterTag, "** Analyzing itinerary " + i);
 
                 strLog = new StringBuilder();
                 legsDecoded = new ArrayList<>();
@@ -207,10 +215,10 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     legsDecoded.addAll(legPoints);
                 }
 
-                Log.d(TAG, "** Itinerary [" + i + "] -> From {"
+                Log.d(filterTag, "** Itinerary [" + i + "] -> From {"
                         + tPlan.from.getLat() + ", " + tPlan.from.getLon() + "} to {"
                         + tPlan.to.getLat()   + ", " + tPlan.to.getLon()   + "}"
-                        + " -- {" + busName + "} **");
+                        + " -- {" + busName + "} **" + "\n");
 //                        + strLog.toString().replace("\\", "\\\\") + "\n");
 
                 itinerariesDecoded.add(legsDecoded);
@@ -220,14 +228,22 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
 //            Query query = new Query();
 
+            Log.d(osmTag, "** Start features control with OSM **");
+
+            EnrichedItinerary enrichedItinerary;
+            itinerariesToSelect = new ArrayList<>();
+            int j = 0;
+
             for (List<LatLng> itinerary : itinerariesDecoded) {
+
+//                Log.d(osmTag, itinerary.);
 
                 countFeaturesQuery.setAroundFilter(30, itinerary);
                 countFeaturesQuery.build();
 
-                Log.d("OSM_Filter", countFeaturesQuery.toString());
+                Overpass overpassManager = new Overpass();
 
-                Call<OverpassResponse> call = Overpass.ask(countFeaturesQuery);
+                Log.d(osmTag, countFeaturesQuery.toString());
 
                 retrofit2.Response<OverpassResponse> responseR = null;
 
@@ -238,6 +254,9 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
                     try {
 
+                        Log.d(osmTag, "Attempt " + currentTry);
+
+                        Call<OverpassResponse> call = overpassManager.ask(countFeaturesQuery);
                         responseR = call.execute();
 
                         OverpassResponse body = responseR.body();
@@ -246,9 +265,12 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                         FeaturesCount greenCount = OverpassParser.parseGreenToCount(body.elements);
                         FeaturesCount panoramicCount = OverpassParser.parsePanoramicToCount(body.elements);
 
-                        Log.d("OSM_Filter", historicCount.toString());
-                        Log.d("OSM_Filter", greenCount.toString());
-                        Log.d("OSM_Filter", panoramicCount.toString());
+                        Log.d(osmTag, historicCount.toString());
+                        Log.d(osmTag, greenCount.toString());
+                        Log.d(osmTag, panoramicCount.toString());
+
+                        enrichedItinerary = new EnrichedItinerary(itineraries.get(j), itinerary, historicCount, greenCount, panoramicCount, body.elements);
+                        itinerariesToSelect.add(enrichedItinerary);
 
                         break;
 
@@ -256,12 +278,17 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                         e.printStackTrace();
 
                         if (responseR != null)
-                            Log.d("OSM_Filter", responseR.errorBody().toString());
+                            Log.d(osmTag, responseR.errorBody().toString());
                     }
 
                     currentTry += 1;
                 }
+
+                j += 1;
             }
+
+            // Now we have three itineraries among we ahve to choose the best one based on the features requested
+            itinerariesToSelect = selectTripByFeatures(itinerariesToSelect, customTrip);
         }
 
         tripRequest += 1;
@@ -311,10 +338,49 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         if (response != null && response.getPlan() != null
                 && response.getPlan().getItinerary().get(0) != null) {
 
-            List<Itinerary> itineraries = response.getPlan().getItinerary();
+            List<Itinerary> itineraries = new ArrayList<>();
+
+            if (itinerariesToSelect != null) {
+                for (EnrichedItinerary itinerary : itinerariesToSelect) {
+                    itineraries.add(itinerary.getItinerary());
+                }
+            }
+            else {
+                Activity activityRetrieved = activity.get();
+
+                if (activityRetrieved != null) {
+
+                    AlertDialog.Builder feedback = new AlertDialog.Builder(activityRetrieved);
+                    feedback.setTitle(resources.getString(R.string.tripplanner_error_dialog_title));
+                    feedback.setNeutralButton(resources.getString(android.R.string.ok), null);
+
+                    String msg = resources.getString(R.string.customtrip_tripplanner_error_not_defined);
+
+                    PlannerError error = response.getError();
+
+                    if (error != null) {
+                        int errorCode = error.getId();
+
+                        if (response != null && response.getError() != null
+                                && errorCode != Message.PLAN_OK
+                                .getId()) {
+
+                            msg = getErrorMessage(response.getError().getId());
+                            if (msg == null) {
+                                msg = response.getError().getMsg();
+                            }
+                        }
+                    }
+                    feedback.setMessage(msg);
+                    feedback.create().show();
+                }
+
+                Log.e(filterTag, "No custom route to display!");
+            }
 
             callback.onTripRequestComplete(itineraries, currentRequestString);
-        } else {
+        }
+        else {
             Activity activityRetrieved = activity.get();
             if (activityRetrieved != null) {
                 AlertDialog.Builder feedback = new AlertDialog.Builder(activityRetrieved);
@@ -489,5 +555,78 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepAlive", "false");
         }
+    }
+
+    private List<EnrichedItinerary> selectTripByFeatures(List<EnrichedItinerary> enrichedItineraries, CustomTrip customTrip) {
+
+        final String selectionTag = "TRQ_Custom";
+
+        List<EnrichedItinerary> toReturn = new ArrayList<>();
+        final int reqHistoricCount  = customTrip.getMonuments();
+        final int reqGreenCount     = customTrip.getGreenAreas();
+        final int reqPanoramicCount = customTrip.getOpenSpaces();
+
+        Log.d(selectionTag, customTrip.toString());
+//        Log.d(selectionTag, );
+
+        int itIndex = 0;
+        int chosen = 0;
+        int maxHistoricFounded = 0;
+        int maxGreenFounded = 0;
+        int maxPanoramicFounded = 0;
+
+        for (EnrichedItinerary itinerary : enrichedItineraries) {
+
+            final int itHistoricCount   = itinerary.getHistoricAggregatedCount();
+            final int itGreenCount      = itinerary.getGreenAggregatedCount();
+            final int itPanoramicCount  = itinerary.getPanoramicAggregatedCount();
+
+            if (itHistoricCount > maxHistoricFounded) {
+                maxHistoricFounded = itHistoricCount;
+            }
+
+            if (itGreenCount > maxGreenFounded){
+                maxGreenFounded = itGreenCount;
+            }
+
+            if (itPanoramicCount > maxPanoramicFounded) {
+                maxPanoramicFounded = itPanoramicCount;
+            }
+
+            itIndex += 1;
+        }
+
+        if (reqHistoricCount == CustomTrip.MAX && reqGreenCount == 0 && reqPanoramicCount == 0) {
+
+            for (EnrichedItinerary itinerary : enrichedItineraries) {
+
+                if (itinerary.getHistoricAggregatedCount() == maxHistoricFounded) {
+                    toReturn.add(itinerary);
+                }
+            }
+        }
+        else if (reqGreenCount == CustomTrip.MAX && reqHistoricCount == 0 && reqPanoramicCount == 0) {
+
+            for (EnrichedItinerary itinerary : enrichedItineraries) {
+
+                if (itinerary.getGreenAggregatedCount() == maxGreenFounded) {
+                    toReturn.add(itinerary);
+                }
+            }
+        }
+        else if (reqPanoramicCount == CustomTrip.MAX && reqHistoricCount == 0 && reqGreenCount == 0) {
+
+            for (EnrichedItinerary itinerary : enrichedItineraries) {
+
+                if (itinerary.getPanoramicAggregatedCount() == maxPanoramicFounded) {
+                    toReturn.add(itinerary);
+                }
+            }
+        }
+        else {
+
+        }
+
+        return toReturn;
     }
 }

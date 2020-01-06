@@ -222,6 +222,9 @@
     <string name="tripplanner_error_geocode_from_to_ambiguous">Origin and destination are uncertain</string>
     <string name="tripplanner_error_triangle">Something went wrong.  Change your bike options and try again</string>
 
+    <!-- Custom Trip Errors -->
+    <string name="customtrip_tripplanner_error_not_defined">Sorry, it\'s not possible to find a trip with the chosen preferences.  Please try again varying some parameters.</string>
+
     <!-- Play services error dialog -->
 
     <!-- Title -->
