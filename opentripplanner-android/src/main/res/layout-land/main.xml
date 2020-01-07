@@ -138,7 +138,8 @@
                     android:layout_toStartOf="@id/separator"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_margin="4dp">
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray">
             </Spinner>
 
         </RelativeLayout>

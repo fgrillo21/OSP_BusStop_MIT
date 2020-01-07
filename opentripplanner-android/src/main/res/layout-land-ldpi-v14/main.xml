@@ -102,8 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/button_bottom_layout">
+                android:layout_alignParentBottom="true">
 
             <ImageButton
                     android:id="@+id/btnDisplayDirection"
@@ -132,7 +131,8 @@
                     android:layout_toStartOf="@id/separator"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:layout_margin="4dp">
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray">
             </Spinner>
 
         </RelativeLayout>
