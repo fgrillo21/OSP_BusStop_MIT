@@ -269,7 +269,14 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                         Log.d(osmTag, greenCount.toString());
                         Log.d(osmTag, panoramicCount.toString());
 
-                        enrichedItinerary = new EnrichedItinerary(itineraries.get(j), itinerary, historicCount, greenCount, panoramicCount, body.elements);
+                        enrichedItinerary = EnrichedItinerary.newEnrichedItinerary()
+                                .withItinerary(itineraries.get(j))
+                                .withItineraryDecoded(itinerary)
+                                .withHistoricCount(historicCount)
+                                .withGreenCount(greenCount)
+                                .withPanoramicCount(panoramicCount)
+                                .withElements(body.elements)
+                                .build();
                         itinerariesToSelect.add(enrichedItinerary);
 
                         break;
