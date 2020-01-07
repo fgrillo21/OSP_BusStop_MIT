@@ -108,6 +108,7 @@
             <ImageButton
                     android:id="@+id/btnDisplayDirection"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:src="@drawable/location_directions"
@@ -117,6 +118,7 @@
             <View
                     android:id="@+id/separator"
                     android:layout_toLeftOf="@id/btnDisplayDirection"
+                    android:layout_toStartOf="@id/btnDisplayDirection"
                     android:layout_width="1dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="8dp"
@@ -127,6 +129,7 @@
             <Spinner
                     android:id="@+id/itinerarySelection"
                     android:layout_toLeftOf="@id/separator"
+                    android:layout_toStartOf="@id/separator"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_margin="4dp">
