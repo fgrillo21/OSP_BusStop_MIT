@@ -33,4 +33,6 @@
     <color name="black">#000000</color>
     <color name="green">#008000</color>
     <color name="darker_gray">#aaaaaa</color>
+    <color name="overlay">#80000000</color>
+    <color name="textColor">#ffffff</color>
 </resources>
