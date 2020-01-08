@@ -62,20 +62,20 @@ public class CustomActivity extends AppCompatActivity implements AdapterView.OnI
         //1st Item
         item = new DataGrid();
         item.setPhotoName("Monumenti");
-        item.setPhotoPath(R.drawable.monuments);
+        item.setPhotoPath(R.drawable.monuments_bw);
         dataGrid.add(item);
 
         //2nd Item
         item = new DataGrid();
         item.setPhotoName("Aree Verdi");
-        item.setPhotoPath(R.drawable.greenareas);
+        item.setPhotoPath(R.drawable.greenareas_bw);
         dataGrid.add(item);
 
 
         //3rd Item
         item = new DataGrid();
         item.setPhotoName("Spazi aperti");
-        item.setPhotoPath(R.drawable.openspaces);
+        item.setPhotoPath(R.drawable.openspaces_bw);
         dataGrid.add(item);
 
         return dataGrid;
