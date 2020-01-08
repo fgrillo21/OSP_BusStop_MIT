@@ -44,7 +44,7 @@ public class PresetActivity extends AppCompatActivity {
 
         layout_dot = findViewById(R.id.layout_dot);
         viewPager = findViewById(R.id.viewpager);
-        CustomPagerAdapter adapter = new CustomPagerAdapter(getApplicationContext(),imageId);
+        PresetPagerAdapter adapter = new PresetPagerAdapter(getApplicationContext(),imageId);
         viewPager.setAdapter(adapter);
         viewPager.setPageMargin(60);
         dotscount = adapter.getCount();

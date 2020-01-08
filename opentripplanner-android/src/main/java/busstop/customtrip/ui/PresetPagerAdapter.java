@@ -10,12 +10,12 @@ import java.util.List;
 
 import edu.usf.cutr.opentripplanner.android.R;
 
-public class CustomPagerAdapter extends PagerAdapter {
+public class PresetPagerAdapter extends PagerAdapter {
 
     private Context context;
     private List<Integer> imagesArray;
 
-    CustomPagerAdapter(Context context, List<Integer> imagesArray){
+    PresetPagerAdapter(Context context, List<Integer> imagesArray){
 
         this.context = context;
         this.imagesArray = imagesArray;
