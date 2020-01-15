@@ -16,13 +16,10 @@
 
 package edu.usf.cutr.opentripplanner.android.fragments;
 
-import org.opentripplanner.routing.core.TraverseMode;
-import org.opentripplanner.api.model.Itinerary;
-import org.opentripplanner.api.model.Leg;
-
 import android.app.Activity;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,8 +31,13 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.opentripplanner.api.model.Itinerary;
+import org.opentripplanner.api.model.Leg;
+import org.opentripplanner.routing.core.TraverseMode;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
@@ -87,6 +89,10 @@ public class DirectionListFragment extends ExpandableListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+
+        /* all'avvio di questa pagina di info si nasconde l'action bar relativa alla MyActivity */
+        ActionBar actionBar = ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar();
+        Objects.requireNonNull(actionBar).hide();
 
         View mainView = inflater.inflate(R.layout.direction, container, false);
 
