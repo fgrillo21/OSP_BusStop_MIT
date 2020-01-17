@@ -56,6 +56,11 @@
             android:theme="@style/Theme.AppCompat">
         </activity>
         <activity
+            android:name="busstop.customtrip.ui.SeekBarTestActivity"
+            android:label="@string/map"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+        <activity
             android:name=".SettingsActivity"
             android:theme="@style/MyTheme"
             android:windowSoftInputMode="stateHidden" />

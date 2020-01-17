@@ -30,4 +30,9 @@ public class RouteActivity extends AppCompatActivity {
         Intent intent = new Intent(RouteActivity.this, MyActivity.class);
         startActivity(intent);
     }
+
+    public void seekbartest(View view) {
+        Intent intent = new Intent(RouteActivity.this, SeekBarTestActivity.class);
+        startActivity(intent);
+    }
 }

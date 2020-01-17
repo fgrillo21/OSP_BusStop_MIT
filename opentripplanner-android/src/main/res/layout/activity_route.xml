@@ -34,6 +34,16 @@
             android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center"
+            android:layout_marginBottom="20dp"
             android:onClick="map"
             android:text="@string/map" />
+
+        <Button
+            android:id="@+id/seekbartest"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center"
+            android:onClick="seekbartest"
+            android:text="Test Seekbar" />
 </LinearLayout>
