@@ -68,4 +68,13 @@
         android:layout_marginTop="19dp"
         android:text="Green Areas: "  />
 
+    <TextView
+        android:id="@+id/remaning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/seekBar3"
+        android:layout_marginTop="19dp"
+        android:text="Remaning % to select: "  />
+
 </RelativeLayout>
