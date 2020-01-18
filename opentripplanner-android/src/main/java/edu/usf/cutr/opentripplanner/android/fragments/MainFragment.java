@@ -135,6 +135,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import busstop.customtrip.model.CustomTrip;
+import busstop.customtrip.model.EnrichedItinerary;
 import edu.usf.cutr.opentripplanner.android.MyActivity;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
@@ -172,6 +173,10 @@ import edu.usf.cutr.opentripplanner.android.util.RangeSeekBar;
 import edu.usf.cutr.opentripplanner.android.util.RangeSeekBar.OnRangeSeekBarChangeListener;
 import edu.usf.cutr.opentripplanner.android.util.RightDrawableOnTouchListener;
 import edu.usf.cutr.opentripplanner.android.util.TripInfo;
+import nice.fontaine.overpass.models.response.geometries.Element;
+import nice.fontaine.overpass.models.response.geometries.Node;
+import nice.fontaine.overpass.models.response.geometries.Relation;
+import nice.fontaine.overpass.models.response.geometries.Way;
 
 import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
@@ -321,6 +326,16 @@ public class MainFragment extends Fragment implements
 
     private CustomTrip customTrip;
 
+    private List<EnrichedItinerary> itinerariesSelected = null;
+
+
+
+    enum FeatureType {
+        HISTORIC,
+        GREEN,
+        PANORAMIC
+    }
+
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void removeOnGlobalLayoutListener(View v,
@@ -354,6 +369,8 @@ public class MainFragment extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        Log.d("TRQ", "Main Attach");
+
         try {
             ((MyActivity) activity).setDateCompleteCallback(this);
             setFragmentListener((OtpFragment) activity);
@@ -367,6 +384,11 @@ public class MainFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (savedInstanceState !=null)
+        Log.d(OTPApp.TAG, "Main onCreate" + savedInstanceState.toString());
+        else
+            Log.d("TRQ", "Main Create");
 
         getActivity().getSupportFragmentManager()
                 .addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
@@ -467,8 +489,12 @@ public class MainFragment extends Fragment implements
     @SuppressLint("RestrictedApi")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.d(OTPApp.TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null)
+            Log.d(OTPApp.TAG, "onActivityCreated: " + savedInstanceState.toString());
+        else
+            Log.d(OTPApp.TAG, "onActivityCreated: NULL");
 
         mApplicationContext = getActivity().getApplicationContext();
 
@@ -725,6 +751,7 @@ public class MainFragment extends Fragment implements
                     setMarker(true, bikeRentalStationInfo.getLocation(), false, false);
                     setTextBoxLocation(bikeRentalStationInfo.getName(), true);
                 }
+                Log.d(tripTag, "SAVING OTPBundle");
                 saveOTPBundle();
                 OTPBundle otpBundle = getFragmentListener().getOTPBundle();
                 Matcher matcher = Pattern.compile("\\d+").matcher(marker.getTitle());
@@ -1025,6 +1052,7 @@ public class MainFragment extends Fragment implements
         OnClickListener oclDisplayDirection = new OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                Log.d(tripTag, "SAVING OTPBundle 10044");
                 saveOTPBundle();
                 getFragmentListener().onSwitchedToDirectionFragment();
             }
@@ -1203,6 +1231,7 @@ public class MainFragment extends Fragment implements
     public void processRequestTrip() {
         Log.d(tripTag, Boolean.toString(mIsStartLocationGeocodingCompleted) + Boolean.toString(mIsEndLocationGeocodingCompleted));
         if (mIsStartLocationGeocodingCompleted && mIsEndLocationGeocodingCompleted){
+            itinerariesSelected = null;
             requestTrip();
         }
     }
@@ -1214,6 +1243,7 @@ public class MainFragment extends Fragment implements
      * Fragment listener provides intercommunication with other fragments or classes.
      */
     private void saveOTPBundle() {
+        Log.d("TRQ", "SAVE BUNDLE");
         OTPBundle bundle = new OTPBundle();
         bundle.setFromText(mResultTripStartLocation);
         bundle.setToText(mResultTripEndLocation);
@@ -1222,6 +1252,14 @@ public class MainFragment extends Fragment implements
     }
 
     private void restoreState(Bundle savedInstanceState) {
+
+        if (savedInstanceState != null) {
+            Log.d("TRQ", "RESTORE STATE: " + savedInstanceState.toString());
+        }
+        else {
+            Log.d("TRQ", "RESTORE STATE");
+        }
+
         if (savedInstanceState != null) {
             mMap = retrieveMap(mMap);
 
@@ -1275,8 +1313,10 @@ public class MainFragment extends Fragment implements
 
                 OTPBundle otpBundle = (OTPBundle) savedInstanceState
                         .getSerializable(OTPApp.BUNDLE_KEY_OTP_BUNDLE);
+                Log.d("TRQ", "getSerializable");
                 if (otpBundle != null) {
-                    List<Itinerary> itineraries = otpBundle.getItineraryList();
+
+                    List<EnrichedItinerary> itineraries = otpBundle.getItineraryList();
                     getFragmentListener().onItinerariesLoaded(itineraries);
                     getFragmentListener().onItinerarySelected(otpBundle.getCurrentItineraryIndex(), 0);
                     fillItinerariesSpinner(itineraries);
@@ -1864,7 +1904,7 @@ public class MainFragment extends Fragment implements
                                 .getString(R.string.map_markers_start_marker_title))
                         .snippet(mApplicationContext.getResources()
                                 .getString(R.string.map_markers_start_marker_description))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
                 mStartMarkerPosition = latLng;
                 return mMap.addMarker(markerOptions);
             } else {
@@ -1872,7 +1912,7 @@ public class MainFragment extends Fragment implements
                         .title(mApplicationContext.getResources().getString(R.string.map_markers_end_marker_title))
                         .snippet(mApplicationContext.getResources()
                                 .getString(R.string.map_markers_end_marker_description))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mEndMarkerPosition = latLng;
                 return mMap.addMarker(markerOptions);
             }
@@ -1967,11 +2007,14 @@ public class MainFragment extends Fragment implements
         }
     }
 
+
     public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
 
-        bundle.putBoolean(OTPApp.BUNDLE_KEY_MAP_FAILED, mMapFailed);
+        Log.d("TRQ", "MainFragmentSAVEINSTANCESTATE");
 
+        bundle.putBoolean(OTPApp.BUNDLE_KEY_MAP_FAILED, mMapFailed);
+        OTPBundle otpBundlee;
         if (!mMapFailed) {
             bundle.putParcelable(OTPApp.BUNDLE_KEY_MAP_CAMERA, mMap.getCameraPosition());
             bundle.putParcelable(OTPApp.BUNDLE_KEY_MAP_START_MARKER_POSITION, mStartMarkerPosition);
@@ -2022,7 +2065,9 @@ public class MainFragment extends Fragment implements
 
             bundle.putSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_OPTIMIZATION, previousOptimization);
 
+
             if (!mFragmentListener.getCurrentItineraryList().isEmpty()) {
+                Log.d("TRQ", "putSerializable()");
                 OTPBundle otpBundle = new OTPBundle();
                 otpBundle.setFromText(mResultTripStartLocation);
                 otpBundle.setToText(mResultTripEndLocation);
@@ -2030,6 +2075,9 @@ public class MainFragment extends Fragment implements
                 otpBundle.setCurrentItineraryIndex(mFragmentListener.getCurrentItineraryIndex());
                 otpBundle.setCurrentItinerary(mFragmentListener.getCurrentItinerary());
                 bundle.putSerializable(OTPApp.BUNDLE_KEY_OTP_BUNDLE, otpBundle);
+                otpBundlee = (OTPBundle) bundle.getSerializable(OTPApp.BUNDLE_KEY_OTP_BUNDLE);
+                Log.d("TRQ", "Fine putSerializable()");
+
             }
             bundle.putSerializable(OTPApp.BUNDLE_KEY_CUSTOM_SERVER_METADATA, mCustomServerMetadata);
         }
@@ -2114,22 +2162,23 @@ public class MainFragment extends Fragment implements
     public void onResume() {
         super.onResume();
 
+        Log.d("TRQ", "MainFragment onResume");
         listenForBikeUpdates(mIsAlarmBikeRentalUpdateActive);
 
-        Log.d(OTPApp.TAG, "MainFragment onResume");
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        Log.d("TRQ", "MainFragmentPAUSE");
         listenForBikeUpdates(false);
     }
 
     @Override
     public void onStop() {
         disconnectLocationClient();
-
+        Log.d("TRQ", "MainFragmentSTOP");
         super.onStop();
     }
 
@@ -2829,18 +2878,19 @@ public class MainFragment extends Fragment implements
     }
 
     @Override
-    public void onTripRequestComplete(List<Itinerary> itineraries,
+    public void onTripRequestComplete(List<EnrichedItinerary> enrichedItineraries,
             String currentRequestString) {
+
         if (getActivity() != null) {
-            ConversionUtils.fixTimezoneOffsets(itineraries,
+            ConversionUtils.fixTimezoneOffsets(enrichedItineraries,
                     mPrefs.getBoolean(OTPApp.PREFERENCE_KEY_USE_DEVICE_TIMEZONE, false));
-            fillItinerariesSpinner(itineraries);
-            toggleItinerarySelectionSpinner(!itineraries.isEmpty());
+            fillItinerariesSpinner(enrichedItineraries);
+            toggleItinerarySelectionSpinner(!enrichedItineraries.isEmpty());
 
             OtpFragment ofl = getFragmentListener();
 
             // onItinerariesLoaded must be invoked before onItinerarySelected(0)
-            ofl.onItinerariesLoaded(itineraries);
+            ofl.onItinerariesLoaded(enrichedItineraries);
             ofl.onItinerarySelected(0, 1);
             MyActivity myActivity = (MyActivity) getActivity();
             myActivity.setCurrentRequestString(currentRequestString);
@@ -2876,13 +2926,13 @@ public class MainFragment extends Fragment implements
         }
     }
 
-    private void fillItinerariesSpinner(List<Itinerary> itineraryList) {
+    private void fillItinerariesSpinner(List<EnrichedItinerary> itineraryList) {
         String[] itinerarySummaryList = new String[itineraryList.size()];
         long tripDuration;
 
         for (int i = 0; i < itinerarySummaryList.length; i++) {
             boolean isTransitIsTagSet = false;
-            Itinerary it = itineraryList.get(i);
+            Itinerary it = itineraryList.get(i).getItinerary();
             tripDuration = ConversionUtils.normalizeDuration(it.duration, mPrefs);
             for (Leg leg : it.legs) {
                 TraverseMode traverseMode = TraverseMode.valueOf(leg.mode);
@@ -3404,13 +3454,13 @@ public class MainFragment extends Fragment implements
     @Override
     public void onUpdateTripTimesComplete(HashMap<String, List<TripTimeShort>> timesUpdatesForTrips) {
         if (getActivity() != null){
-            List<Itinerary> itineraries;
+            List<EnrichedItinerary> itineraries;
             if ((itineraries = getFragmentListener().getCurrentItineraryList()) != null){
                 if ((timesUpdatesForTrips != null) && !timesUpdatesForTrips.isEmpty()){
                     long lastLegTime = 0;
-                    Leg lastLeg = itineraries.get(0).legs.get(0);
-                    for (Itinerary itinerary : itineraries){
-                        for (Leg leg : itinerary.legs){
+                    Leg lastLeg = itineraries.get(0).getItinerary().legs.get(0);
+                    for (EnrichedItinerary itinerary : itineraries){
+                        for (Leg leg : itinerary.getItinerary().legs){
                             long legEndTimeLong = Long.parseLong(leg.startTime);
                             if (legEndTimeLong > lastLegTime){
                                 lastLegTime = legEndTimeLong;
@@ -3729,8 +3779,8 @@ public class MainFragment extends Fragment implements
                 RequestTimesForTrips requestTimesForTrips =
                         new RequestTimesForTrips(mApplicationContext, MainFragment.this);
                 List<String> legsToUpdate = new ArrayList<String>();
-                for (Itinerary itinerary : getFragmentListener().getCurrentItineraryList()){
-                    for (Leg leg : itinerary.legs){
+                for (EnrichedItinerary itinerary : getFragmentListener().getCurrentItineraryList()){
+                    for (Leg leg : itinerary.getItinerary().legs){
                         if (leg.realTime && (TraverseMode.valueOf(leg.mode)).isTransit()){
                             legsToUpdate.add(leg.agencyId + ":" + leg.tripId);
                         }
@@ -3820,5 +3870,170 @@ public class MainFragment extends Fragment implements
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, getServerInitialZoom(selectedServer)));
             }
         }
+    }
+
+    /**
+     * Creates and adds to the map a new marker.
+     * <p>
+     *
+     * @param latLng        the position to initialize the new marker
+     * @param featureType   the type of the feature to indicate
+     * @return the new marker created
+     */
+    private Marker addMarker(LatLng latLng, FeatureType featureType, String title, String snippet) {
+
+        if (!mMapFailed) {
+
+            float color = BitmapDescriptorFactory.HUE_MAGENTA;
+
+            MarkerOptions markerOptions = new MarkerOptions().position(latLng);
+
+            switch (featureType) {
+
+                case HISTORIC: color = BitmapDescriptorFactory.HUE_RED;
+                    break;
+
+                case GREEN: color = BitmapDescriptorFactory.HUE_GREEN;
+                    break;
+
+                case PANORAMIC: color = BitmapDescriptorFactory.HUE_BLUE;
+                    break;
+            }
+
+            markerOptions
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.defaultMarker(color))
+                    .snippet(snippet)
+                    .draggable(false);
+
+            return mMap.addMarker(markerOptions);
+        }
+
+        return null;
+    }
+
+    private double getGeometricalCenterLatitude(double lowerLeftLatitude, double upperRightLatitude) {
+
+        return (lowerLeftLatitude + upperRightLatitude) / 2;
+    }
+
+    /**
+     * @return the geometricalCenterLongitude
+     */
+    private double getGeometricalCenterLongitude(double lowerLeftLongitude, double upperRightLongitude) {
+        return (lowerLeftLongitude + upperRightLongitude) / 2;
+    }
+
+    private LatLng getFeatureLatLng(Element feature) {
+
+        LatLng  latLng = null;
+
+        if (feature.type.equalsIgnoreCase("node")) {
+            Node node = (Node) feature;
+            double lat = node.lat;
+            double lng = node.lon;
+            latLng = new LatLng(lat, lng);
+        } else if (feature.type.equalsIgnoreCase("way")) {
+            Way way = (Way) feature;
+            double lat = getGeometricalCenterLatitude(way.bounds.minlat, way.bounds.maxlat);
+            double lng = getGeometricalCenterLongitude(way.bounds.minlon, way.bounds.maxlon);
+            latLng = new LatLng(lat, lng);
+        } else if (feature.type.equalsIgnoreCase("relation")) {
+            Relation relation = (Relation) feature;
+            double lat = getGeometricalCenterLatitude(relation.bounds.minlat, relation.bounds.maxlat);
+            double lng = getGeometricalCenterLongitude(relation.bounds.minlon, relation.bounds.maxlon);
+            latLng = new LatLng(lat, lng);
+        }
+
+        return latLng;
+    }
+
+    public void showFeaturesOnMap(EnrichedItinerary currentItinerary) {
+        showFeaturesOnMap(currentItinerary, true);
+    }
+
+    public void showFeaturesOnMap(EnrichedItinerary currentItinerary, boolean pedantic) {
+
+        Log.d(tripTag, "Start showing trip " + currentItinerary.getName() + "'s features");
+
+        Element[] historicalFeatures  = currentItinerary.getHistoricalFeatures();
+        Element[] greenFeatures       = currentItinerary.getGreenFeatures();
+        Element[] panoramicalFeatures = currentItinerary.getPanoramicFeatures();
+
+        for (int i = 0; i < historicalFeatures.length; ++i) {
+
+            Element feature = historicalFeatures[i];
+            LatLng  latLng  = null;
+            String  title   = "";
+            String  snippet = "";
+
+            latLng = getFeatureLatLng(feature);
+
+            if (latLng != null) {
+
+                String[] baloon = getFeatureDescription(feature);
+
+                if (pedantic || !baloon[0].equals("")) {
+                    addMarker(latLng, FeatureType.HISTORIC, baloon[0], baloon[1]);
+                }
+            }
+
+        }
+
+        for (int i = 0; i < greenFeatures.length; ++i) {
+
+            Element feature = greenFeatures[i];
+            LatLng  latLng  = null;
+            String  title   = "";
+            String  snippet = "";
+
+            latLng = getFeatureLatLng(feature);
+
+            if (latLng != null) {
+
+                String[] baloon = getFeatureDescription(feature);
+
+                if (pedantic || !baloon[0].equals("")) {
+                    addMarker(latLng, FeatureType.GREEN, baloon[0], baloon[1]);
+                }
+            }
+        }
+
+        for (int i = 0; i < panoramicalFeatures.length; ++i) {
+
+            Element feature = panoramicalFeatures[i];
+            LatLng  latLng = null;
+            String  title   = "";
+            String  snippet = "";
+
+            latLng = getFeatureLatLng(feature);
+
+            if (latLng != null) {
+
+                String[] baloon = getFeatureDescription(feature);
+
+                if (pedantic || !baloon[0].equals("")) {
+                    addMarker(latLng, FeatureType.PANORAMIC, baloon[0], baloon[1]);
+                }
+            }
+        }
+    }
+
+    private String[] getFeatureDescription(Element feature) {
+
+        String[] description = {"", ""};
+
+        if (feature.tags.containsKey("name")) {
+            description[0] = feature.tags.get("name");
+        }
+
+        if (feature.tags.containsKey("description"))
+            description[1] = feature.tags.get("description");
+        else if (feature.tags.containsKey("inscription"))
+            description[1] = feature.tags.get("inscription");
+        else
+            description[1] = feature.tags.values().toString();
+
+        return description;
     }
 }

@@ -64,6 +64,7 @@ import edu.usf.cutr.opentripplanner.android.model.Server;
 import edu.usf.cutr.opentripplanner.android.util.ConversionUtils;
 import edu.usf.cutr.opentripplanner.android.util.JacksonConfig;
 import nice.fontaine.overpass.models.response.OverpassResponse;
+import nice.fontaine.overpass.models.response.geometries.Element;
 import retrofit2.Call;
 
 /**
@@ -103,6 +104,8 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
     private CustomTrip customTrip;
 
     private List<EnrichedItinerary> itinerariesToSelect = null;
+
+    private List<EnrichedItinerary> itinerariesSelected = null;
 
     private List<Itinerary> itinerariesSuggestions;
 
@@ -186,10 +189,10 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             tPlan = response.getPlan();
 
-            int i = 1;
+            int i = 0;
             StringBuilder strLog;
 
-            String busName = "";
+            List<String> busName = new ArrayList<>();
             List<LatLng> legPoints;
             List<List<LatLng>> itinerariesDecoded = new ArrayList<>();
 
@@ -205,20 +208,20 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     TraverseMode traverseMode = TraverseMode.valueOf(leg.mode);
 
                     if (traverseMode.isTransit()) {
-                        busName = ConversionUtils.getRouteShortNameSafe(leg.routeShortName,leg.routeLongName, context);
+                        busName.add(i, ConversionUtils.getRouteShortNameSafe(leg.routeShortName,leg.routeLongName, context));
                     }
 
-                    strLog.append("\n" + "Itinerary [" + i + "] -> Leg: " + leg.legGeometry.getPoints());
+                    strLog.append("\n" + "Itinerary [" + (i + 1) + "] -> Leg: " + leg.legGeometry.getPoints());
 
                     legPoints = PolyUtil.decode(leg.legGeometry.getPoints());
 
                     legsDecoded.addAll(legPoints);
                 }
 
-                Log.d(filterTag, "** Itinerary [" + i + "] -> From {"
+                Log.d(filterTag, "** Itinerary [" + (i + 1) + "] -> From {"
                         + tPlan.from.getLat() + ", " + tPlan.from.getLon() + "} to {"
                         + tPlan.to.getLat()   + ", " + tPlan.to.getLon()   + "}"
-                        + " -- {" + busName + "} **" + "\n");
+                        + " -- {" + busName.get(i) + "} **" + "\n");
 //                        + strLog.toString().replace("\\", "\\\\") + "\n");
 
                 itinerariesDecoded.add(legsDecoded);
@@ -239,68 +242,106 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 //                Log.d(osmTag, itinerary.);
 
                 countFeaturesQuery.setAroundFilter(30, itinerary);
-                countFeaturesQuery.build();
 
-                Overpass overpassManager = new Overpass();
+                OverpassResponse body = null;
+                retrofit2.Response<OverpassResponse> response = null;
 
-                Log.d(osmTag, countFeaturesQuery.toString());
+                try {
+                    Log.d(osmTag, "Start retrieving features COUNT");
+                    countFeaturesQuery.buildCountQuery();
+                    response = executeOverpassQuery(countFeaturesQuery);
+                    body     = response.body();
+                    FeaturesCount historicCount  = OverpassParser.parseHistoricToCount(body.elements);
+                    FeaturesCount greenCount     = OverpassParser.parseGreenToCount(body.elements);
+                    FeaturesCount panoramicCount = OverpassParser.parsePanoramicToCount(body.elements);
+                    Log.d(osmTag, historicCount.toString());
+                    Log.d(osmTag, greenCount.toString());
+                    Log.d(osmTag, panoramicCount.toString());
 
-                retrofit2.Response<OverpassResponse> responseR = null;
+                    Log.d(osmTag, "Start retrieving HISTORICAL features");
+                    countFeaturesQuery.buildHistoricQuery();
+                    response           = executeOverpassQuery(countFeaturesQuery);
+                    body               = response.body();
+                    Element[] historic = body.elements;
+                    Log.d(osmTag, "HISTORICAL features successfully retrieved");
 
-                final int maxTries = 3;
-                int currentTry = 0;
+                    Log.d(osmTag, "Start retrieving GREEN features");
+                    countFeaturesQuery.buildGreenQuery();
+                    response        = executeOverpassQuery(countFeaturesQuery);
+                    body            = response.body();
+                    Element[] green = body.elements;
+                    Log.d(osmTag, "GREEN features successfully retrieved");
 
-                while (currentTry < maxTries) {
+                    Log.d(osmTag, "Start retrieving PANORAMIC features");
+                    countFeaturesQuery.buildPanoramicQuery();
+                    response            = executeOverpassQuery(countFeaturesQuery);
+                    body                = response.body();
+                    Element[] panoramic = body.elements;
+                    Log.d(osmTag, "PANORAMIC features successfully retrieved");
 
-                    try {
+                    enrichedItinerary = EnrichedItinerary.newEnrichedItinerary()
+                            .withItinerary(itineraries.get(j))
+                            .withItineraryDecoded(itinerary)
+                            .withHistoricCount(historicCount)
+                            .withGreenCount(greenCount)
+                            .withPanoramicCount(panoramicCount)
+                            .withHistoricalFeatures(historic)
+                            .withGreenFeatures(green)
+                            .withPanoramicFeatures(panoramic)
+                            .withName(busName.get(j))
+                            .build();
 
-                        Log.d(osmTag, "Attempt " + currentTry);
+                    itinerariesToSelect.add(enrichedItinerary);
 
-                        Call<OverpassResponse> call = overpassManager.ask(countFeaturesQuery);
-                        responseR = call.execute();
-
-                        OverpassResponse body = responseR.body();
-
-                        FeaturesCount historicCount = OverpassParser.parseHistoricToCount(body.elements);
-                        FeaturesCount greenCount = OverpassParser.parseGreenToCount(body.elements);
-                        FeaturesCount panoramicCount = OverpassParser.parsePanoramicToCount(body.elements);
-
-                        Log.d(osmTag, historicCount.toString());
-                        Log.d(osmTag, greenCount.toString());
-                        Log.d(osmTag, panoramicCount.toString());
-
-                        enrichedItinerary = EnrichedItinerary.newEnrichedItinerary()
-                                .withItinerary(itineraries.get(j))
-                                .withItineraryDecoded(itinerary)
-                                .withHistoricCount(historicCount)
-                                .withGreenCount(greenCount)
-                                .withPanoramicCount(panoramicCount)
-                                .withElements(body.elements)
-                                .build();
-                        itinerariesToSelect.add(enrichedItinerary);
-
-                        break;
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-
-                        if (responseR != null)
-                            Log.d(osmTag, responseR.errorBody().toString());
-                    }
-
-                    currentTry += 1;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(osmTag, response.errorBody().toString());
                 }
 
                 j += 1;
             }
 
             // Now we have three itineraries among we ahve to choose the best one based on the features requested
-            itinerariesToSelect = selectTripByFeatures(itinerariesToSelect, customTrip);
+            itinerariesSelected = selectTripByFeatures(itinerariesToSelect, customTrip);
         }
 
         tripRequest += 1;
 
         return totalSize;
+    }
+
+    private retrofit2.Response<OverpassResponse> executeOverpassQuery(Query query) throws RuntimeException, IOException {
+
+        Overpass overpassManager = new Overpass();
+
+        OverpassResponse body = null;
+
+        Log.d(osmTag, countFeaturesQuery.toString());
+
+        retrofit2.Response<OverpassResponse> responseR = null;
+
+        final int maxTries = 3;
+        int currentTry = 0;
+
+        while (currentTry < maxTries) {
+
+            Log.d(osmTag, "Attempt " + currentTry);
+
+                Call<OverpassResponse> call = overpassManager.ask(countFeaturesQuery);
+                responseR = call.execute();
+
+                body = responseR.body();
+
+                if (body != null)
+                    break;
+
+                currentTry += 1;
+        }
+
+        if (body == null)
+            throw new RuntimeException("No answer from overpass interpreter");
+
+        return responseR;
     }
 
     protected void onCancelled(Long result) {
@@ -345,14 +386,10 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         if (response != null && response.getPlan() != null
                 && response.getPlan().getItinerary().get(0) != null) {
 
-            List<Itinerary> itineraries = new ArrayList<>();
+//            List<Itinerary> itineraries = new ArrayList<>();
 
-            if (itinerariesToSelect != null && itinerariesToSelect.size() > 0) {
-                for (EnrichedItinerary itinerary : itinerariesToSelect) {
-                    itineraries.add(itinerary.getItinerary());
-                }
-            }
-            else {
+            if (itinerariesSelected == null || itinerariesSelected.size() == 0) {
+
                 Activity activityRetrieved = activity.get();
 
                 if (activityRetrieved != null) {
@@ -385,7 +422,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                 Log.e(filterTag, "No custom route to display!");
             }
 
-            callback.onTripRequestComplete(itineraries, currentRequestString);
+            callback.onTripRequestComplete(itinerariesSelected, currentRequestString);
         }
         else {
             Activity activityRetrieved = activity.get();
@@ -632,8 +669,46 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         }
         else {
 
+            final double threshold = 0.08;
+            double[]     scarto    = new double[3];
+            double[]     eNorms    = new double[3];
+            double       min       = 32000.0;
+
+            int i = 0;
+            for (EnrichedItinerary itinerary : enrichedItineraries) {
+
+                final int itHistoricCount   = itinerary.getHistoricAggregatedCount();
+                final int itGreenCount      = itinerary.getGreenAggregatedCount();
+                final int itPanoramicCount  = itinerary.getPanoramicAggregatedCount();
+
+                scarto[0] = Math.abs(reqHistoricCount  - itHistoricCount);
+                scarto[1] = Math.abs(reqGreenCount     - itGreenCount);
+                scarto[2] = Math.abs(reqPanoramicCount - itPanoramicCount);
+
+                eNorms[i] = euclideanNorm(scarto);
+
+                if (eNorms[i] < min) {
+                    min = eNorms[i];
+                }
+
+                Log.d(selectionTag, "Norm[" + i + "] = " + eNorms[i]);
+
+                i += 1;
+            }
+
+            for (i = 0; i < 3; ++i) {
+
+                if (Math.abs(eNorms[i] - min) <= threshold) {
+                    toReturn.add(enrichedItineraries.get(i));
+                    Log.d(selectionTag, "Added " + enrichedItineraries.get(i).getName() + "(Norm = " + eNorms[i] + ")");
+                }
+            }
         }
 
         return toReturn;
+    }
+
+    private double euclideanNorm(double[] vector) {
+        return Math.sqrt(Math.pow(vector[0],2) + Math.pow(vector[1], 2) + Math.pow(vector[2], 2));
     }
 }
