@@ -9,12 +9,23 @@
     tools:context="busstop.customtrip.ui.SeekBarTestActivity">
 
     <SeekBar
-        android:id="@+id/seekBar1"
+        android:id="@+id/seekBar0"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="39dp"
+        android:max="100"
+        android:progress="0"
+        />
+
+    <SeekBar
+        android:id="@+id/seekBar1"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/seekBar0"
+        android:layout_marginTop="38dp"
         android:max="100"
         android:progress="0"
         />
@@ -30,25 +41,23 @@
         android:progress="0"
         />
 
-    <SeekBar
-        android:id="@+id/seekBar3"
-        android:layout_width="300dp"
+    <TextView
+        android:id="@+id/textView0"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/seekBar0"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar2"
-        android:layout_marginTop="38dp"
-        android:max="100"
-        android:progress="0"
-        />
+        android:layout_marginBottom="19dp"
+        android:text="" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/seekBar1"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="19dp"
-        android:text="" />
+        android:layout_below="@+id/seekBar0"
+        android:layout_marginTop="19dp"
+        android:text=""  />
 
     <TextView
         android:id="@+id/textView2"
@@ -60,20 +69,11 @@
         android:text=""  />
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar2"
-        android:layout_marginTop="19dp"
-        android:text=""  />
-
-    <TextView
         android:id="@+id/remaning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar3"
+        android:layout_below="@+id/seekBar2"
         android:layout_marginTop="19dp"
         android:text=""  />
 

@@ -11,16 +11,16 @@ import android.widget.TextView;
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class SeekBarTestActivity extends AppCompatActivity {
-    public SeekBar bar1,bar2,bar3;
-    public TextView textProgress1,textProgress2,textProgress3, remaningToSelect;
+    public SeekBar bar0, bar1, bar2;
+    public TextView textProgress0, textProgress1, textProgress2, remaningToSelect;
     private static final int TOTAL_AMOUNT = 100; // the maximum amount for all SeekBars
     // stores the current progress for the SeekBars(initially each SeekBar has a progress of 0)
     private int[] mAllProgress = { 34, 33, 33};
     private int currentTouchId = -1;
     private int previousTouchId = -1;
-    private boolean touchedBar1, touchedBar2, touchedBar3 = false;
+    private boolean touchedBar0, touchedBar1, touchedBar2 = false;
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -28,40 +28,68 @@ public class SeekBarTestActivity extends AppCompatActivity {
         setContentView(R.layout.seek_bar_test);
 
         /* inizializzazione default */
+        bar0 = findViewById(R.id.seekBar0);
         bar1 = findViewById(R.id.seekBar1);
         bar2 = findViewById(R.id.seekBar2);
-        bar3 = findViewById(R.id.seekBar3);
 
-        bar1.setProgress(mAllProgress[0]);
-        bar2.setProgress(mAllProgress[1]);
-        bar3.setProgress(mAllProgress[2]);
+        bar0.setProgress(mAllProgress[0]);
+        bar1.setProgress(mAllProgress[1]);
+        bar2.setProgress(mAllProgress[2]);
 
+        textProgress0 = findViewById(R.id.textView0);
         textProgress1 = findViewById(R.id.textView1);
         textProgress2 = findViewById(R.id.textView2);
-        textProgress3 = findViewById(R.id.textView3);
 
-        textProgress1.setText("Monuments: " + mAllProgress[0] +" %");
-        textProgress2.setText("Green Areas: " + mAllProgress[1] +" %");
-        textProgress3.setText("Open Spaces: " + mAllProgress[2] +" %");
+        textProgress0.setText("Monuments: " + mAllProgress[0] +" %");
+        textProgress1.setText("Green Areas: " + mAllProgress[1] +" %");
+        textProgress2.setText("Open Spaces: " + mAllProgress[2] +" %");
 
         remaningToSelect = findViewById(R.id.remaning);
         remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
 
         /*---------------------------------------*/
 
-        bar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        bar0.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                    setProgressOfCurrentSeekBar(seekBar, progress);
-                    textProgress1.setText("Monuments: " + mAllProgress[0] + " %");
-                    remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
+                setProgressOfCurrentSeekBar(seekBar, progress);
+                textProgress0.setText("Monuments: " + mAllProgress[0] + " %");
+                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
 
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
                 previousTouchId = currentTouchId;
                 currentTouchId = 0;
+                touchedBar0 = true;
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                touchedBar0 = false;
+            }
+        });
+
+        bar0.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return canTouch(0);
+                }
+            }
+        );
+
+        bar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                setProgressOfCurrentSeekBar(seekBar, progress);
+                textProgress1.setText("Green Areas: " + mAllProgress[1] + " %");
+                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                previousTouchId = currentTouchId;
+                currentTouchId = 1;
                 touchedBar1 = true;
             }
 
@@ -70,30 +98,26 @@ public class SeekBarTestActivity extends AppCompatActivity {
             }
         });
 
-        bar1.setOnTouchListener(
-                new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (canTouch(0))
-                            return true;
-                        else
-                            return false;
-                    }
+        bar1.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return canTouch(1);
                 }
+            }
         );
 
         bar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                    setProgressOfCurrentSeekBar(seekBar, progress);
-                    textProgress2.setText("Green Areas: " + mAllProgress[1] + " %");
-                    remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
+                setProgressOfCurrentSeekBar(seekBar, progress);
+                textProgress2.setText("Open Spaces: " + mAllProgress[2] + " %");
+                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
                 previousTouchId = currentTouchId;
-                currentTouchId = 1;
+                currentTouchId = 2;
                 touchedBar2 = true;
             }
 
@@ -102,48 +126,12 @@ public class SeekBarTestActivity extends AppCompatActivity {
             }
         });
 
-        bar2.setOnTouchListener(
-                new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (canTouch(1))
-                            return true;
-                        else
-                            return false;
-                    }
+        bar2.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return canTouch(2);
                 }
-        );
-
-        bar3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                    setProgressOfCurrentSeekBar(seekBar, progress);
-                    textProgress3.setText("Open Spaces: " + mAllProgress[2] + " %");
-                    remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
-
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                previousTouchId = currentTouchId;
-                currentTouchId = 2;
-                touchedBar3 = true;
-            }
-
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                touchedBar3 = false;
-            }
-        });
-
-        bar3.setOnTouchListener(
-                new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (canTouch(2))
-                            return true;
-                        else
-                            return false;
-                    }
-                }
         );
     }
 
@@ -210,11 +198,11 @@ public class SeekBarTestActivity extends AppCompatActivity {
 
     private int whichIsIt(int id) {
         switch (id) {
-            case R.id.seekBar1:
+            case R.id.seekBar0:
                 return 0; // first position in mAllProgress
-            case R.id.seekBar2:
+            case R.id.seekBar1:
                 return 1;
-            case R.id.seekBar3:
+            case R.id.seekBar2:
                 return 2;
             default:
                 throw new IllegalStateException(
@@ -225,13 +213,13 @@ public class SeekBarTestActivity extends AppCompatActivity {
     private boolean canTouch(int which) {
         switch (which) {
             case 0:
-                return (touchedBar2 || touchedBar3);
+                return (touchedBar1 || touchedBar2);
 
             case 1:
-                return (touchedBar1 || touchedBar3);
+                return (touchedBar0 || touchedBar2);
 
             case 2:
-                return (touchedBar1 || touchedBar2);
+                return (touchedBar0 || touchedBar1);
 
             default:
                 throw new IllegalStateException(
