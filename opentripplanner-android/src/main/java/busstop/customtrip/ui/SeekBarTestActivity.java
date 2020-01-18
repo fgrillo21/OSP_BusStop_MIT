@@ -13,31 +13,44 @@ public class SeekBarTestActivity extends AppCompatActivity{
     public TextView textProgress1,textProgress2,textProgress3, remaningToSelect;
     private static final int TOTAL_AMOUNT = 100; // the maximum amount for all SeekBars
     // stores the current progress for the SeekBars(initially each SeekBar has a progress of 0)
-    private int[] mAllProgress = { 0, 0, 0 };
+    private int[] mAllProgress = { 34, 33, 33};
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.seek_bar_test);
 
+        /* inizializzazione default */
         bar1 = findViewById(R.id.seekBar1);
         bar2 = findViewById(R.id.seekBar2);
         bar3 = findViewById(R.id.seekBar3);
 
+        bar1.setProgress(mAllProgress[0]);
+        bar2.setProgress(mAllProgress[1]);
+        bar3.setProgress(mAllProgress[2]);
+
         textProgress1 = findViewById(R.id.textView1);
         textProgress2 = findViewById(R.id.textView2);
         textProgress3 = findViewById(R.id.textView3);
+
+        textProgress1.setText("Monuments: " + mAllProgress[0] +" %");
+        textProgress2.setText("Green Areas: " + mAllProgress[1] +" %");
+        textProgress3.setText("Open Spaces: " + mAllProgress[2] +" %");
+
         remaningToSelect = findViewById(R.id.remaning);
+        remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
+
+        /*---------------------------------------*/
 
         bar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
-            @SuppressLint("SetTextI18n")
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 setProgressOfCurrentSeekBar(seekBar, progress);
                 int which = whichIsIt(seekBar.getId());
                 textProgress1.setText("Monuments: " + mAllProgress[which] +" %");
-                remaningToSelect.setText("Remaining % to select: " + remaining());
+                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -50,12 +63,11 @@ public class SeekBarTestActivity extends AppCompatActivity{
 
         bar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
-            @SuppressLint("SetTextI18n")
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 setProgressOfCurrentSeekBar(seekBar, progress);
                 int which = whichIsIt(seekBar.getId());
                 textProgress2.setText("Green Areas: " + mAllProgress[which] +" %");
-                remaningToSelect.setText("Remaining % to select: " + remaining());
+                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -68,12 +80,11 @@ public class SeekBarTestActivity extends AppCompatActivity{
 
         bar3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
-            @SuppressLint("SetTextI18n")
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 setProgressOfCurrentSeekBar(seekBar, progress);
                 int which = whichIsIt(seekBar.getId());
                 textProgress3.setText("Open Spaces: " + mAllProgress[which] +" %");
-                remaningToSelect.setText("Remaining % to select: " + remaining());
+                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
