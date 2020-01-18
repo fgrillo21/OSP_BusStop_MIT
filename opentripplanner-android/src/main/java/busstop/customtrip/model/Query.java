@@ -103,67 +103,134 @@ public class Query {
         }
     }
 
-    public void build() {
+    public void buildCountQuery() {
+
         query = settings + timeout + ";";
 
         query += "(";
 
-        for (String key : historicTags.keySet()) {
-            for (String value : historicTags.get(key)) {
-                if (value.length() > 0) {
-                    query += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    query += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    query += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                }
-                else {
-                    query += "node[\""     + key + "\"]" + filterAround + ";";
-                    query += "way[\""      + key + "\"]" + filterAround + ";";
-                    query += "relation[\"" + key + "\"]" + filterAround + ";";
-                }
-            }
-        }
+        query += historicFeatuers();
 
         query += ") -> .monuments;";
 
         query += "(";
 
-        for (String key : greenTags.keySet()) {
-            for (String value : greenTags.get(key)) {
-                if (value.length() > 0) {
-                    query += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    query += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    query += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                }
-                else {
-                    query += "node[\""     + key + "\"]" + filterAround + ";";
-                    query += "way[\""      + key + "\"]" + filterAround + ";";
-                    query += "relation[\"" + key + "\"]" + filterAround + ";";
-                }
-            }
-        }
+        query += greenFeatures();
 
         query += ") -> .green;";
 
         query += "(";
 
+        query += panoramicFeatures();
+
+        query += ") -> .panoramic;";
+
+        query += outCount;
+    }
+
+    public void buildHistoricQuery() {
+
+        query = settings + timeout + ";";
+
+        query += "(";
+
+        query += historicFeatuers();
+
+        query += ");";
+
+        query += outFeatures;
+    }
+
+    public void buildGreenQuery() {
+
+        query = settings + timeout + ";";
+
+        query += "(";
+
+        query += greenFeatures();
+
+        query += ");";
+
+        query += outFeatures;
+    }
+
+    public void buildPanoramicQuery () {
+
+        query = settings + timeout + ";";
+
+        query += "(";
+
+        query += panoramicFeatures();
+
+        query += ");";
+
+        query += outFeatures;
+    }
+
+    private String panoramicFeatures() {
+
+        String panoramicQuery = "";
+
         for (String key : panoramicTags.keySet()) {
             for (String value : panoramicTags.get(key)) {
                 if (value.length() > 0) {
-                    query += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    query += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    query += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                    panoramicQuery += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                    panoramicQuery += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                    panoramicQuery += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
                 }
                 else {
-                    query += "node[\""     + key + "\"]" + filterAround + ";";
-                    query += "way[\""      + key + "\"]" + filterAround + ";";
-                    query += "relation[\"" + key + "\"]" + filterAround + ";";
+                    panoramicQuery += "node[\""     + key + "\"]" + filterAround + ";";
+                    panoramicQuery += "way[\""      + key + "\"]" + filterAround + ";";
+                    panoramicQuery += "relation[\"" + key + "\"]" + filterAround + ";";
                 }
             }
         }
 
-        query += ") -> .panoramic;";
+        return panoramicQuery;
+    }
 
-        query += out;
+    private String greenFeatures() {
+
+        String greenQuery = "";
+
+        for (String key : greenTags.keySet()) {
+            for (String value : greenTags.get(key)) {
+                if (value.length() > 0) {
+                    greenQuery += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                    greenQuery += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                    greenQuery += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                }
+                else {
+                    greenQuery += "node[\""     + key + "\"]" + filterAround + ";";
+                    greenQuery += "way[\""      + key + "\"]" + filterAround + ";";
+                    greenQuery += "relation[\"" + key + "\"]" + filterAround + ";";
+                }
+            }
+        }
+
+        return greenQuery;
+    }
+
+    private String historicFeatuers() {
+
+        String historicQuery = "";
+
+        for (String key : historicTags.keySet()) {
+            for (String value : historicTags.get(key)) {
+                if (value.length() > 0) {
+                    historicQuery += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                    historicQuery += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                    historicQuery += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                }
+                else {
+                    historicQuery += "node[\""     + key + "\"]" + filterAround + ";";
+                    historicQuery += "way[\""      + key + "\"]" + filterAround + ";";
+                    historicQuery += "relation[\"" + key + "\"]" + filterAround + ";";
+                }
+            }
+        }
+
+        return historicQuery;
     }
 
     public String toQuery() {
@@ -173,9 +240,10 @@ public class Query {
     private String query;
     private String settings;
     private String timeout;
+    private String filterAround;
 
-    String filterAround;
-    String out;
+    private final String outCount;
+    private final String outFeatures;
 
     HashMap<String, Set<String>> historicTags;
     HashMap<String, Set<String>> greenTags;
@@ -186,12 +254,10 @@ public class Query {
         settings = "[out:json]";
         timeout  = "[timeout:800]";
         filterAround = "";
-        out = ".monuments out count;" +
+        outCount = ".monuments out count;" +
               ".green     out count;" +
-              ".panoramic out count;" +"";
-//              "(.monuments; .green; .panoramic;);" +
-//              "out geom;";
-
+              ".panoramic out count;";
+        outFeatures = "out geom;";
         historicTags = new HashMap<>();
         greenTags = new HashMap<>();
         panoramicTags = new HashMap<>();
