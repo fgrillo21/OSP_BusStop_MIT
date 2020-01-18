@@ -20,6 +20,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import busstop.customtrip.model.EnrichedItinerary;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
 import edu.usf.cutr.opentripplanner.android.listeners.OtpFragment;
@@ -78,6 +81,9 @@ public class DirectionListFragment extends ExpandableListFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        Log.d("TRQ", "Direction onAttach");
+
         try {
             setFragmentListener((OtpFragment) activity);
         } catch (ClassCastException e) {
@@ -94,6 +100,8 @@ public class DirectionListFragment extends ExpandableListFragment {
         ActionBar actionBar = ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar();
         Objects.requireNonNull(actionBar).hide();
 
+        Log.d("TRQ", "Direction.onCreateView");
+
         View mainView = inflater.inflate(R.layout.direction, container, false);
 
         header = inflater.inflate(R.layout.list_direction_header, null);
@@ -104,6 +112,11 @@ public class DirectionListFragment extends ExpandableListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState!=null)
+            Log.d("TRQ", "DirectiononActivityCreated: " + savedInstanceState.toString());
+        else
+        Log.d("TRQ", "Direction.onActivityCreated");
 
         ImageButton btnDisplayMap = (ImageButton) header.findViewById(R.id.btnDisplayMap);
         final OtpFragment ofl = this.getFragmentListener();
@@ -135,7 +148,7 @@ public class DirectionListFragment extends ExpandableListFragment {
 
         ArrayList<Leg> currentItinerary = new ArrayList<Leg>();
         currentItinerary.addAll(fragmentListener.getCurrentItinerary());
-        ArrayList<Itinerary> itineraryList = new ArrayList<Itinerary>();
+        ArrayList<EnrichedItinerary> itineraryList = new ArrayList<EnrichedItinerary>();
         itineraryList.addAll(fragmentListener.getCurrentItineraryList());
         int currentItineraryIndex = fragmentListener.getCurrentItineraryIndex();
 
@@ -155,7 +168,7 @@ public class DirectionListFragment extends ExpandableListFragment {
         boolean isTransitIsTagSet = false;
         for (int i = 0; i < itinerarySummaryList.length; i++) {
             isTransitIsTagSet = false;
-            Itinerary it = itineraryList.get(i);
+            Itinerary it = itineraryList.get(i).getItinerary();
             for (Leg leg : it.legs) {
                 TraverseMode traverseMode = TraverseMode.valueOf(leg.mode);
                 if (traverseMode.isTransit()) {
@@ -174,7 +187,7 @@ public class DirectionListFragment extends ExpandableListFragment {
         }
 
         for (int i = 0; i < itinerarySummaryList.length; i++) {
-            Itinerary it = itineraryList.get(i);
+            Itinerary it = itineraryList.get(i).getItinerary();
             long tripDuration = ConversionUtils.normalizeDuration(it.duration, getActivity().getApplicationContext());
             itinerarySummaryList[i] += getString(R.string.step_by_step_total_duration) + " " + ConversionUtils
                     .getFormattedDurationTextNoSeconds(tripDuration, false,
@@ -277,7 +290,7 @@ public class DirectionListFragment extends ExpandableListFragment {
 
     private void setDepartureArrivalHeaders() {
         Itinerary actualItinerary = fragmentListener.getCurrentItineraryList()
-                .get(fragmentListener.getCurrentItineraryIndex());
+                .get(fragmentListener.getCurrentItineraryIndex()).getItinerary();
 
         if (!actualItinerary.legs.isEmpty()) {
             Leg firstLeg = actualItinerary.legs.get(0);
