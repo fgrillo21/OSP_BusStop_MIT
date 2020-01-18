@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 import busstop.customtrip.model.CustomTrip;
+import busstop.customtrip.model.EnrichedItinerary;
 import edu.usf.cutr.opentripplanner.android.fragments.DirectionListFragment;
 import edu.usf.cutr.opentripplanner.android.fragments.MainFragment;
 import edu.usf.cutr.opentripplanner.android.listeners.DateCompleteListener;
@@ -67,7 +68,7 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
 
     private List<Leg> currentItinerary = new ArrayList<Leg>();
 
-    private List<Itinerary> currentItineraryList = new ArrayList<Itinerary>();
+    private List<EnrichedItinerary> currentItineraryList = new ArrayList<EnrichedItinerary>();
 
     private int currentItineraryIndex = -1;
 
@@ -86,6 +87,9 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState !=null)
+        Log.d("TRQ", "Creo MyActivity: " + savedInstanceState.toString());
+    else Log.d("TRQ", "Creo MyActivity: ");
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -106,6 +110,7 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
             fragmentTransaction
                     .replace(R.id.mainFragment, mainFragment, OTPApp.TAG_FRAGMENT_MAIN_FRAGMENT);
             fragmentTransaction.commit();
+
         }
 
         if(mainFragment != null) {
@@ -220,15 +225,15 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
     }
 
     @Override
-    public void onItinerariesLoaded(List<Itinerary> itineraries) {
+    public void onItinerariesLoaded(List<EnrichedItinerary> itineraries) {
         currentItineraryList.clear();
         currentItineraryList.addAll(itineraries);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean(OTPApp.PREFERENCE_KEY_LIVE_UPDATES,true)){
             boolean realtimeLegsOnItineraries = false;
             long soonerRealTimeDeparture = Long.MAX_VALUE;
-            for (Itinerary itinerary : itineraries){
-                for (Leg leg : itinerary.legs){
+            for (EnrichedItinerary itinerary : itineraries){
+                for (Leg leg : itinerary.getItinerary().legs){
                     if (leg.realTime){
                         long legRealtimeDeparture = Long.parseLong(leg.startTime);
                         if (legRealtimeDeparture < soonerRealTimeDeparture){
@@ -258,9 +263,10 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
 
         currentItineraryIndex = i;
         currentItinerary.clear();
-        currentItinerary.addAll(currentItineraryList.get(i).legs);
+        currentItinerary.addAll(currentItineraryList.get(i).getItinerary().legs);
 
         mainFragment.showRouteOnMap(currentItinerary, animateCamera);
+        mainFragment.showFeaturesOnMap(currentItineraryList.get(i), false);
     }
 
     @Override
@@ -277,6 +283,8 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
         transaction.add(R.id.mainFragment, directionFragment);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         transaction.addToBackStack(null);
+
+        Log.d("TRQ", "Creo DirectioN");
 
         transaction.commit();
     }
@@ -319,7 +327,7 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
     }
 
     @Override
-    public List<Itinerary> getCurrentItineraryList() {
+    public List<EnrichedItinerary> getCurrentItineraryList() {
         return currentItineraryList;
     }
 

@@ -16,6 +16,7 @@
 
 package edu.usf.cutr.opentripplanner.android.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -92,6 +93,7 @@ public class DirectionListFragment extends ExpandableListFragment {
         }
     }
 
+    @SuppressLint("NewApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {

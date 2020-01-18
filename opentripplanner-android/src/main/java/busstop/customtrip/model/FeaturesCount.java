@@ -1,7 +1,10 @@
 package busstop.customtrip.model;
 
-public class FeaturesCount {
+import java.io.Serializable;
 
+public class FeaturesCount implements  Serializable {
+
+    private static final long serialVersionUID = 7316776533289077690L;
     int nodes;
     int ways;
     int relations;

@@ -24,6 +24,8 @@ import org.opentripplanner.api.model.Leg;
 import java.io.Serializable;
 import java.util.List;
 
+import busstop.customtrip.model.EnrichedItinerary;
+
 /**
  * @author Khoa Tran
  */
@@ -38,7 +40,7 @@ public class OTPBundle implements Serializable {
 
     private List<Leg> currentItinerary;
 
-    private List<Itinerary> itineraryList;
+    private List<EnrichedItinerary> itineraryList;
 
     private int currentItineraryIndex;
 
@@ -151,14 +153,14 @@ public class OTPBundle implements Serializable {
     /**
      * @return the itineraryList
      */
-    public List<Itinerary> getItineraryList() {
+    public List<EnrichedItinerary> getItineraryList() {
         return itineraryList;
     }
 
     /**
      * @param itineraryList the itineraryList to set
      */
-    public void setItineraryList(List<Itinerary> itineraryList) {
+    public void setItineraryList(List<EnrichedItinerary> itineraryList) {
         this.itineraryList = itineraryList;
     }
 

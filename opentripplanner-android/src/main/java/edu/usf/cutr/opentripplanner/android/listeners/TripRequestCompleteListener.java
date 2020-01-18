@@ -20,11 +20,13 @@ import org.opentripplanner.api.model.Itinerary;
 
 import java.util.List;
 
+import busstop.customtrip.model.EnrichedItinerary;
+
 /**
  * @author Khoa Tran
  */
 
 public interface TripRequestCompleteListener {
 
-    public void onTripRequestComplete(List<Itinerary> itineraries, String currentRequestString);
+    public void onTripRequestComplete(List<EnrichedItinerary> itineraries, String currentRequestString);
 }

@@ -25,6 +25,7 @@ import android.support.v4.app.Fragment;
 
 import java.util.List;
 
+import busstop.customtrip.model.EnrichedItinerary;
 import edu.usf.cutr.opentripplanner.android.model.OTPBundle;
 
 /**
@@ -36,13 +37,13 @@ import edu.usf.cutr.opentripplanner.android.model.OTPBundle;
 
 public interface OtpFragment {
 
-    public void onItinerariesLoaded(List<Itinerary> itineraries);
+    public void onItinerariesLoaded(List<EnrichedItinerary> itineraries);
 
     public void onItinerarySelected(int i, int animateCamera);
 
     public List<Leg> getCurrentItinerary();
 
-    public List<Itinerary> getCurrentItineraryList();
+    public List<EnrichedItinerary> getCurrentItineraryList();
 
     public int getCurrentItineraryIndex();
 

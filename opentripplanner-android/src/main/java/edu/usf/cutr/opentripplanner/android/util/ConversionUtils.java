@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import busstop.customtrip.model.EnrichedItinerary;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
 
@@ -156,16 +157,16 @@ public class ConversionUtils {
         return text;
     }
 
-    public static List<Itinerary> fixTimezoneOffsets(List<Itinerary> itineraries,
+    public static List<EnrichedItinerary> fixTimezoneOffsets(List<EnrichedItinerary> itineraries,
             boolean useDeviceTimezone) {
         int agencyTimeZoneOffset = 0;
         boolean containsTransitLegs = false;
 
         if ((itineraries != null) && !itineraries.isEmpty()) {
-            ArrayList<Itinerary> itinerariesFixed = new ArrayList<Itinerary>(itineraries);
+            ArrayList<EnrichedItinerary> itinerariesFixed = new ArrayList<EnrichedItinerary>(itineraries);
 
-            for (Itinerary it : itinerariesFixed) {
-                for (Leg leg : it.legs) {
+            for (EnrichedItinerary it : itinerariesFixed) {
+                for (Leg leg : it.getItinerary().legs) {
                     if ((TraverseMode.valueOf((String) leg.mode)).isTransit()
                             && !containsTransitLegs) {
                         containsTransitLegs = true;
@@ -181,12 +182,12 @@ public class ConversionUtils {
 
             if (useDeviceTimezone || !containsTransitLegs) {
                 agencyTimeZoneOffset = TimeZone.getDefault()
-                        .getOffset(Long.parseLong(itinerariesFixed.get(0).startTime));
+                        .getOffset(Long.parseLong(itinerariesFixed.get(0).getItinerary().startTime));
             }
 
             if (agencyTimeZoneOffset != 0) {
-                for (Itinerary it : itinerariesFixed) {
-                    for (Leg leg : it.legs) {
+                for (EnrichedItinerary it : itinerariesFixed) {
+                    for (Leg leg : it.getItinerary().legs) {
                         leg.agencyTimeZoneOffset = agencyTimeZoneOffset;
                     }
                 }
