@@ -60,8 +60,10 @@ public class SeekBarTestActivity extends AppCompatActivity {
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
-                previousTouchId = currentTouchId;
-                currentTouchId = 0;
+                if(currentTouchId != 0) {
+                    previousTouchId = currentTouchId;
+                    currentTouchId = 0;
+                }
                 touchedBar0 = true;
             }
 
@@ -88,8 +90,10 @@ public class SeekBarTestActivity extends AppCompatActivity {
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
-                previousTouchId = currentTouchId;
-                currentTouchId = 1;
+                if(currentTouchId != 0) {
+                    previousTouchId = currentTouchId;
+                    currentTouchId = 1;
+                }
                 touchedBar1 = true;
             }
 
@@ -116,8 +120,10 @@ public class SeekBarTestActivity extends AppCompatActivity {
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
-                previousTouchId = currentTouchId;
-                currentTouchId = 2;
+                if(currentTouchId != 0) {
+                    previousTouchId = currentTouchId;
+                    currentTouchId = 2;
+                }
                 touchedBar2 = true;
             }
 
@@ -173,6 +179,20 @@ public class SeekBarTestActivity extends AppCompatActivity {
             // the user goes left so simply save the new progress(space will be
             // available to other SeekBars)
             mAllProgress[which] = progress;
+            if(previousTouchId == -1) {
+                switch (which) {
+                    default:
+                    case 2:
+                    case 0: {
+                        bar1.setProgress(mAllProgress[1] + remaining());
+                        break;
+                    }
+                    case 1: {
+                        bar0.setProgress(mAllProgress[0] + remaining());
+                        break;
+                    }
+                }
+            }
         }
     }
 
