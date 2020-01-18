@@ -48,7 +48,7 @@
         android:layout_alignBottom="@+id/seekBar1"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="19dp"
-        android:text="Monuments: " />
+        android:text="Monuments: 0 %" />
 
     <TextView
         android:id="@+id/textView2"
@@ -57,7 +57,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/seekBar1"
         android:layout_marginTop="19dp"
-        android:text="Green Areas: "  />
+        android:text="Green Areas: 0 %"  />
 
     <TextView
         android:id="@+id/textView3"
@@ -66,7 +66,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/seekBar2"
         android:layout_marginTop="19dp"
-        android:text="Green Areas: "  />
+        android:text="Open Spaces: 0 %"  />
 
     <TextView
         android:id="@+id/remaning"
@@ -75,6 +75,6 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/seekBar3"
         android:layout_marginTop="19dp"
-        android:text="Remaning % to select: "  />
+        android:text="Remaning % to select: 100 %"  />
 
 </RelativeLayout>

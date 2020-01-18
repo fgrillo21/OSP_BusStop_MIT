@@ -54,7 +54,7 @@ public class SeekBarTestActivity extends AppCompatActivity{
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 setProgressOfCurrentSeekBar(seekBar, progress);
                 int which = whichIsIt(seekBar.getId());
-                textProgress2.setText("Monuments: " + mAllProgress[which] +" %");
+                textProgress2.setText("Green Areas: " + mAllProgress[which] +" %");
                 remaningToSelect.setText("Remaining % to select: " + remaining());
             }
 
@@ -72,7 +72,7 @@ public class SeekBarTestActivity extends AppCompatActivity{
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 setProgressOfCurrentSeekBar(seekBar, progress);
                 int which = whichIsIt(seekBar.getId());
-                textProgress3.setText("Monuments: " + mAllProgress[which] +" %");
+                textProgress3.setText("Open Spaces: " + mAllProgress[which] +" %");
                 remaningToSelect.setText("Remaining % to select: " + remaining());
             }
 
