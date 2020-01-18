@@ -3,17 +3,22 @@ package busstop.customtrip.ui;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import edu.usf.cutr.opentripplanner.android.R;
 
-public class SeekBarTestActivity extends AppCompatActivity{
+public class SeekBarTestActivity extends AppCompatActivity {
     public SeekBar bar1,bar2,bar3;
     public TextView textProgress1,textProgress2,textProgress3, remaningToSelect;
     private static final int TOTAL_AMOUNT = 100; // the maximum amount for all SeekBars
     // stores the current progress for the SeekBars(initially each SeekBar has a progress of 0)
     private int[] mAllProgress = { 34, 33, 33};
+    private int currentTouchId = -1;
+    private int previousTouchId = -1;
+    private boolean touchedBar1, touchedBar2, touchedBar3 = false;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -47,53 +52,99 @@ public class SeekBarTestActivity extends AppCompatActivity{
         bar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setProgressOfCurrentSeekBar(seekBar, progress);
-                int which = whichIsIt(seekBar.getId());
-                textProgress1.setText("Monuments: " + mAllProgress[which] +" %");
-                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
+
+                    setProgressOfCurrentSeekBar(seekBar, progress);
+                    textProgress1.setText("Monuments: " + mAllProgress[0] + " %");
+                    remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
+
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
+                previousTouchId = currentTouchId;
+                currentTouchId = 0;
+                touchedBar1 = true;
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                touchedBar1 = false;
             }
         });
+
+        bar1.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (canTouch(0))
+                            return true;
+                        else
+                            return false;
+                    }
+                }
+        );
 
         bar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setProgressOfCurrentSeekBar(seekBar, progress);
-                int which = whichIsIt(seekBar.getId());
-                textProgress2.setText("Green Areas: " + mAllProgress[which] +" %");
-                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
+
+                    setProgressOfCurrentSeekBar(seekBar, progress);
+                    textProgress2.setText("Green Areas: " + mAllProgress[1] + " %");
+                    remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
+                previousTouchId = currentTouchId;
+                currentTouchId = 1;
+                touchedBar2 = true;
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                touchedBar2 = false;
             }
         });
+
+        bar2.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (canTouch(1))
+                            return true;
+                        else
+                            return false;
+                    }
+                }
+        );
 
         bar3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setProgressOfCurrentSeekBar(seekBar, progress);
-                int which = whichIsIt(seekBar.getId());
-                textProgress3.setText("Open Spaces: " + mAllProgress[which] +" %");
-                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
+
+                    setProgressOfCurrentSeekBar(seekBar, progress);
+                    textProgress3.setText("Open Spaces: " + mAllProgress[2] + " %");
+                    remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
+                previousTouchId = currentTouchId;
+                currentTouchId = 2;
+                touchedBar3 = true;
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                touchedBar3 = false;
             }
         });
+
+        bar3.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (canTouch(2))
+                            return true;
+                        else
+                            return false;
+                    }
+                }
+        );
     }
 
     private void setProgressOfCurrentSeekBar(SeekBar seekBar, int progress) {
@@ -168,6 +219,23 @@ public class SeekBarTestActivity extends AppCompatActivity{
             default:
                 throw new IllegalStateException(
                         "There should be a Seekbar with this id(" + id + ")!");
+        }
+    }
+
+    private boolean canTouch(int which) {
+        switch (which) {
+            case 0:
+                return (touchedBar2 || touchedBar3);
+
+            case 1:
+                return (touchedBar1 || touchedBar3);
+
+            case 2:
+                return (touchedBar1 || touchedBar2);
+
+            default:
+                throw new IllegalStateException(
+                        "There should be a Seekbar with this id(" + which + ")!");
         }
     }
 }
