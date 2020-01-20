@@ -3,6 +3,7 @@ package busstop.customtrip.ui;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
@@ -12,11 +13,17 @@ import edu.usf.cutr.opentripplanner.android.R;
 
 public class SeekBarTestActivity extends AppCompatActivity {
     public SeekBar bar0, bar1, bar2;
+    private SeekBar[] seekBars = new SeekBar[3];
     public TextView textProgress0, textProgress1, textProgress2, remaningToSelect;
-    private static final int TOTAL_AMOUNT = 100; // the maximum amount for all SeekBars
-    // stores the current progress for the SeekBars(initially each SeekBar has a progress of 0)
-    private int[] mAllProgress = { 34, 33, 33};
-    private int currentTouchId = -1;
+    private static final float TOTAL_AMOUNT = 100.0f; // the maximum amount for all SeekBars
+
+    // stores the current progress for the SeekBars
+    private float[]   realProgress    = {100.0f/3, 100.0f/3, 100.0f/3};
+
+    // Graphic progress rounded from real progress that is a float percentage
+    private int[]     graphicProgress = {Math.round(realProgress[0]), Math.round(realProgress[1]), Math.round(realProgress[2])};
+
+    private int currentTouchId  = -1;
     private int previousTouchId = -1;
     private boolean touchedBar0, touchedBar1, touchedBar2 = false;
 
@@ -28,21 +35,21 @@ public class SeekBarTestActivity extends AppCompatActivity {
         setContentView(R.layout.seek_bar_test);
 
         /* inizializzazione default */
-        bar0 = findViewById(R.id.seekBar0);
-        bar1 = findViewById(R.id.seekBar1);
-        bar2 = findViewById(R.id.seekBar2);
+        bar0 = seekBars[0] = findViewById(R.id.seekBar0);
+        bar1 = seekBars[1] = findViewById(R.id.seekBar1);
+        bar2 = seekBars[2] = findViewById(R.id.seekBar2);
 
-        bar0.setProgress(mAllProgress[0]);
-        bar1.setProgress(mAllProgress[1]);
-        bar2.setProgress(mAllProgress[2]);
+        bar0.setProgress(graphicProgress[0]);
+        bar1.setProgress(graphicProgress[1]);
+        bar2.setProgress(graphicProgress[2]);
 
         textProgress0 = findViewById(R.id.textView0);
         textProgress1 = findViewById(R.id.textView1);
         textProgress2 = findViewById(R.id.textView2);
 
-        textProgress0.setText("Monuments: " + mAllProgress[0] +" %");
-        textProgress1.setText("Green Areas: " + mAllProgress[1] +" %");
-        textProgress2.setText("Open Spaces: " + mAllProgress[2] +" %");
+        textProgress0.setText("Monuments: " + realProgress[0] +" % (" + graphicProgress[0] + ")");
+        textProgress1.setText("Green Areas: " + realProgress[1] +" % (" + graphicProgress[1] + ")");
+        textProgress2.setText("Open Spaces: " + realProgress[2] +" % (" + graphicProgress[2]  + ")");
 
         remaningToSelect = findViewById(R.id.remaning);
         remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
@@ -53,8 +60,14 @@ public class SeekBarTestActivity extends AppCompatActivity {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                setProgressOfCurrentSeekBar(seekBar, progress);
-                textProgress0.setText("Monuments: " + mAllProgress[0] + " %");
+                if (fromUser) {
+                    setProgressOfCurrentSeekBar(seekBar, progress);
+
+                }
+
+                textProgress0.setText("Monuments: " + realProgress[0] +" % (" + graphicProgress[0] + ")");
+                textProgress1.setText("Green Areas: " + realProgress[1] +" % (" + graphicProgress[1] + ")");
+                textProgress2.setText("Open Spaces: " + realProgress[2] +" % (" + graphicProgress[2]  + ")");
                 remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
 
             }
@@ -84,13 +97,17 @@ public class SeekBarTestActivity extends AppCompatActivity {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                setProgressOfCurrentSeekBar(seekBar, progress);
-                textProgress1.setText("Green Areas: " + mAllProgress[1] + " %");
+                if (fromUser) {
+                    setProgressOfCurrentSeekBar(seekBar, progress);
+                }
+                textProgress0.setText("Monuments: " + realProgress[0] +" % (" + graphicProgress[0] + ")");
+                textProgress1.setText("Green Areas: " + realProgress[1] +" % (" + graphicProgress[1] + ")");
+                textProgress2.setText("Open Spaces: " + realProgress[2] +" % (" + graphicProgress[2]  + ")");
                 remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
-                if(currentTouchId != 0) {
+                if(currentTouchId != 1) {
                     previousTouchId = currentTouchId;
                     currentTouchId = 1;
                 }
@@ -114,13 +131,17 @@ public class SeekBarTestActivity extends AppCompatActivity {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                setProgressOfCurrentSeekBar(seekBar, progress);
-                textProgress2.setText("Open Spaces: " + mAllProgress[2] + " %");
+                if (fromUser) {
+                    setProgressOfCurrentSeekBar(seekBar, progress);
+                }
+                textProgress0.setText("Monuments: " + realProgress[0] +" % (" + graphicProgress[0] + ")");
+                textProgress1.setText("Green Areas: " + realProgress[1] +" % (" + graphicProgress[1] + ")");
+                textProgress2.setText("Open Spaces: " + realProgress[2] +" % (" + graphicProgress[2]  + ")");
                 remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
-                if(currentTouchId != 0) {
+                if(currentTouchId != 2) {
                     previousTouchId = currentTouchId;
                     currentTouchId = 2;
                 }
@@ -144,82 +165,97 @@ public class SeekBarTestActivity extends AppCompatActivity {
     private void setProgressOfCurrentSeekBar(SeekBar seekBar, int progress) {
         // find out which SeekBar triggered the event so we can retrieve its saved current
         // progress
+
+        int notMeId1 = -1, notMeId2 = -1, slaveId = -1;
         int which = whichIsIt(seekBar.getId());
-        // the stored progress for this SeekBar
-        int storedProgress = mAllProgress[which];
-        // we basically have two cases, the user either goes to the left or to
-        // the right with the thumb. If he goes to the right we must check to
-        // see how much he's allowed to go in that direction(based on the other
-        // SeekBar values) and stop him if he the available progress was used. If
-        // he goes to the left use that progress as going back
-        // and freeing the track isn't a problem.
-        if (progress > storedProgress) {
-            // how much is currently available based on all SeekBar progress
-            int remaining = remaining();
-            // if there's no progress remaining then simply set the progress at
-            // the stored progress(so the user can't move the thumb further)
-            if (remaining == 0) {
-                seekBar.setProgress(storedProgress);
-                return;
-            } else {
-                // we still have some progress available so check that available
-                // progress and let the user move the thumb as long as the
-                // progress is at most as the sum between the stored progress
-                // and the maximum still available progress
-                if (storedProgress + remaining >= progress) {
-                    mAllProgress[which] = progress;
-                } else {
-                    // the current progress is bigger then the available
-                    // progress so restrict the value
-                    mAllProgress[which] = storedProgress + remaining;
-                }
+
+        if (previousTouchId == -1) {
+
+            switch(which) {
+                case 0: notMeId1 = 1; notMeId2 = 2;
+                        break;
+
+                case 1: notMeId1 = 0; notMeId2 = 2;
+                        break;
+
+                case 2: notMeId1 = 0; notMeId2 = 1;
+                        break;
             }
-        } else {
-            // (progress <= storedProgress)
-            // the user goes left so simply save the new progress(space will be
-            // available to other SeekBars)
-            mAllProgress[which] = progress;
-            if(previousTouchId == -1) {
-                switch (which) {
-                    default:
-                    case 2:
-                    case 0: {
-                        bar1.setProgress(mAllProgress[1] + remaining());
-                        break;
-                    }
-                    case 1: {
-                        bar0.setProgress(mAllProgress[0] + remaining());
-                        break;
-                    }
-                }
+        }
+        else {
+
+            if ((currentTouchId == 0 && previousTouchId == 1) || (currentTouchId == 1 && previousTouchId == 0)) {
+                slaveId = 2;
+            }
+            else if ((currentTouchId == 0 && previousTouchId == 2) || (currentTouchId == 2 && previousTouchId == 0)) {
+                slaveId = 1;
+            }
+            else if ((currentTouchId == 1 && previousTouchId == 2) || (currentTouchId == 2 && previousTouchId == 1)) {
+                slaveId = 0;
+            }
+        }
+
+        Log.d("SEEK", String.valueOf(progress));
+        Log.d("SEEK", "{" + String.valueOf(graphicProgress[0]) + ", " + String.valueOf(graphicProgress[1]) + ", " +String.valueOf(graphicProgress[2])+"}");
+
+        float increment        = progress - realProgress[which];
+        realProgress[which]    = realProgress[which] + increment;
+        graphicProgress[which] = Math.round(realProgress[which]);
+        float newRemaining     = remaining();
+
+        if (previousTouchId == -1) {
+            // target = (100.0f - realProgress[which] - realProgress[notMeId1] - realProgress[notMeId2]) / 2.0f;
+            realProgress[notMeId1]    = realProgress[notMeId1] + newRemaining / 2;
+            realProgress[notMeId2]    = realProgress[notMeId2] + newRemaining / 2;
+            graphicProgress[notMeId1] = Math.round(realProgress[notMeId1]);
+            graphicProgress[notMeId2] = Math.round(realProgress[notMeId2]);
+            seekBars[notMeId1].setProgress(graphicProgress[notMeId1]);
+            seekBars[notMeId2].setProgress(graphicProgress[notMeId2]);
+        }
+        else {
+            if (realProgress[slaveId] + newRemaining >= 0.0f) {
+                realProgress[slaveId] = realProgress[slaveId] + newRemaining;
+                graphicProgress[slaveId] = Math.round(realProgress[slaveId]);
+                seekBars[slaveId].setProgress(graphicProgress[slaveId]);
+            }
+            else {
+                float excess = realProgress[slaveId] + newRemaining;
+                realProgress[slaveId] = 0.0f;
+                realProgress[previousTouchId] = realProgress[previousTouchId] + excess;
+                graphicProgress[slaveId] = 0;
+                graphicProgress[previousTouchId] = Math.round(realProgress[previousTouchId]);
+                seekBars[slaveId].setProgress(graphicProgress[slaveId]);
+                seekBars[previousTouchId].setProgress(graphicProgress[previousTouchId]);
             }
         }
     }
 
     /**
      * Returns the still available progress after the difference between the
-     * maximum value(TOTAL_AMOUNT = 100) and the sum of the store progresses of
+     * maximum value(TOTAL_AMOUNT = TOTAL_AMOUNT) and the sum of the store progresses of
      * all SeekBars.
      *
      * @return the available progress.
      */
-    private int remaining() {
-        int remaining = TOTAL_AMOUNT;
+    private float remaining() {
+
+        float remaining = TOTAL_AMOUNT;
+
         for (int i = 0; i < 3; i++) {
-            remaining -= mAllProgress[i];
+            remaining -= realProgress[i];
         }
-        if (remaining >= 100) {
-            remaining = 100;
-        } else if (remaining <= 0) {
-            remaining = 0;
-        }
+//        if (remaining >= TOTAL_AMOUNT) {
+//            remaining = TOTAL_AMOUNT;
+//        } else if (remaining <= 0) {
+//            remaining = 0;
+//        }
         return remaining;
     }
 
     private int whichIsIt(int id) {
         switch (id) {
             case R.id.seekBar0:
-                return 0; // first position in mAllProgress
+                return 0; // first position in graphicProgress
             case R.id.seekBar1:
                 return 1;
             case R.id.seekBar2:
