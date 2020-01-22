@@ -3830,7 +3830,7 @@ public class MainFragment extends Fragment implements
 
     private void setStartMarkerLocation(boolean useServerCenter, Server selectedServer) {
 
-        LatLng latLng = null;
+        LatLng latLng = getLastLocation();
 
         if (selectedServer != null) {
             if (!mMapFailed) {
@@ -3843,12 +3843,17 @@ public class MainFragment extends Fragment implements
             latLng = getServerCenter(selectedServer);
             setMarker(true, latLng, false, true);
         }
-        else {
-            // Uso GeoCoder per trovare Bologna Centrale sulla mappa e piazzare il marker per la partenza
-            CustomAddress customAddress = LocationUtil.processGeocoding(mApplicationContext, selectedServer, false, "Bologna centrale").get(0);
-            latLng = new LatLng(customAddress.getLatitude(), customAddress.getLongitude());
+        else if (latLng != null) {
+
+            if (!LocationUtil.checkPointInBoundingBox(latLng, mOTPApp.getSelectedServer())) {
+                // Uso GeoCoder per trovare Bologna Centrale sulla mappa e piazzare il marker per la partenza
+                CustomAddress customAddress = LocationUtil.processGeocoding(mApplicationContext, selectedServer, false, "Bologna centrale").get(0);
+                latLng = new LatLng(customAddress.getLatitude(), customAddress.getLongitude());
+            }
+
             setMarker(true, latLng, false, true);
         }
+
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, getServerInitialZoom(selectedServer)));
     }
