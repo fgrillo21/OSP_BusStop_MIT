@@ -108,7 +108,7 @@
 
                 android:background="?attr/btnBackground">
         </ImageButton>
-<!--        &lt;!&ndash;                android:src="@drawable/device_access_location_found"&ndash;&gt;?attr/btnMyLocationPicture-->
+
         <RelativeLayout
                 android:id="@id/panelDisplayDirection"
                 android:layout_width="match_parent"
