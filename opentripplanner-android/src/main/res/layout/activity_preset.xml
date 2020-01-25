@@ -8,6 +8,19 @@
     android:orientation="vertical"
     tools:context="busstop.customtrip.ui.PresetActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/filter_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/filter_icon_black"
+            android:contentDescription="@string/filter_button">
+        </ImageButton>
+    </LinearLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
@@ -17,7 +30,7 @@
         android:clipToPadding="false"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingTop="20dp"/>
+        android:paddingTop="5dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
