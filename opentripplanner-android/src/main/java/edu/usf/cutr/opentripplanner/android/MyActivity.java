@@ -32,18 +32,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-
 import com.google.android.gms.maps.model.LatLng;
-
-import org.opentripplanner.api.model.Itinerary;
 import org.opentripplanner.api.model.Leg;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import busstop.customtrip.model.CustomTrip;
 import busstop.customtrip.model.EnrichedItinerary;
 import edu.usf.cutr.opentripplanner.android.fragments.DirectionListFragment;
