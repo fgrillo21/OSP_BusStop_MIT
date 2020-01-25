@@ -24,7 +24,7 @@ public class PresetActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     LinearLayout layout_dot;
-    List<Integer> imageId = Arrays.asList(R.drawable.monuments, R.drawable.greenareas, R.drawable.openspaces);
+    List<Integer> imageId = Arrays.asList(R.drawable.monuments, R.drawable.greenareas, R.drawable.openspaces, R.drawable.mixed_elements);
 
     private int dotscount;
     private ImageView[] dots;
@@ -92,6 +92,9 @@ public class PresetActivity extends AppCompatActivity {
                         myTitleText.setText(R.string.description_openspaces);
                         break;
                     }
+                    case 3: {
+                        myTitleText.setText(R.string.description_choose_percentage);
+                    }
                 }
             }
 
@@ -143,9 +146,22 @@ public class PresetActivity extends AppCompatActivity {
                         .build();
                 break;
             }
+            case 3: {
+                customTrip = CustomTrip.newActivityGroup()
+                        .withMonuments(34)
+                        .withGreenAreas(33)
+                        .withOpenSpaces(33)
+                        .build();
+            }
         }
-        Intent intent = new Intent(PresetActivity.this, MyActivity.class);
-        intent.putExtra("customTrip", customTrip);
-        startActivity(intent);
+        if(pageSelected == 3) {
+            Intent intent = new Intent(PresetActivity.this, SeekBarActivity.class);
+            intent.putExtra("customTrip", customTrip);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(PresetActivity.this, MyActivity.class);
+            intent.putExtra("customTrip", customTrip);
+            startActivity(intent);
+        }
     }
 }

@@ -56,8 +56,8 @@
             android:theme="@style/MyThemeLight">
         </activity>
         <activity
-            android:name="busstop.customtrip.ui.SeekBarTestActivity"
-            android:label="@string/map"
+            android:name="busstop.customtrip.ui.SeekBarActivity"
+            android:label="@string/personalizza"
             android:theme="@style/MyThemeLight">
         </activity>
         <activity

@@ -1,43 +1,60 @@
 package busstop.customtrip.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import busstop.customtrip.model.CustomTrip;
 import edu.usf.cutr.opentripplanner.android.R;
 
-public class SeekBarTestActivity extends AppCompatActivity {
+public class SeekBarActivity extends AppCompatActivity {
     public SeekBar bar0, bar1, bar2;
     private SeekBar[] seekBars = new SeekBar[3];
-    public TextView textProgress0, textProgress1, textProgress2, remaningToSelect;
+    public TextView textProgress0, textProgress1, textProgress2;
     private static final float TOTAL_AMOUNT = 100.0f; // the maximum amount for all SeekBars
 
     // stores the current progress for the SeekBars
     private float[]   realProgress    = {100.0f/3, 100.0f/3, 100.0f/3};
 
     // Graphic progress rounded from real progress that is a float percentage
-    private int[]     graphicProgress = {Math.round(realProgress[0]), Math.round(realProgress[1]), Math.round(realProgress[2])};
+    private int[] graphicProgress;
 
-    private int currentTouchId  = -1;
+    private int currentTouchId = -1;
     private int previousTouchId = -1;
     private boolean touchedBar0, touchedBar1, touchedBar2 = false;
+
+    private CustomTrip customTrip;
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.seek_bar_test);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        setContentView(R.layout.seek_bar);
 
         /* inizializzazione default */
         bar0 = seekBars[0] = findViewById(R.id.seekBar0);
         bar1 = seekBars[1] = findViewById(R.id.seekBar1);
         bar2 = seekBars[2] = findViewById(R.id.seekBar2);
+
+        Intent i = getIntent();
+        customTrip = (CustomTrip)i.getSerializableExtra("customTrip");
+        graphicProgress = new int[]{customTrip.getMonuments(), customTrip.getGreenAreas(), customTrip.getOpenSpaces()};
 
         bar0.setProgress(graphicProgress[0]);
         bar1.setProgress(graphicProgress[1]);
@@ -50,9 +67,6 @@ public class SeekBarTestActivity extends AppCompatActivity {
         textProgress0.setText("Monuments: " + realProgress[0] +" % (" + graphicProgress[0] + ")");
         textProgress1.setText("Green Areas: " + realProgress[1] +" % (" + graphicProgress[1] + ")");
         textProgress2.setText("Open Spaces: " + realProgress[2] +" % (" + graphicProgress[2]  + ")");
-
-        remaningToSelect = findViewById(R.id.remaning);
-        remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
 
         /*---------------------------------------*/
 
@@ -68,7 +82,6 @@ public class SeekBarTestActivity extends AppCompatActivity {
                 textProgress0.setText("Monuments: " + realProgress[0] +" % (" + graphicProgress[0] + ")");
                 textProgress1.setText("Green Areas: " + realProgress[1] +" % (" + graphicProgress[1] + ")");
                 textProgress2.setText("Open Spaces: " + realProgress[2] +" % (" + graphicProgress[2]  + ")");
-                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
 
             }
 
@@ -103,7 +116,6 @@ public class SeekBarTestActivity extends AppCompatActivity {
                 textProgress0.setText("Monuments: " + realProgress[0] +" % (" + graphicProgress[0] + ")");
                 textProgress1.setText("Green Areas: " + realProgress[1] +" % (" + graphicProgress[1] + ")");
                 textProgress2.setText("Open Spaces: " + realProgress[2] +" % (" + graphicProgress[2]  + ")");
-                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -137,7 +149,6 @@ public class SeekBarTestActivity extends AppCompatActivity {
                 textProgress0.setText("Monuments: " + realProgress[0] +" % (" + graphicProgress[0] + ")");
                 textProgress1.setText("Green Areas: " + realProgress[1] +" % (" + graphicProgress[1] + ")");
                 textProgress2.setText("Open Spaces: " + realProgress[2] +" % (" + graphicProgress[2]  + ")");
-                remaningToSelect.setText("Remaning % to select:" + remaining() + "%");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -196,7 +207,7 @@ public class SeekBarTestActivity extends AppCompatActivity {
         }
 
         Log.d("SEEK", String.valueOf(progress));
-        Log.d("SEEK", "{" + String.valueOf(graphicProgress[0]) + ", " + String.valueOf(graphicProgress[1]) + ", " +String.valueOf(graphicProgress[2])+"}");
+        Log.d("SEEK", "{" + graphicProgress[0] + ", " + graphicProgress[1] + ", " + graphicProgress[2] +"}");
 
         float increment        = progress - realProgress[which];
         realProgress[which]    = realProgress[which] + increment;
@@ -244,11 +255,7 @@ public class SeekBarTestActivity extends AppCompatActivity {
         for (int i = 0; i < 3; i++) {
             remaining -= realProgress[i];
         }
-//        if (remaining >= TOTAL_AMOUNT) {
-//            remaining = TOTAL_AMOUNT;
-//        } else if (remaining <= 0) {
-//            remaining = 0;
-//        }
+
         return remaining;
     }
 
@@ -281,5 +288,18 @@ public class SeekBarTestActivity extends AppCompatActivity {
                 throw new IllegalStateException(
                         "There should be a Seekbar with this id(" + which + ")!");
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
     }
 }

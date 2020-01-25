@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="busstop.customtrip.ui.SeekBarTestActivity">
+    tools:context="busstop.customtrip.ui.SeekBarActivity">
 
     <SeekBar
         android:id="@+id/seekBar0"
