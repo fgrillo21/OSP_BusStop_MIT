@@ -210,6 +210,9 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     if (traverseMode.isTransit()) {
                         busName.add(i, ConversionUtils.getRouteShortNameSafe(leg.routeShortName,leg.routeLongName, context));
                     }
+                    else {
+                        busName.add("");
+                    }
 
                     strLog.append("\n" + "Itinerary [" + (i + 1) + "] -> Leg: " + leg.legGeometry.getPoints());
 
@@ -218,10 +221,14 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     legsDecoded.addAll(legPoints);
                 }
 
-                Log.d(filterTag, "** Itinerary [" + (i + 1) + "] -> From {"
+                String str = "** Itinerary [" + (i + 1) + "] -> From {"
                         + tPlan.from.getLat() + ", " + tPlan.from.getLon() + "} to {"
-                        + tPlan.to.getLat()   + ", " + tPlan.to.getLon()   + "}"
-                        + " -- {" + busName.get(i) + "} **" + "\n");
+                        + tPlan.to.getLat()   + ", " + tPlan.to.getLon()   + "}";
+
+                if (busName.size() > i)
+                    str = str + " -- {" + busName.get(i) + "} **" + "\n";
+
+                Log.d(filterTag, str);
 //                        + strLog.toString().replace("\\", "\\\\") + "\n");
 
                 itinerariesDecoded.add(legsDecoded);
@@ -611,10 +618,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         final int reqPanoramicCount = customTrip.getOpenSpaces();
 
         Log.d(selectionTag, customTrip.toString());
-//        Log.d(selectionTag, );
 
-        int itIndex = 0;
-        int chosen = 0;
         int maxHistoricFounded = 0;
         int maxGreenFounded = 0;
         int maxPanoramicFounded = 0;
@@ -636,8 +640,6 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             if (itPanoramicCount > maxPanoramicFounded) {
                 maxPanoramicFounded = itPanoramicCount;
             }
-
-            itIndex += 1;
         }
 
         if (reqHistoricCount == CustomTrip.MAX && reqGreenCount == 0 && reqPanoramicCount == 0) {
