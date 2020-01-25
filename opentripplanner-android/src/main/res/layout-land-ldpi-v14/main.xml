@@ -110,7 +110,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
-                    android:src="?attr/btnBottomBackground"
+                    android:src="?attr/btnDisplayDirPicture"
                     android:background="@android:color/transparent">
             </ImageButton>
 
