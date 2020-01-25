@@ -356,6 +356,7 @@ public class MainFragment extends Fragment implements
     }
 
     public void setCustomTripInfo(CustomTrip customTrip) {
+        Log.d("TRQ CUSTOM TRIP", "{" + customTrip.getMonuments() + ", " + customTrip.getGreenAreas() + ", " + customTrip.getOpenSpaces() +"}");
         this.customTrip = customTrip;
     }
 
@@ -386,10 +387,11 @@ public class MainFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        if (savedInstanceState !=null)
-        Log.d(OTPApp.TAG, "Main onCreate" + savedInstanceState.toString());
-        else
+        if (savedInstanceState !=null) {
+            Log.d(OTPApp.TAG, "Main onCreate" + savedInstanceState.toString());
+        } else {
             Log.d("TRQ", "Main Create");
+        }
 
         getActivity().getSupportFragmentManager()
                 .addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {

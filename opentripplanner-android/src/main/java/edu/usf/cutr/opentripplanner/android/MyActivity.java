@@ -81,9 +81,12 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState !=null)
-        Log.d("TRQ", "Creo MyActivity: " + savedInstanceState.toString());
-    else Log.d("TRQ", "Creo MyActivity: ");
+        if (savedInstanceState !=null) {
+            Log.d("TRQ", "Creo MyActivity: " + savedInstanceState.toString());
+        } else {
+            Log.d("TRQ", "Creo MyActivity: ");
+        }
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
