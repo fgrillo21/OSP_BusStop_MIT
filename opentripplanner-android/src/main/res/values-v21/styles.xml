@@ -1,0 +1,20 @@
+<resources>
+
+    <!--     API Level required 21 -->
+
+    <style name="MyThemeDark" parent="BaseThemeDark">
+
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowEnterTransition">@android:transition/slide_bottom</item>
+        <item name="android:windowExitTransition">@android:transition/slide_bottom</item>
+
+    </style>
+
+
+<!--    <style name="ItinerarySpinnerTheme">-->
+
+<!--&lt;!&ndash;        <item name="android:theme">@style/Theme.AppCompat.Light</item>&ndash;&gt;-->
+
+<!--    </style>-->
+
+</resources>
