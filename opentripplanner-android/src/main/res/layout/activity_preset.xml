@@ -34,7 +34,7 @@
             android:layout_height="fill_parent"
             android:gravity="center"
             android:text="@string/description_monuments"
-            android:textColor="@color/sysWhite" />
+            style="?attr/textViewPresetStyle"        />
     </LinearLayout>
 
     <LinearLayout

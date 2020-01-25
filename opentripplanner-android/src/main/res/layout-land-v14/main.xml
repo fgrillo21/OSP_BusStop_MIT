@@ -43,8 +43,8 @@
                 android:layout_height="55dp"
                 android:layout_width="55dp"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/ic_action_import_export"
-                android:background="@drawable/button_layout">
+                android:src="?attr/btnSwapOrDestPicture"
+                android:background="?attr/btnBackground">
         </ImageButton>
 
         <ImageButton
@@ -53,8 +53,8 @@
                 android:layout_width="55dp"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/btnSwapOriginDestination"
-                android:src="@drawable/device_access_time"
-                android:background="@drawable/button_layout">
+                android:src="?attr/btnDateDialogPicture"
+                android:background="?attr/btnBackground">
         </ImageButton>
 
         <AutoCompleteTextView
@@ -93,8 +93,8 @@
                 android:layout_width="55dp"
                 android:layout_alignParentRight="true"
                 android:layout_above="@+id/panelDisplayDirection"
-                android:src="@drawable/device_access_location_found"
-                android:background="@drawable/button_layout">
+                android:src="?attr/btnMyLocationPicture"
+                android:background="?attr/btnBackground">
         </ImageButton>
 
         <RelativeLayout
@@ -111,7 +111,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
-                    android:src="@drawable/location_directions"
+                    android:src="?attr/btnBottomBackground"
                     android:background="@android:color/transparent">
             </ImageButton>
 
@@ -132,8 +132,7 @@
                     android:layout_toStartOf="@id/separator"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_margin="4dp"
-                    android:background="@android:color/darker_gray">
+                    android:layout_margin="4dp">
             </Spinner>
 
         </RelativeLayout>

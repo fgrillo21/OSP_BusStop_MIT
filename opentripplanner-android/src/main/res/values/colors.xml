@@ -27,12 +27,12 @@
     <color name="sysWhiteFaded">#50FFFFFF</color>
     <color name="sysYellowFaded">#50FFFF00</color>
     <color name="colorPrimary">#ffff8800</color>
-    <color name="colorPrimaryDark">#ffff8800</color>
+<!--    <color name="colorPrimaryDark">#ffff8800</color>-->
     <color name="colorAccent">#FF4081</color>
     <color name="red">#ff0000</color>
     <color name="black">#000000</color>
     <color name="green">#008000</color>
     <color name="darker_gray">#aaaaaa</color>
     <color name="overlay">#80000000</color>
-    <color name="textColor">#ffffff</color>
+<!--    <color name="textColor">#000000</color>-->
 </resources>
