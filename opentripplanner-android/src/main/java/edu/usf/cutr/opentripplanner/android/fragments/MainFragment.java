@@ -108,6 +108,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import org.opentripplanner.api.model.Itinerary;
 import org.opentripplanner.api.model.Leg;
@@ -3830,32 +3831,42 @@ public class MainFragment extends Fragment implements
 
     private void setStartMarkerLocation(boolean useServerCenter, Server selectedServer) {
 
-        LatLng latLng = getLastLocation();
+        LatLng latLng;
+        boolean insideServerBounds = false;
 
-        if (selectedServer != null) {
-            if (!mMapFailed) {
+        if (!mMapFailed) {
+
+            if (selectedServer == null)
+                throw new NullPointerException();
+
+            // Uso le coordinate del centro del server
+            if (useServerCenter) {
+
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getServerCenter(selectedServer),
-                        getServerInitialZoom(selectedServer)));
+                                getServerInitialZoom(selectedServer)));
+
+                latLng = getServerCenter(selectedServer);
+                setMarker(true, latLng, false, true);
+            }
+            else {
+
+                latLng = getLastLocation();
+
+                // Voglio usare la posizione dell'utente ma è nulla: uso Bologna Centrale
+                if (latLng != null) {
+                    insideServerBounds = LocationUtil.checkPointInBoundingBox(latLng, mOTPApp.getSelectedServer());
+                }
+
+                if (latLng == null || !insideServerBounds) {
+                    // Uso GeoCoder per trovare Bologna Centrale sulla mappa e piazzare il marker per la partenza
+                    CustomAddress customAddress = LocationUtil.processGeocoding(mApplicationContext, selectedServer, false, "Bologna centrale").get(0);
+                    latLng = new LatLng(customAddress.getLatitude(), customAddress.getLongitude());
+                }
+
+                setMarker(true, latLng, false, true);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, getServerInitialZoom(selectedServer)));
             }
         }
-
-        if (useServerCenter) {
-            latLng = getServerCenter(selectedServer);
-            setMarker(true, latLng, false, true);
-        }
-        else if (latLng != null) {
-
-            if (!LocationUtil.checkPointInBoundingBox(latLng, mOTPApp.getSelectedServer())) {
-                // Uso GeoCoder per trovare Bologna Centrale sulla mappa e piazzare il marker per la partenza
-                CustomAddress customAddress = LocationUtil.processGeocoding(mApplicationContext, selectedServer, false, "Bologna centrale").get(0);
-                latLng = new LatLng(customAddress.getLatitude(), customAddress.getLongitude());
-            }
-
-            setMarker(true, latLng, false, true);
-        }
-
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, getServerInitialZoom(selectedServer)));
     }
 
     private void setInitialCameraLocation(boolean useServerCenter, Server selectedServer) {
@@ -3916,6 +3927,8 @@ public class MainFragment extends Fragment implements
 
         return null;
     }
+
+
 
     private double getGeometricalCenterLatitude(double lowerLeftLatitude, double upperRightLatitude) {
 
