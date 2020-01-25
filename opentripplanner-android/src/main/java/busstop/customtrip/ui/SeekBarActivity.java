@@ -14,6 +14,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import busstop.customtrip.model.CustomTrip;
+import edu.usf.cutr.opentripplanner.android.MyActivity;
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class SeekBarActivity extends AppCompatActivity {
@@ -301,5 +302,17 @@ public class SeekBarActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
+    }
+
+    public void end_button(View view) {
+        customTrip = CustomTrip.newActivityGroup()
+            .withMonuments(graphicProgress[0])
+            .withGreenAreas(graphicProgress[1])
+            .withOpenSpaces(graphicProgress[2])
+            .build();
+
+        Intent intent = new Intent(SeekBarActivity.this, MyActivity.class);
+            intent.putExtra("customTrip", customTrip);
+            startActivity(intent);
     }
 }

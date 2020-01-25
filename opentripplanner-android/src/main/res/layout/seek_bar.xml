@@ -68,13 +68,16 @@
         android:layout_marginTop="19dp"
         android:text=""  />
 
-    <TextView
-        android:id="@+id/remaning"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/end_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="145dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/seekBar2"
         android:layout_marginTop="19dp"
-        android:text=""  />
+        android:onClick="end_button"
+        android:text="@string/end" />
+
 
 </RelativeLayout>
