@@ -72,6 +72,8 @@
     <string name="map_markers_warning_live_upates_early_arrival">early</string>
     <string name="map_markers_warning_live_upates_late_arrival">delay</string>
 
+    <string name="map_markers_wikipedia">Tap this baloon to get more info.</string>
+
     <!-- Bike rental stations map markers -->
 
     <!-- Info pop-ups -->

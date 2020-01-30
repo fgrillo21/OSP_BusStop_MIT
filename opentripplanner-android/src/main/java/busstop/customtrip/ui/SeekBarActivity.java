@@ -55,7 +55,7 @@ public class SeekBarActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         customTrip = (CustomTrip)i.getSerializableExtra("customTrip");
-        graphicProgress = new int[]{customTrip.getMonuments(), customTrip.getGreenAreas(), customTrip.getOpenSpaces()};
+        graphicProgress = new int[]{Math.round(customTrip.getMonuments()), Math.round(customTrip.getGreenAreas()), Math.round(customTrip.getOpenSpaces())};
 
         bar0.setProgress(graphicProgress[0]);
         bar1.setProgress(graphicProgress[1]);

@@ -48,14 +48,14 @@
 
     <declare-styleable name="customAttrs">
 
-        <attr name="btnMyLocationPicture" format="reference"/>
-        <attr name="btnDisplayDirPicture" format="reference"/>
-        <attr name="btnSwapOrDestPicture" format="reference"/>
-        <attr name="btnDateDialogPicture" format="reference"/>
-        <attr name="btnBackground"        format="reference"/>
-        <attr name="btnBottomBackground"  format="reference"/>
-
-        <attr name="textViewPresetStyle"  format="reference"/>
+        <attr name="btnMyLocationPicture"   format="reference"/>
+        <attr name="btnDisplayDirPicture"   format="reference"/>
+        <attr name="btnSwapOrDestPicture"   format="reference"/>
+        <attr name="btnDateDialogPicture"   format="reference"/>
+        <attr name="btnShowFeaturesPicture" format="reference"/>
+        <attr name="btnBackground"          format="reference"/>
+        <attr name="btnBottomBackground"    format="reference"/>
+        <attr name="textViewPresetStyle"    format="reference"/>
 
     </declare-styleable>
 

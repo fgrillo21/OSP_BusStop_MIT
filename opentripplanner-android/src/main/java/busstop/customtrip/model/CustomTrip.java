@@ -1,12 +1,16 @@
 package busstop.customtrip.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 @SuppressWarnings("serial") //With this annotation we are going to hide compiler warnings
 public class CustomTrip implements Serializable {
-    private final int monuments;
-    private final int greenAreas;
-    private final int openSpaces;
+    private final float monuments;
+    private final float greenAreas;
+    private final float openSpaces;
+    private int maxStops;
+    private int maxDurationMinutes;
+    private List<Place> intermediatePlaces;
 
     public static final int MAX = 100;
 
@@ -14,40 +18,40 @@ public class CustomTrip implements Serializable {
         return new CustomTripBuilder();
     }
 
-    private CustomTrip(int monuments, int greenAreas, int openSpaces) {
+    private CustomTrip(float monuments, float greenAreas, float openSpaces) {
         this.monuments = monuments;
         this.greenAreas = greenAreas;
         this.openSpaces = openSpaces;
     }
 
-    public int getMonuments() {
+    public float getMonuments() {
         return monuments;
     }
 
-    public int getGreenAreas() {
+    public float getGreenAreas() {
         return greenAreas;
     }
 
-    public int getOpenSpaces() {
+    public float getOpenSpaces() {
         return openSpaces;
     }
 
     public static final class CustomTripBuilder {
-        private int monuments;
-        private int greenAreas;
-        private int openSpaces;
+        private float monuments;
+        private float greenAreas;
+        private float openSpaces;
 
-        public CustomTripBuilder withMonuments(int monuments) {
+        public CustomTripBuilder withMonuments(float monuments) {
             this.monuments = monuments;
             return this;
         }
 
-        public CustomTripBuilder withGreenAreas(int greenAreas) {
+        public CustomTripBuilder withGreenAreas(float greenAreas) {
             this.greenAreas = greenAreas;
             return this;
         }
 
-        public CustomTripBuilder withOpenSpaces(int openSpaces) {
+        public CustomTripBuilder withOpenSpaces(float openSpaces) {
             this.openSpaces = openSpaces;
             return this;
         }

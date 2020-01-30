@@ -50,7 +50,7 @@
             <!--<string name="text_box_virtual_keyboard_done_label">GO!</string>-->
 
         <!-- Start/End markers -->
-        <string name="map_markers_start_marker_title">Salita</string>
+        <string name="map_markers_start_marker_title">Partenza</string>
     <string name="map_markers_start_marker_description">Tenere premuto per trascinare&#8230;</string>
         <string name="map_markers_end_marker_title">Destinazione</string>
     <string name="map_markers_end_marker_description">Tenere premuto per trascinare&#8230;</string>
@@ -66,6 +66,7 @@
                 <!-- Connectors -->
                 <string name="map_markers_connector_before_stop">da</string>
                 <string name="map_markers_connector_before_destination">a</string>
+                <string name="map_markers__wikipedia">Premi questo fumetto per maggiori informazioni.</string>
 
                 <!-- Real time -->
                 <!--<string name="map_markers_warning_live_udpates">Live updates</string>-->
