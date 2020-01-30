@@ -28,4 +28,12 @@
         android:visibility="gone"
         android:textSize="12sp"/>
 
+    <TextView
+        android:id="@+id/customInfoFeatureLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/customInfoWindowSnippet"
+        android:visibility="gone"
+        android:textSize="12sp"/>
+
 </RelativeLayout>

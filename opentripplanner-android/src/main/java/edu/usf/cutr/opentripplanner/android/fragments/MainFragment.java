@@ -80,7 +80,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -108,7 +107,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.maps.android.ui.IconGenerator;
 
 import org.opentripplanner.api.model.Itinerary;
 import org.opentripplanner.api.model.Leg;
@@ -274,6 +272,8 @@ public class MainFragment extends Fragment implements
     private boolean mIsEndLocationChangedByUser = true;
 
     private Map<Marker, TripInfo> mModeMarkers;
+
+    private Map<Marker, String> mLinks;
 
     private List<Polyline> mRoute;
 
@@ -757,17 +757,34 @@ public class MainFragment extends Fragment implements
                 Log.d(tripTag, "SAVING OTPBundle");
                 saveOTPBundle();
                 OTPBundle otpBundle = getFragmentListener().getOTPBundle();
-                Matcher matcher = Pattern.compile("\\d+").matcher(marker.getTitle());
-                if (matcher.find()) {
-                    String numberString = marker.getTitle().substring(0, matcher.end());
-                    //Step indexes shown to the user are in a scale starting by 1 but instructions steps internally start by 0
-                    int currentStepIndex = Integer.parseInt(numberString) - 1;
-                    otpBundle.setCurrentStepIndex(currentStepIndex);
-                    otpBundle.setFromInfoWindow(true);
-                    getFragmentListener().setOTPBundle(otpBundle);
-                    getFragmentListener().onSwitchedToDirectionFragment();
+                if (!mLinks.containsKey(marker)) {
+                    Matcher matcher = Pattern.compile("\\d+").matcher(marker.getTitle());
+                    if (matcher.find()) {
+                        String numberString = marker.getTitle().substring(0, matcher.end());
+                        //Step indexes shown to the user are in a scale starting by 1 but instructions steps internally start by 0
+                        int currentStepIndex = Integer.parseInt(numberString) - 1;
+                        otpBundle.setCurrentStepIndex(currentStepIndex);
+                        otpBundle.setFromInfoWindow(true);
+                        getFragmentListener().setOTPBundle(otpBundle);
+                        getFragmentListener().onSwitchedToDirectionFragment();
+                    }
                 }
+                else {
+                    String url = mLinks.get(marker);
 
+                    if (url != null) {
+
+                        if (!url.equals("")) {
+                            String[] domain = url.split(":");
+
+                            String wikipedia = "";
+
+                            wikipedia = "https://" + domain[0] + ".wikipedia.org/wiki/" + domain[1];
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikipedia));
+                            startActivity(browserIntent);
+                        }
+                    }
+                }
             }
         };
         mMap.setOnInfoWindowClickListener(onInfoWindowClickListener);
@@ -1548,6 +1565,22 @@ public class MainFragment extends Fragment implements
 
         request.setShowIntermediateStops(Boolean.TRUE);
 
+        request.setNumItineraries(5);
+
+        List<String> intermediatePlaces = new ArrayList<String>();
+
+        // TO-DO: sostituire intermediatePlaces con customTrip.getIntermediatePlaces();
+
+        try {
+            intermediatePlaces.add(URLEncoder.encode("44.50333,11.33474", OTPApp.URL_ENCODING));
+            intermediatePlaces.add(URLEncoder.encode("44.50214,11.34004", OTPApp.URL_ENCODING));
+            intermediatePlaces.add(URLEncoder.encode("44.50262,11.34642", OTPApp.URL_ENCODING));
+
+        request.setIntermediatePlaces(intermediatePlaces);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
         WeakReference<Activity> weakContext = new WeakReference<Activity>(
                 MainFragment.this.getActivity());
 
@@ -1562,6 +1595,8 @@ public class MainFragment extends Fragment implements
 
         mTripDate = null;
     }
+
+
 
     /**
      * Retrieves a map if the map fragment parameter is null.
@@ -2577,8 +2612,16 @@ public class MainFragment extends Fragment implements
                 entry.getKey().remove();
             }
         }
+
+        if (mLinks != null) {
+            for (Map.Entry<Marker, String> entry : mLinks.entrySet()) {
+                entry.getKey().remove();
+            }
+        }
+
         mRoute = new ArrayList<Polyline>();
         mModeMarkers = new HashMap<Marker, TripInfo>();
+        mLinks = new HashMap<Marker, String>();
         Marker firstTransitMarker = null;
 
         if (!itinerary.isEmpty() && !mMapFailed) {
@@ -2627,6 +2670,7 @@ public class MainFragment extends Fragment implements
                 }
             }
             mCustomInfoWindowAdapter.setMarkers(mModeMarkers);
+            mCustomInfoWindowAdapter.setLinks(mLinks);
             mMap.setInfoWindowAdapter(mCustomInfoWindowAdapter);
             if (animateCamera == 1){
                 if (firstTransitMarker != null){
@@ -2650,8 +2694,12 @@ public class MainFragment extends Fragment implements
         if (drawable != null) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable.getCurrent();
             Bitmap bitmap = bitmapDrawable.getBitmap();
+            final float ratio = 1.5f;
+            int width = (int) (bitmap.getWidth() * 1.5);
+            int height = (int) (bitmap.getHeight() * 1.5);
+            Bitmap marker = Bitmap.createScaledBitmap(bitmap, width, height, false);
             modeMarkerOption.icon(
-                    BitmapDescriptorFactory.fromBitmap(bitmap));
+                    BitmapDescriptorFactory.fromBitmap(marker));
         } else {
             Log.e(OTPApp.TAG, "Error obtaining drawable to add mode icons to the map");
         }
@@ -3898,7 +3946,7 @@ public class MainFragment extends Fragment implements
      * @param featureType   the type of the feature to indicate
      * @return the new marker created
      */
-    private Marker addMarker(LatLng latLng, FeatureType featureType, String title, String snippet) {
+    private Marker addMarker(LatLng latLng, FeatureType featureType, String title, String snippet, String url) {
 
         if (!mMapFailed) {
 
@@ -3924,7 +3972,11 @@ public class MainFragment extends Fragment implements
                     .snippet(snippet)
                     .draggable(false);
 
-            return mMap.addMarker(markerOptions);
+            Marker featureMarker = mMap.addMarker(markerOptions);
+
+            mLinks.put(featureMarker, url);
+
+            return featureMarker;
         }
 
         return null;
@@ -3994,7 +4046,7 @@ public class MainFragment extends Fragment implements
                 String[] baloon = getFeatureDescription(feature);
 
                 if (pedantic || !baloon[0].equals("")) {
-                    addMarker(latLng, FeatureType.HISTORIC, baloon[0], baloon[1]);
+                    addMarker(latLng, FeatureType.HISTORIC, baloon[0], baloon[1], baloon[2]);
                 }
             }
 
@@ -4014,7 +4066,7 @@ public class MainFragment extends Fragment implements
                 String[] baloon = getFeatureDescription(feature);
 
                 if (pedantic || !baloon[0].equals("")) {
-                    addMarker(latLng, FeatureType.GREEN, baloon[0], baloon[1]);
+                    addMarker(latLng, FeatureType.GREEN, baloon[0], baloon[1], baloon[2]);
                 }
             }
         }
@@ -4033,7 +4085,7 @@ public class MainFragment extends Fragment implements
                 String[] baloon = getFeatureDescription(feature);
 
                 if (pedantic || !baloon[0].equals("")) {
-                    addMarker(latLng, FeatureType.PANORAMIC, baloon[0], baloon[1]);
+                    addMarker(latLng, FeatureType.PANORAMIC, baloon[0], baloon[1], baloon[2]);
                 }
             }
         }
@@ -4041,18 +4093,20 @@ public class MainFragment extends Fragment implements
 
     private String[] getFeatureDescription(Element feature) {
 
-        String[] description = {"", ""};
+        String[] description = {"", "", ""};
 
         if (feature.tags.containsKey("name")) {
             description[0] = feature.tags.get("name");
         }
 
         if (feature.tags.containsKey("description"))
-            description[1] = feature.tags.get("description");
-        else if (feature.tags.containsKey("inscription"))
-            description[1] = feature.tags.get("inscription");
-        else
-            description[1] = feature.tags.values().toString();
+            description[1] += feature.tags.get("description") + "\n";
+        if (feature.tags.containsKey("inscription"))
+            description[1] +=  feature.tags.get("inscription") + "\n";
+        if (feature.tags.containsKey("wikipedia")) {
+            description[1] += R.string.map_markers__wikipedia + feature.tags.get("wikipedia");
+            description[2] = feature.tags.get("wikipedia");
+        }
 
         return description;
     }

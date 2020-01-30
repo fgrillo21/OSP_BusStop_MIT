@@ -37,6 +37,8 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
     private Context context;
 
+    private Map<Marker, String> links;
+
     public CustomInfoWindowAdapter(LayoutInflater layoutInflater, Context context){
         this.layoutInflater = layoutInflater;
         this.context = context;
@@ -52,8 +54,21 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
         View view  = layoutInflater.inflate(R.layout.custom_info_window, null);
         TextView title = (TextView) view.findViewById(R.id.customInfoWindowTitle);
         TextView snippet = (TextView)view.findViewById(R.id.customInfoWindowSnippet);
+        TextView url = (TextView)view.findViewById(R.id.customInfoFeatureLink);
 
         title.setText(marker.getTitle());
+
+
+        String link = links.get(marker);
+
+        String wikipedia = "";
+
+        if (link != null) {
+
+            wikipedia = link;
+        }
+
+        url.setText(wikipedia);
 
         TripInfo infoMarker = markers.get(marker);
         if ((infoMarker == null) || (infoMarker.getSnippet() == null)){
@@ -99,4 +114,6 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
     public void setMarkers(Map<Marker, TripInfo> markers) {
         this.markers = markers;
     }
+
+    public void setLinks(Map<Marker, String> links) {this.links = links;}
 }
