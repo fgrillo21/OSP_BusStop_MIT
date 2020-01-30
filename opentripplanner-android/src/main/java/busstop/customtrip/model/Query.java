@@ -71,14 +71,15 @@ public class Query {
     }
 
     public void addHistoricTag(String key, String value) {
-        if (historicTags.containsKey(key)){
+
+        if (historicTags.containsKey(key)) {
             historicTags.get(key).add(value);
-        }
-        else {
+        } else {
             Set<String> set = new HashSet<String>();
             set.add(value);
             historicTags.put(key, set);
         }
+
     }
 
     public void addGreenTag(String key, String value) {
@@ -109,7 +110,7 @@ public class Query {
 
         query += "(";
 
-        query += historicFeatuers();
+        query += historicFeatures();
 
         query += ") -> .monuments;";
 
@@ -128,13 +129,39 @@ public class Query {
         query += outCount;
     }
 
+    public void buildComplexQuery() {
+
+        query = settings + timeout + ";";
+
+        query += "(";
+
+        query += historicFeatures();
+
+        query += ") -> .monuments;";
+
+        query += "(";
+
+        query += greenFeatures();
+
+        query += ") -> .green;";
+
+        query += "(";
+
+        query += panoramicFeatures();
+
+        query += ") -> .panoramic;";
+
+        query += outCount;
+        query += " (.monuments;.green;.panoramic;); " + outFeatures;
+    }
+
     public void buildHistoricQuery() {
 
         query = settings + timeout + ";";
 
         query += "(";
 
-        query += historicFeatuers();
+        query += historicFeatures();
 
         query += ");";
 
@@ -169,68 +196,77 @@ public class Query {
 
     private String panoramicFeatures() {
 
-        String panoramicQuery = "";
-
-        for (String key : panoramicTags.keySet()) {
-            for (String value : panoramicTags.get(key)) {
-                if (value.length() > 0) {
-                    panoramicQuery += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    panoramicQuery += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    panoramicQuery += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                }
-                else {
-                    panoramicQuery += "node[\""     + key + "\"]" + filterAround + ";";
-                    panoramicQuery += "way[\""      + key + "\"]" + filterAround + ";";
-                    panoramicQuery += "relation[\"" + key + "\"]" + filterAround + ";";
-                }
-            }
-        }
-
-        return panoramicQuery;
+        return getFeaturesQuery(panoramicTags);
     }
 
     private String greenFeatures() {
 
-        String greenQuery = "";
-
-        for (String key : greenTags.keySet()) {
-            for (String value : greenTags.get(key)) {
-                if (value.length() > 0) {
-                    greenQuery += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    greenQuery += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    greenQuery += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                }
-                else {
-                    greenQuery += "node[\""     + key + "\"]" + filterAround + ";";
-                    greenQuery += "way[\""      + key + "\"]" + filterAround + ";";
-                    greenQuery += "relation[\"" + key + "\"]" + filterAround + ";";
-                }
-            }
-        }
-
-        return greenQuery;
+        return getFeaturesQuery(greenTags);
     }
 
-    private String historicFeatuers() {
+    private String historicFeatures() {
 
-        String historicQuery = "";
+        return getFeaturesQuery(historicTags);
+    }
 
-        for (String key : historicTags.keySet()) {
-            for (String value : historicTags.get(key)) {
-                if (value.length() > 0) {
-                    historicQuery += "node[\""     + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    historicQuery += "way[\""      + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                    historicQuery += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
-                }
-                else {
-                    historicQuery += "node[\""     + key + "\"]" + filterAround + ";";
-                    historicQuery += "way[\""      + key + "\"]" + filterAround + ";";
-                    historicQuery += "relation[\"" + key + "\"]" + filterAround + ";";
+    private String getFeaturesQuery(HashMap<String, Set<String>> tags) {
+
+        String queryString = "";
+
+        for (String key : tags.keySet()) {
+            for (String value : tags.get(key)) {
+
+                String[] keys = key.split(",");
+
+                if (keys.length == 1) {
+                    if (value.length() > 0) {
+                        queryString += "node[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                        queryString += "way[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                        queryString += "relation[\"" + key + "\" = \"" + value + "\"]" + filterAround + ";";
+                    } else {
+                        queryString += "node[\"" + key + "\"]" + filterAround + ";";
+                        queryString += "way[\"" + key + "\"]" + filterAround + ";";
+                        queryString += "relation[\"" + key + "\"]" + filterAround + ";";
+                    }
+                } else {
+                    String[] values = value.split(",");
+
+                    if (value.length() > 0) {
+                        queryString += "node";
+
+                        int i = 0;
+                        for (String k : keys) {
+                            queryString += "[\"" + k + "\" = \"" + values[i] + "\"]";
+                            i++;
+                        }
+
+                        queryString += filterAround + ";" + "way";
+
+                        i = 0;
+                        for (String k : keys) {
+                            queryString += "[\"" + k + "\" = \"" + values[i] + "\"]";
+                            i++;
+                        }
+
+                        queryString += filterAround + ";" + "relation";
+
+                        i = 0;
+                        for (String k : keys) {
+                            queryString += "[\"" + k + "\" = \"" + values[i] + "\"]";
+                            i++;
+                        }
+
+                        queryString += filterAround + ";";
+
+                    }
+                    else {
+                        throw new IllegalArgumentException("Bad tag array");
+                    }
                 }
             }
         }
 
-        return historicQuery;
+        return queryString;
     }
 
     public String toQuery() {
