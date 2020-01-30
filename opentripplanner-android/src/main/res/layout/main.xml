@@ -108,6 +108,18 @@
                 android:background="?attr/btnBackground">
         </ImageButton>
 
+        <ImageButton
+            android:id="@+id/btnShowFeatures"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_above="@+id/panelDisplayDirection"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="56dp"
+            android:background="?attr/btnBackground"
+            android:src="?attr/btnShowFeaturesPicture">
+
+        </ImageButton>
+
         <RelativeLayout
                 android:id="@id/panelDisplayDirection"
                 android:layout_width="match_parent"
@@ -147,7 +159,8 @@
                 android:layout_marginBottom="4dp"
                 android:layout_toStartOf="@id/separator"
                 android:layout_toLeftOf="@id/separator"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:spinnerMode="dialog">
 
             </Spinner>
 
