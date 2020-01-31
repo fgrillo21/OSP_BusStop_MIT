@@ -263,7 +263,8 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
         currentItinerary.addAll(currentItineraryList.get(i).getItinerary().legs);
 
         mainFragment.showRouteOnMap(currentItinerary, animateCamera);
-        mainFragment.showFeaturesOnMap(currentItineraryList.get(i), false);
+
+        mainFragment.setFeaturesOnMap(currentItineraryList.get(i), false);
     }
 
     @Override

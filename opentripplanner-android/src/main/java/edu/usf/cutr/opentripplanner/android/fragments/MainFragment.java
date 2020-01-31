@@ -329,7 +329,11 @@ public class MainFragment extends Fragment implements
 
     private List<EnrichedItinerary> itinerariesSelected = null;
 
+    ImageButton mBtnShowFeatures;
 
+    private boolean showFeatures = false;
+
+    private List<Marker> featureMarkers = new ArrayList<>();
 
     enum FeatureType {
         HISTORIC,
@@ -355,7 +359,16 @@ public class MainFragment extends Fragment implements
         }
     }
 
-    public void setCustomTripInfo(CustomTrip customTrip) {
+    public void setShowFeaturesOnMap(boolean show) {
+        showFeatures = show;
+    }
+
+    public boolean isShowFeaturesEnabled() {
+        return showFeatures;
+    }
+
+    public void setCustomTripInfo
+    (CustomTrip customTrip) {
         Log.d("TRQ CUSTOM TRIP", "{" + customTrip.getMonuments() + ", " + customTrip.getGreenAreas() + ", " + customTrip.getOpenSpaces() +"}");
         this.customTrip = customTrip;
     }
@@ -465,6 +478,8 @@ public class MainFragment extends Fragment implements
             mBtnDisplayDirection = (ImageButton) mainView.findViewById(R.id.btnDisplayDirection);
 
             mPanelDisplayDirection = mainView.findViewById(R.id.panelDisplayDirection);
+
+            mBtnShowFeatures = (ImageButton) mainView.findViewById(R.id.btnShowFeatures);
 
             mTbStartLocation.setImeOptions(EditorInfo.IME_ACTION_NEXT);
             mTbEndLocation.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -1238,10 +1253,24 @@ public class MainFragment extends Fragment implements
 
             }
         };
-        int currentItineraryIndex = mFragmentListener.getCurrentItineraryIndex();
+        final int currentItineraryIndex = mFragmentListener.getCurrentItineraryIndex();
 
         mItinerarySelectionSpinner.setSelection(currentItineraryIndex);
         mItinerarySelectionSpinner.setOnItemSelectedListener(itinerarySpinnerListener);
+
+        mBtnShowFeatures.setOnClickListener(new OnClickListener() {
+
+            public void onClick(View button) {
+                if (button.isSelected()){
+                    button.setSelected(false);
+                    toggleFeaturesOnMap(false);
+                } else {
+                    button.setSelected(true);
+                    toggleFeaturesOnMap(true);
+                }
+            }
+
+        });
     }
 
     /**
@@ -2103,7 +2132,6 @@ public class MainFragment extends Fragment implements
 
             bundle.putSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_OPTIMIZATION, previousOptimization);
 
-
             if (!mFragmentListener.getCurrentItineraryList().isEmpty()) {
                 Log.d("TRQ", "putSerializable()");
                 OTPBundle otpBundle = new OTPBundle();
@@ -2113,7 +2141,6 @@ public class MainFragment extends Fragment implements
                 otpBundle.setCurrentItineraryIndex(mFragmentListener.getCurrentItineraryIndex());
                 otpBundle.setCurrentItinerary(mFragmentListener.getCurrentItinerary());
                 bundle.putSerializable(OTPApp.BUNDLE_KEY_OTP_BUNDLE, otpBundle);
-                otpBundlee = (OTPBundle) bundle.getSerializable(OTPApp.BUNDLE_KEY_OTP_BUNDLE);
                 Log.d("TRQ", "Fine putSerializable()");
 
             }
@@ -3970,7 +3997,8 @@ public class MainFragment extends Fragment implements
                     .title(title)
                     .icon(BitmapDescriptorFactory.defaultMarker(color))
                     .snippet(snippet)
-                    .draggable(false);
+                    .draggable(false)
+                    .visible(false);
 
             Marker featureMarker = mMap.addMarker(markerOptions);
 
@@ -4020,13 +4048,22 @@ public class MainFragment extends Fragment implements
         return latLng;
     }
 
-    public void showFeaturesOnMap(EnrichedItinerary currentItinerary) {
-        showFeaturesOnMap(currentItinerary, true);
+    public void toggleFeaturesOnMap(boolean show) {
+        for (Marker marker : featureMarkers) {
+            marker.setVisible(show);
+        }
     }
 
-    public void showFeaturesOnMap(EnrichedItinerary currentItinerary, boolean pedantic) {
+    public void setFeaturesOnMap(EnrichedItinerary currentItinerary) {
+        setFeaturesOnMap(currentItinerary, true);
+    }
+
+
+    public void setFeaturesOnMap(EnrichedItinerary currentItinerary, boolean pedantic) {
 
         Log.d(tripTag, "Start showing trip " + currentItinerary.getName() + "'s features");
+
+        featureMarkers.clear();
 
         Element[] historicalFeatures  = currentItinerary.getHistoricalFeatures();
         Element[] greenFeatures       = currentItinerary.getGreenFeatures();
@@ -4046,7 +4083,7 @@ public class MainFragment extends Fragment implements
                 String[] baloon = getFeatureDescription(feature);
 
                 if (pedantic || !baloon[0].equals("")) {
-                    addMarker(latLng, FeatureType.HISTORIC, baloon[0], baloon[1], baloon[2]);
+                    featureMarkers.add(addMarker(latLng, FeatureType.HISTORIC, baloon[0], baloon[1], baloon[2]));
                 }
             }
 
@@ -4066,7 +4103,7 @@ public class MainFragment extends Fragment implements
                 String[] baloon = getFeatureDescription(feature);
 
                 if (pedantic || !baloon[0].equals("")) {
-                    addMarker(latLng, FeatureType.GREEN, baloon[0], baloon[1], baloon[2]);
+                    featureMarkers.add(addMarker(latLng, FeatureType.GREEN, baloon[0], baloon[1], baloon[2]));
                 }
             }
         }
@@ -4085,7 +4122,7 @@ public class MainFragment extends Fragment implements
                 String[] baloon = getFeatureDescription(feature);
 
                 if (pedantic || !baloon[0].equals("")) {
-                    addMarker(latLng, FeatureType.PANORAMIC, baloon[0], baloon[1], baloon[2]);
+                    featureMarkers.add(addMarker(latLng, FeatureType.PANORAMIC, baloon[0], baloon[1], baloon[2]));
                 }
             }
         }
@@ -4104,7 +4141,7 @@ public class MainFragment extends Fragment implements
         if (feature.tags.containsKey("inscription"))
             description[1] +=  feature.tags.get("inscription") + "\n";
         if (feature.tags.containsKey("wikipedia")) {
-            description[1] += R.string.map_markers__wikipedia + feature.tags.get("wikipedia");
+            description[1] += R.string.map_markers_wikipedia + feature.tags.get("wikipedia");
             description[2] = feature.tags.get("wikipedia");
         }
 
