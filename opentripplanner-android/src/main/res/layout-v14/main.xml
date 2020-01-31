@@ -104,7 +104,8 @@
             android:layout_above="@+id/btnMyLocation"
             android:layout_alignParentRight="true"
             android:background="?attr/btnBackground"
-            android:src="?attr/btnShowFeaturesPicture">
+            android:src="?attr/btnShowFeaturesPicture"
+            android:visibility="invisible">
 
         </ImageButton>
 

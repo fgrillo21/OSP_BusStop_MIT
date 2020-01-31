@@ -1887,8 +1887,8 @@ public class MainFragment extends Fragment implements
                     setMarkerPosition(true, latlng);
                     mStartMarkerPosition = latlng;
                 }
-                MainFragment.this.setLocationTb(latlng, true);
-                prefsEditor.putBoolean(OTPApp.PREFERENCE_KEY_ORIGIN_IS_MY_LOCATION, false);
+                            MainFragment.this.setLocationTb(latlng, true);
+                            prefsEditor.putBoolean(OTPApp.PREFERENCE_KEY_ORIGIN_IS_MY_LOCATION, false);
                 prefsEditor.commit();
                 if (mPrefs.getBoolean(OTPApp.PREFERENCE_KEY_USE_INTELLIGENT_MARKERS, true) && geocode) {
                     mIsStartLocationGeocodingCompleted = false;
@@ -4058,7 +4058,17 @@ public class MainFragment extends Fragment implements
         setFeaturesOnMap(currentItinerary, true);
     }
 
+    public boolean isShowButtonVisible() {
+        return mBtnShowFeatures.isShown();
+    }
 
+    public void showButtonVisible(boolean show) {
+
+        if (show)
+            mBtnShowFeatures.setVisibility(View.VISIBLE);
+        else
+            mBtnShowFeatures.setVisibility(View.INVISIBLE);
+    }
     public void setFeaturesOnMap(EnrichedItinerary currentItinerary, boolean pedantic) {
 
         Log.d(tripTag, "Start showing trip " + currentItinerary.getName() + "'s features");

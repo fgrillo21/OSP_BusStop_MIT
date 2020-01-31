@@ -265,6 +265,10 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
         mainFragment.showRouteOnMap(currentItinerary, animateCamera);
 
         mainFragment.setFeaturesOnMap(currentItineraryList.get(i), false);
+
+        if (!mainFragment.isShowButtonVisible()) {
+            mainFragment.showButtonVisible(true);
+        }
     }
 
     @Override
