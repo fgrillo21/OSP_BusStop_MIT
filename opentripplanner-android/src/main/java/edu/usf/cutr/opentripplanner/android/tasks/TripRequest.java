@@ -613,9 +613,9 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         final String selectionTag = "TRQ_Custom";
 
         List<EnrichedItinerary> toReturn = new ArrayList<>();
-        final int reqHistoricCount  = customTrip.getMonuments();
-        final int reqGreenCount     = customTrip.getGreenAreas();
-        final int reqPanoramicCount = customTrip.getOpenSpaces();
+        final int reqHistoricCount  = (int) customTrip.getMonuments();
+        final int reqGreenCount     = (int) customTrip.getGreenAreas();
+        final int reqPanoramicCount = (int) customTrip.getOpenSpaces();
 
         Log.d(selectionTag, customTrip.toString());
 
