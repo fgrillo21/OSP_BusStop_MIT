@@ -24,7 +24,8 @@
         android:ems="20"
         android:enabled="false"
         android:hint="@string/maxDurationInputHint"
-        android:digits="0123456789."
+        android:digits="0123456789"
+        android:imeOptions="actionDone"
         android:inputType="number"/>
 
     <CheckBox
@@ -40,7 +41,8 @@
         android:ems="20"
         android:enabled="false"
         android:hint="@string/maxStopsInputHint"
-        android:digits="0123456789."
+        android:digits="0123456789"
+        android:imeOptions="actionDone"
         android:inputType="number" />
 
     <LinearLayout
