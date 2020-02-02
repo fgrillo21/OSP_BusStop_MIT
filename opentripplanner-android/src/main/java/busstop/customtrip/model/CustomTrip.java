@@ -9,8 +9,9 @@ public class CustomTrip implements Serializable {
     private final float monuments;
     private final float greenAreas;
     private final float openSpaces;
+    private final boolean isMaxStopsOn;
     private final int maxStops;
-    private final boolean isLimitDurationOn;
+    private final boolean isMaxDurationOn;
     private final int maxDurationMinutes;
     private final List<Place> intermediatePlaces;
 
@@ -28,8 +29,9 @@ public class CustomTrip implements Serializable {
                 .withMonuments(customTrip.getMonuments())
                 .withGreenAreas(customTrip.getGreenAreas())
                 .withOpenSpaces(customTrip.getOpenSpaces())
+                .withIsMaxStopsOn(customTrip.isMaxStopsOn())
                 .withMaxStops(customTrip.getMaxStops())
-                .withIsLimitDurationOn(customTrip.isLimitDurationOn())
+                .withIsMaxDurationOn(customTrip.isMaxDurationOn())
                 .withMaxDurationMinutes(customTrip.getMaxDurationMinutes())
                 .withIntermediatePlaces(customTrip.getIntermediatePlaces());
     }
@@ -41,19 +43,21 @@ public class CustomTrip implements Serializable {
                 .withMonuments(0)
                 .withGreenAreas(0)
                 .withOpenSpaces(0)
+                .withIsMaxStopsOn(false)
                 .withMaxStops(2)
-                .withIsLimitDurationOn(false)
+                .withIsMaxDurationOn(false)
                 .withMaxDurationMinutes(70)
                 .withIntermediatePlaces(new ArrayList<Place>())
                 .build();
     }
 
-    private CustomTrip(float monuments, float greenAreas, float openSpaces, int maxStops, boolean isLimitDurationOn, int maxDurationMinutes, List<Place> intermediatePlaces) {
+    private CustomTrip(float monuments, float greenAreas, float openSpaces, boolean isMaxStopsOn, int maxStops, boolean isMaxDurationOn, int maxDurationMinutes, List<Place> intermediatePlaces) {
         this.monuments = monuments;
         this.greenAreas = greenAreas;
         this.openSpaces = openSpaces;
+        this.isMaxStopsOn = isMaxStopsOn;
         this.maxStops = maxStops;
-        this.isLimitDurationOn = isLimitDurationOn;
+        this.isMaxDurationOn = isMaxDurationOn;
         this.maxDurationMinutes = maxDurationMinutes;
         this.intermediatePlaces = intermediatePlaces;
     }
@@ -70,12 +74,16 @@ public class CustomTrip implements Serializable {
         return openSpaces;
     }
 
+    public boolean isMaxStopsOn() {
+        return isMaxStopsOn;
+    }
+
     public int getMaxStops() {
         return maxStops;
     }
 
-    public boolean isLimitDurationOn() {
-        return isLimitDurationOn;
+    public boolean isMaxDurationOn() {
+        return isMaxDurationOn;
     }
 
     public int getMaxDurationMinutes() {
@@ -90,8 +98,9 @@ public class CustomTrip implements Serializable {
         private float monuments;
         private float greenAreas;
         private float openSpaces;
+        private boolean isMaxStopsOn;
         private int maxStops;
-        private boolean isLimitDurationOn;
+        private boolean isMaxDurationOn;
         private int maxDurationMinutes;
         private List<Place> intermediatePlaces;
 
@@ -110,13 +119,18 @@ public class CustomTrip implements Serializable {
             return this;
         }
 
+        public CustomTripBuilder withIsMaxStopsOn(boolean isMaxStopsOn) {
+            this.isMaxStopsOn = isMaxStopsOn;
+            return this;
+        }
+
         public CustomTripBuilder withMaxStops(int maxStops) {
             this.maxStops = maxStops;
             return this;
         }
 
-        public CustomTripBuilder withIsLimitDurationOn(boolean isLimitDurationOn) {
-            this.isLimitDurationOn = isLimitDurationOn;
+        public CustomTripBuilder withIsMaxDurationOn(boolean isLimitDurationOn) {
+            this.isMaxDurationOn = isLimitDurationOn;
             return this;
         }
 
@@ -131,7 +145,7 @@ public class CustomTrip implements Serializable {
         }
 
         public CustomTrip build() {
-            return new CustomTrip(monuments, greenAreas, openSpaces, maxStops, isLimitDurationOn, maxDurationMinutes, intermediatePlaces);
+            return new CustomTrip(monuments, greenAreas, openSpaces, isMaxStopsOn, maxStops, isMaxDurationOn, maxDurationMinutes, intermediatePlaces);
         }
     }
 
@@ -141,6 +155,11 @@ public class CustomTrip implements Serializable {
                 "monuments=" + monuments +
                 ", greenAreas=" + greenAreas +
                 ", openSpaces=" + openSpaces +
+                ", isMaxStopsOn=" + isMaxStopsOn +
+                ", maxStops=" + maxStops +
+                ", isMaxDurationOn=" + isMaxDurationOn +
+                ", maxDurationMinutes=" + maxDurationMinutes +
+                ", intermediatePlaces=" + intermediatePlaces +
                 '}';
     }
 }

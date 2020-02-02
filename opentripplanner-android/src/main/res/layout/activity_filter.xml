@@ -1,19 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="busstop.customtrip.ui.FilterActivity">
+
+    <CheckBox
+        android:id="@+id/maxDurationCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/maxDurationCheckboxText" />
+
+    <EditText
+        android:id="@+id/maxDurationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="20"
+        android:enabled="false"
+        android:hint="@string/maxDurationInputHint"
+        android:digits="0123456789."
+        android:inputType="number"/>
+
+    <CheckBox
+        android:id="@+id/maxStopsCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/maxStopsCheckboxText" />
+
+    <EditText
+        android:id="@+id/maxStopsInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="20"
+        android:enabled="false"
+        android:hint="@string/maxStopsInputHint"
+        android:digits="0123456789."
+        android:inputType="number" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical">
         <Button
             android:id="@+id/buttom_apply"
             style="?android:attr/buttonStyleSmall"
@@ -23,5 +58,4 @@
             android:onClick="apply"
             android:text="@string/apply" />
     </LinearLayout>
-
 </LinearLayout>

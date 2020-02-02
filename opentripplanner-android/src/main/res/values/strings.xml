@@ -592,4 +592,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."</strin
     <string name="description_openspaces">Un percorso che comprende la vista di tutti gli spazi aperti di Bologna.</string>
     <string name="description_choose_percentage"> Un percorso personalizzato, generato selezionando manualmente la percentuale preferita per ogni categoria.</string>
     <string name="filter_button">Filter button</string>
+    <string name="maxDurationCheckboxText"> Modifica durata minima del viaggio</string>
+    <string name="maxDurationInputHint">Es. 30 (Default: 70 min)</string>
+    <string name="maxStopsCheckboxText"> Modifica numero massimo di cambi</string>
+    <string name="maxStopsInputHint">Es. 0 (Default: 2)</string>
 </resources>
