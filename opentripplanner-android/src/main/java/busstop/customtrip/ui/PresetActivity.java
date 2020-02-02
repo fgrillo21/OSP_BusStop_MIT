@@ -25,6 +25,7 @@ public class PresetActivity extends AppCompatActivity {
     ViewPager viewPager;
     LinearLayout layout_dot;
     List<Integer> imageId = Arrays.asList(R.drawable.monuments, R.drawable.greenareas, R.drawable.openspaces, R.drawable.mixed_elements);
+    CustomTrip customTrip = CustomTrip.getCustomTripDefaultValues();
 
     private int dotscount;
     private ImageView[] dots;
@@ -119,11 +120,10 @@ public class PresetActivity extends AppCompatActivity {
     }
 
     public void choose(View view) {
-        CustomTrip customTrip;
         switch (pageSelected) {
             default:
             case 0: {
-                customTrip = CustomTrip.newActivityGroup()
+                customTrip = CustomTrip.newCustomTrip(customTrip)
                         .withMonuments(100)
                         .withGreenAreas(0)
                         .withOpenSpaces(0)
@@ -131,7 +131,7 @@ public class PresetActivity extends AppCompatActivity {
                 break;
             }
             case 1: {
-                customTrip = CustomTrip.newActivityGroup()
+                customTrip =  CustomTrip.newCustomTrip(customTrip)
                         .withMonuments(0)
                         .withGreenAreas(100)
                         .withOpenSpaces(0)
@@ -139,7 +139,7 @@ public class PresetActivity extends AppCompatActivity {
                 break;
             }
             case 2: {
-                customTrip = CustomTrip.newActivityGroup()
+                customTrip = CustomTrip.newCustomTrip(customTrip)
                         .withMonuments(0)
                         .withGreenAreas(0)
                         .withOpenSpaces(100)
@@ -147,7 +147,7 @@ public class PresetActivity extends AppCompatActivity {
                 break;
             }
             case 3: {
-                customTrip = CustomTrip.newActivityGroup()
+                customTrip = CustomTrip.newCustomTrip(customTrip)
                         .withMonuments(34)
                         .withGreenAreas(33)
                         .withOpenSpaces(33)

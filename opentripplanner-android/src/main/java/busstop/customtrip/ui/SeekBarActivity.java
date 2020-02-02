@@ -305,7 +305,7 @@ public class SeekBarActivity extends AppCompatActivity {
     }
 
     public void end_button(View view) {
-        customTrip = CustomTrip.newActivityGroup()
+        customTrip = CustomTrip.newCustomTrip(customTrip)
             .withMonuments(graphicProgress[0])
             .withGreenAreas(graphicProgress[1])
             .withOpenSpaces(graphicProgress[2])
