@@ -25,7 +25,8 @@ public class PresetActivity extends AppCompatActivity {
     ViewPager viewPager;
     LinearLayout layout_dot;
     List<Integer> imageId = Arrays.asList(R.drawable.monuments, R.drawable.greenareas, R.drawable.openspaces, R.drawable.mixed_elements);
-    CustomTrip customTrip = CustomTrip.getCustomTripDefaultValues();
+    CustomTrip customTrip;
+    String fromActivity;
 
     private int dotscount;
     private ImageView[] dots;
@@ -42,6 +43,17 @@ public class PresetActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_preset);
+
+        /* Get here the info about custom trip*/
+        Intent intent = getIntent();
+        fromActivity = (String) intent.getSerializableExtra("fromActivity");
+        if(fromActivity == null) {
+            /* solo la prima volta che si arriva in questa activity il custom trip viene inizializzato con i valori di default */
+            customTrip = CustomTrip.getCustomTripDefaultValues();
+        } else {
+            /* per adesso qui ci si arriva solo dopo aver applicato i filter (da FilterActivity) */
+            customTrip = (CustomTrip) intent.getSerializableExtra("customTrip");
+        }
 
         layout_dot = findViewById(R.id.layout_dot);
         viewPager = findViewById(R.id.viewpager);
@@ -163,5 +175,12 @@ public class PresetActivity extends AppCompatActivity {
             intent.putExtra("customTrip", customTrip);
             startActivity(intent);
         }
+    }
+
+    public void filter(View view) {
+        Intent intent = new Intent(PresetActivity.this, FilterActivity.class);
+        intent.putExtra("customTrip", customTrip);
+        intent.putExtra("fromActivity", "Preset");
+        startActivity(intent);
     }
 }

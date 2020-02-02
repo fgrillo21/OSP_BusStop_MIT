@@ -35,31 +35,32 @@
             android:name="busstop.customtrip.ui.RouteActivity"
             android:label="@string/busStop"
             android:theme="@style/MyThemeDark">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
-                    <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="busstop.customtrip.ui.CustomActivity"
             android:label="@string/custom"
-            android:theme="@style/MyThemeDark">
-        </activity>
+            android:theme="@style/MyThemeDark"></activity>
         <activity
             android:name="busstop.customtrip.ui.PresetActivity"
             android:label="@string/preset"
-            android:theme="@style/MyThemeDark">
-        </activity>
+            android:theme="@style/MyThemeDark"></activity>
         <activity
             android:name=".MyActivity"
             android:label="@string/map"
-            android:theme="@style/MyThemeLight">
-        </activity>
+            android:theme="@style/MyThemeLight"></activity>
         <activity
             android:name="busstop.customtrip.ui.SeekBarActivity"
             android:label="@string/personalizza"
-            android:theme="@style/MyThemeLight">
-        </activity>
+            android:theme="@style/MyThemeLight"></activity>
+        <activity
+            android:name="busstop.customtrip.ui.FilterActivity"
+            android:label="@string/advancedFilters"
+            android:theme="@style/MyThemeDark"></activity>
         <activity
             android:name=".SettingsActivity"
             android:theme="@style/MyThemeDark"
