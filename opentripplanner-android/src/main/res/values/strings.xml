@@ -596,4 +596,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."</strin
     <string name="maxDurationInputHint">Es. 30 (Default: 70 min)</string>
     <string name="maxStopsCheckboxText"> Modifica numero massimo di cambi</string>
     <string name="maxStopsInputHint">Es. 0 (Default: 2)</string>
+    <string name="spaceTitleTextView">Digita i percorsi intermedi</string>
+    <string name="spaceTitleHint">Es. Piazza maggiore</string>
+    <string name="clearButtonText">Pulisci selezione</string>
 </resources>

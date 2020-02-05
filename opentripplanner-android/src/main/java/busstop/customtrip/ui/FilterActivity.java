@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -49,7 +50,7 @@ public class FilterActivity extends AppCompatActivity {
     CheckBox maxDurationCheckbox;
     CheckBox maxStopsCheckbox;
     ImageButton mBtnDeletePlace;
-    ImageButton mBtnEmptyList;
+    Button mBtnEmptyList;
     EditText maxDurationInput;
     EditText maxStopsInput;
     AutoCompleteTextView textViewIntermediatePlaces;
