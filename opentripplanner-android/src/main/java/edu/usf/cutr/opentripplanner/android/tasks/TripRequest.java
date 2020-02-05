@@ -59,6 +59,7 @@ import busstop.customtrip.util.Overpass;
 import busstop.customtrip.util.OverpassParser;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
+import edu.usf.cutr.opentripplanner.android.fragments.MainFragment;
 import edu.usf.cutr.opentripplanner.android.listeners.TripRequestCompleteListener;
 import edu.usf.cutr.opentripplanner.android.model.Server;
 import edu.usf.cutr.opentripplanner.android.util.ConversionUtils;
@@ -143,6 +144,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
         countFeaturesQuery.addPanoramicTag("amenity", "marketplace");
         countFeaturesQuery.addPanoramicTag("highway", "marketplace");
+        countFeaturesQuery.addPanoramicTag("highway,area", "pedestrian,yes");
     }
 
     protected void onPreExecute() {
@@ -236,8 +238,6 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                 i += 1;
             }
 
-//            Query query = new Query();
-
             Log.d(osmTag, "** Start features control with OSM **");
 
             EnrichedItinerary enrichedItinerary;
@@ -245,8 +245,6 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             int j = 0;
 
             for (List<LatLng> itinerary : itinerariesDecoded) {
-
-//                Log.d(osmTag, itinerary.);
 
                 countFeaturesQuery.setAroundFilter(30, itinerary);
 
@@ -296,6 +294,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                             .withGreenFeatures(green)
                             .withPanoramicFeatures(panoramic)
                             .withName(busName.get(j))
+                            .withTransfersCount(MainFragment.getItineraryTransfersCount(itineraries.get(j)))
                             .build();
 
                     itinerariesToSelect.add(enrichedItinerary);
@@ -308,7 +307,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                 j += 1;
             }
 
-            // Now we have three itineraries among we ahve to choose the best one based on the features requested
+            // Now we have three itineraries among we have to choose the best one based on the features requested
             itinerariesSelected = selectTripByFeatures(itinerariesToSelect, customTrip);
         }
 
@@ -392,8 +391,6 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
         if (response != null && response.getPlan() != null
                 && response.getPlan().getItinerary().get(0) != null) {
-
-//            List<Itinerary> itineraries = new ArrayList<>();
 
             if (itinerariesSelected == null || itinerariesSelected.size() == 0) {
 
@@ -559,6 +556,19 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             }
         }
 
+        List<String> intermediatePlaces = requestParams.getIntermediatePlaces();
+
+        if (intermediatePlaces.size() > 0) {
+
+            Iterator iPlaces = intermediatePlaces.iterator();
+
+            while (iPlaces.hasNext()) {
+                params += "&intermediatePlaces=" + iPlaces.next();
+            }
+
+            params += "&intermediatePlacesOrdered=false";
+        }
+
         String u = baseURL + prefix + OTPApp.PLAN_LOCATION + params;
 
         Log.d(OTPApp.TAG, "URL: " + u);
@@ -608,14 +618,16 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         }
     }
 
+
+
     private List<EnrichedItinerary> selectTripByFeatures(List<EnrichedItinerary> enrichedItineraries, CustomTrip customTrip) {
 
         final String selectionTag = "TRQ_Custom";
 
         List<EnrichedItinerary> toReturn = new ArrayList<>();
-        final int reqHistoricCount  = (int) customTrip.getMonuments();
-        final int reqGreenCount     = (int) customTrip.getGreenAreas();
-        final int reqPanoramicCount = (int) customTrip.getOpenSpaces();
+        final float reqHistoricPercentage  = customTrip.getMonuments();
+        final float reqGreenPercentage     = customTrip.getGreenAreas();
+        final float reqPanoramicPercentage = customTrip.getOpenSpaces();
 
         Log.d(selectionTag, customTrip.toString());
 
@@ -642,7 +654,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             }
         }
 
-        if (reqHistoricCount == CustomTrip.MAX && reqGreenCount == 0 && reqPanoramicCount == 0) {
+        if (reqHistoricPercentage == CustomTrip.MAX && reqGreenPercentage == 0 && reqPanoramicPercentage == 0) {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
@@ -651,7 +663,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                 }
             }
         }
-        else if (reqGreenCount == CustomTrip.MAX && reqHistoricCount == 0 && reqPanoramicCount == 0) {
+        else if (reqGreenPercentage == CustomTrip.MAX && reqHistoricPercentage == 0 && reqPanoramicPercentage == 0) {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
@@ -660,7 +672,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                 }
             }
         }
-        else if (reqPanoramicCount == CustomTrip.MAX && reqHistoricCount == 0 && reqGreenCount == 0) {
+        else if (reqPanoramicPercentage == CustomTrip.MAX && reqHistoricPercentage == 0 && reqGreenPercentage == 0) {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
@@ -672,20 +684,31 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         else {
 
             final double threshold = 0.08;
-            double[]     scarto    = new double[3];
-            double[]     eNorms    = new double[3];
+            final int numItineraries = enrichedItineraries.size();
+            double[]     scarto    = new double[numItineraries];
+            double[]     eNorms    = new double[numItineraries];
             double       min       = 32000.0;
 
             int i = 0;
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
-                final int itHistoricCount   = itinerary.getHistoricAggregatedCount();
-                final int itGreenCount      = itinerary.getGreenAggregatedCount();
-                final int itPanoramicCount  = itinerary.getPanoramicAggregatedCount();
+                final int   itHistoricCount       = itinerary.getHistoricAggregatedCount();
+                final int   itGreenCount          = itinerary.getGreenAggregatedCount();
+                final int   itPanoramicCount      = itinerary.getPanoramicAggregatedCount();
+                final int   itTotalFeatures       = itHistoricCount + itGreenCount + itPanoramicCount;
+                final float itHistoricPercentage  = (float) itHistoricCount  * 100 / itTotalFeatures;
+                final float itGreenPercentage     = (float) itGreenCount     * 100 / itTotalFeatures;
+                final float itPanoramicPercentage = (float) itPanoramicCount * 100 / itTotalFeatures;
 
-                scarto[0] = Math.abs(reqHistoricCount  - itHistoricCount);
-                scarto[1] = Math.abs(reqGreenCount     - itGreenCount);
-                scarto[2] = Math.abs(reqPanoramicCount - itPanoramicCount);
+                scarto[0] = Math.abs(reqHistoricPercentage  - itHistoricPercentage);
+                scarto[1] = Math.abs(reqGreenPercentage     - itGreenPercentage);
+                scarto[2] = Math.abs(reqPanoramicPercentage - itPanoramicPercentage);
+
+                Log.d(selectionTag, itinerary.getName());
+                Log.d(selectionTag, "Historic : " + itHistoricCount  + " " + itHistoricPercentage  + "%");
+                Log.d(selectionTag, "Green    : " + itGreenCount     + " " + itGreenPercentage     + "%");
+                Log.d(selectionTag, "Panoramic: " + itPanoramicCount + " " + itPanoramicPercentage + "%");
+                Log.d(selectionTag, "{" + scarto[0] + ", " + scarto[1] + ", " + scarto[2] + "}");
 
                 eNorms[i] = euclideanNorm(scarto);
 
@@ -693,12 +716,12 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     min = eNorms[i];
                 }
 
-                Log.d(selectionTag, "Norm[" + i + "] = " + eNorms[i]);
+                Log.d(selectionTag, "Norm[" + itinerary.getName() + "] = " + eNorms[i]);
 
                 i += 1;
             }
 
-            for (i = 0; i < 3; ++i) {
+            for (i = 0; i < numItineraries; ++i) {
 
                 if (Math.abs(eNorms[i] - min) <= threshold) {
                     toReturn.add(enrichedItineraries.get(i));
@@ -712,5 +735,10 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
     private double euclideanNorm(double[] vector) {
         return Math.sqrt(Math.pow(vector[0],2) + Math.pow(vector[1], 2) + Math.pow(vector[2], 2));
+    }
+
+    private void sortItinerariesList(List<EnrichedItinerary> list, int maxFounded) {
+
+
     }
 }

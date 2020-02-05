@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -45,12 +46,53 @@
         android:imeOptions="actionDone"
         android:inputType="number" />
 
-    <LinearLayout
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="0dip"
+        android:layout_height="wrap_content" />
+
+    <AutoCompleteTextView
+        android:id="@+id/textViewIntermediatePlaces"
+        android:layout_width="383dp"
+        android:layout_height="wrap_content"
+        android:hint="Tappe intermedie..."
+        android:imeOptions="actionSearch"
+        android:inputType="textAutoComplete|textAutoCorrect" />
+
+    <ListView
+        android:id="@+id/listPlacesChosen"
+        android:layout_width="wrap_content"
+        android:layout_height="159dp"
+        android:choiceMode="singleChoice"
+        android:listSelector="#666666"
+        android:scrollbarAlwaysDrawHorizontalTrack="false"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
+        android:minHeight="22dp"
+        />
+
+    <LinearLayout
+        android:layout_width="379dp"
+        android:layout_height="426dp"
         android:layout_weight="1"
         android:gravity="center|bottom"
         android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/btnTrashPlaces"
+            android:layout_width="42dp"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:onClick="emptyPlaces"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
+
+        <ImageButton
+            android:id="@+id/btnDeletePlace"
+            android:layout_width="46dp"
+            android:layout_height="36dp"
+            android:clickable="false"
+            android:onClick="deletePlace"
+            app:srcCompat="@android:drawable/ic_delete" />
+
         <Button
             android:id="@+id/buttom_apply"
             style="?android:attr/buttonStyleSmall"
@@ -59,5 +101,7 @@
             android:layout_gravity="center_horizontal|center"
             android:onClick="apply"
             android:text="@string/apply" />
+
     </LinearLayout>
+
 </LinearLayout>

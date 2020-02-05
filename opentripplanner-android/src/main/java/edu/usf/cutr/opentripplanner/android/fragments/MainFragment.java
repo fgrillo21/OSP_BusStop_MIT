@@ -50,6 +50,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -135,6 +137,7 @@ import java.util.regex.Pattern;
 
 import busstop.customtrip.model.CustomTrip;
 import busstop.customtrip.model.EnrichedItinerary;
+import busstop.customtrip.model.Place;
 import edu.usf.cutr.opentripplanner.android.MyActivity;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
@@ -1258,6 +1261,7 @@ public class MainFragment extends Fragment implements
         mItinerarySelectionSpinner.setSelection(currentItineraryIndex);
         mItinerarySelectionSpinner.setOnItemSelectedListener(itinerarySpinnerListener);
 
+
         mBtnShowFeatures.setOnClickListener(new OnClickListener() {
 
             public void onClick(View button) {
@@ -1596,16 +1600,17 @@ public class MainFragment extends Fragment implements
 
         request.setNumItineraries(5);
 
-        List<String> intermediatePlaces = new ArrayList<String>();
-
-        // TO-DO: sostituire intermediatePlaces con customTrip.getIntermediatePlaces();
+        List<Place>  intermediatePlaces        = new ArrayList<>(customTrip.getIntermediatePlaces());
+        List<String> intermediatePlacesEncoded = new ArrayList<>();
 
         try {
-            intermediatePlaces.add(URLEncoder.encode("44.50333,11.33474", OTPApp.URL_ENCODING));
-            intermediatePlaces.add(URLEncoder.encode("44.50214,11.34004", OTPApp.URL_ENCODING));
-            intermediatePlaces.add(URLEncoder.encode("44.50262,11.34642", OTPApp.URL_ENCODING));
 
-        request.setIntermediatePlaces(intermediatePlaces);
+            for (Place place : intermediatePlaces) {
+                intermediatePlacesEncoded.add(URLEncoder.encode(place.getLat() + "," + place.getLng(), OTPApp.URL_ENCODING));
+            }
+
+            request.setIntermediatePlaces(intermediatePlacesEncoded);
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -3021,6 +3026,9 @@ public class MainFragment extends Fragment implements
                     itinerarySummaryList[i] += ". " + ConversionUtils
                             .getRouteShortNameSafe(leg.routeShortName,leg.routeLongName,
                                     mApplicationContext);
+
+                    itinerarySummaryList[i] += "(" + composeItineraryLongName(it) + ")";
+
                     itinerarySummaryList[i] += " - " + ConversionUtils
                             .getFormattedDurationTextNoSeconds(tripDuration, false,
                                     mApplicationContext);
@@ -3041,13 +3049,79 @@ public class MainFragment extends Fragment implements
                                         mApplicationContext);
             }
 
+            itinerarySummaryList[i] += " - Cambi: " + getItineraryTransfersCount(it);
+
         }
 
         ArrayAdapter<String> itineraryAdapter = new ArrayAdapter<String>(this.getActivity(),
-                android.R.layout.simple_spinner_item, itinerarySummaryList);
+                android.R.layout.simple_spinner_item, itinerarySummaryList)
+//                {
+//                    @Override
+//                    public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+//        //                View v = super.getDropDownView(position, convertView, parent);
+//                        if (convertView == null) {
+//                            convertView = new TextView(getContext());
+//                        }
+//
+//                        TextView item = (TextView) convertView;
+////                        item.setText(mItinerarySelectionSpinner.)
+//                        final TextView finalItem = item;
+//                        item.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                finalItem.setSingleLine(false);
+//                            }
+//                        });
+//
+//                        return item;
+//                    }
+//                }
+                ;
 
         itineraryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mItinerarySelectionSpinner.setAdapter(itineraryAdapter);
+    }
+
+    public static int getItineraryTransfersCount(Itinerary itinerary) {
+
+        int changes = 0;
+
+        for (Leg leg : itinerary.legs) {
+
+            TraverseMode traverseMode = TraverseMode.valueOf(leg.mode);
+
+            if (traverseMode.isTransit()) {
+                changes++;
+            }
+        }
+
+        return changes;
+    }
+
+    public String composeItineraryLongName(Itinerary itinerary) {
+
+        String itineraryLongName = "";
+        boolean first = true;
+
+        for (Leg leg : itinerary.legs) {
+
+            TraverseMode traverseMode = TraverseMode.valueOf(leg.mode);
+
+            if (traverseMode.isTransit()) {
+
+                if (!first) {
+                    itineraryLongName += "-";
+                }
+
+                itineraryLongName += ConversionUtils
+                        .getRouteShortNameSafe(leg.routeShortName,leg.routeLongName, mApplicationContext)
+                        .split(" ")[1];
+
+                first = false;
+            }
+        }
+
+        return itineraryLongName;
     }
 
     @Override

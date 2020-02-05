@@ -40,12 +40,13 @@ public class EnrichedItinerary  implements Serializable {
     private Element[]     historicalFeatures;
     private Element[]     greenFeatures;
     private Element[]     panoramicFeatures;
+    private int           transfersCount;
 
     public static EnrichedItineraryBuilder newEnrichedItinerary() {
         return new EnrichedItineraryBuilder();
     }
 
-    private EnrichedItinerary(Itinerary itinerary, List<LatLng>  itineraryDecoded, FeaturesCount historicCount, FeaturesCount greenCount, FeaturesCount panoramicCount, Element[] historicalFeatures, Element[] greenFeatures, Element[] panoramicFeatures, String name) {
+    private EnrichedItinerary(Itinerary itinerary, List<LatLng>  itineraryDecoded, FeaturesCount historicCount, FeaturesCount greenCount, FeaturesCount panoramicCount, Element[] historicalFeatures, Element[] greenFeatures, Element[] panoramicFeatures, String name, int transfersCount) {
         this.itinerary          = itinerary;
         this.itineraryDecoded   = itineraryDecoded;
         this.historicCount      = historicCount;
@@ -55,6 +56,7 @@ public class EnrichedItinerary  implements Serializable {
         this.greenFeatures      = greenFeatures;
         this.panoramicFeatures  = panoramicFeatures;
         this.name               = name;
+        this.transfersCount     = transfersCount;
     }
 
     private void serializeElement(final ObjectOutputStream out, Element feature) throws IOException {
@@ -599,7 +601,8 @@ public class EnrichedItinerary  implements Serializable {
         private Element[]     historicalFeatures;
         private Element[]     greenFeatures;
         private Element[]     panoramicFeatures;
-        private String name;
+        private String        name;
+        private int           transfersCount;
 
         public EnrichedItineraryBuilder withItinerary(Itinerary itinerary) {
             this.itinerary = itinerary;
@@ -642,11 +645,16 @@ public class EnrichedItinerary  implements Serializable {
         }
 
         public EnrichedItinerary build() {
-            return new EnrichedItinerary(itinerary, itineraryDecoded, historicCount, greenCount, panoramicCount, historicalFeatures, greenFeatures, panoramicFeatures, name);
+            return new EnrichedItinerary(itinerary, itineraryDecoded, historicCount, greenCount, panoramicCount, historicalFeatures, greenFeatures, panoramicFeatures, name, transfersCount);
         }
 
         public EnrichedItineraryBuilder withName(String name) {
             this.name = name;
+            return this;
+        }
+
+        public EnrichedItineraryBuilder withTransfersCount(int transfersCount) {
+            this.transfersCount = transfersCount;
             return this;
         }
     }
@@ -663,6 +671,7 @@ public class EnrichedItinerary  implements Serializable {
                 ", greenElements=" + Arrays.toString(greenFeatures) +
                 ", panoramicElements=" + Arrays.toString(panoramicFeatures) +
                 ", name='" + name + '\'' +
+                ", transfers=" + transfersCount +
                 '}';
     }
 }

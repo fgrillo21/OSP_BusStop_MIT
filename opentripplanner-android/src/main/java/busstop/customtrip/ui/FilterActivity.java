@@ -1,26 +1,61 @@
 package busstop.customtrip.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import busstop.customtrip.model.CustomTrip;
+import busstop.customtrip.model.Place;
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class FilterActivity extends AppCompatActivity {
+
+    private static final int MAX_TRIP_DURATION = 70;
+
     CustomTrip customTrip;
     String fromActivity;
+    List<Place> intermediatePlaces = new ArrayList<>();
 
     CheckBox maxDurationCheckbox;
     CheckBox maxStopsCheckbox;
+    ImageButton mBtnDeletePlace;
+    ImageButton mBtnEmptyList;
     EditText maxDurationInput;
     EditText maxStopsInput;
+    AutoCompleteTextView textViewIntermediatePlaces;
+    ListView listViewPlaces;
+    List<Place> mPlacesToCustomTrip = new ArrayList<>();
+    ArrayAdapter<Place> iPlacesArrayAdapter, selectedArrayAdapter;
+    int mPlaceSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +67,22 @@ public class FilterActivity extends AppCompatActivity {
         customTrip = (CustomTrip) intent.getSerializableExtra("customTrip");
         fromActivity = (String) intent.getSerializableExtra("fromActivity");
 
-        maxDurationCheckbox = findViewById(R.id.maxDurationCheckbox);
-        maxStopsCheckbox = findViewById(R.id.maxStopsCheckbox);
-        maxDurationInput = findViewById(R.id.maxDurationInput);
-        maxStopsInput = findViewById(R.id.maxStopsInput);
+        intermediatePlaces = loadIntermediatePlaces(getApplicationContext(), getResources().openRawResource(R.raw.places));
 
+        iPlacesArrayAdapter = new ArrayAdapter<Place>(this, android.R.layout.simple_dropdown_item_1line, intermediatePlaces);
+        selectedArrayAdapter = new ArrayAdapter<Place>(this, android.R.layout.simple_dropdown_item_1line, mPlacesToCustomTrip);
+
+        maxDurationCheckbox = findViewById(R.id.maxDurationCheckbox);
+        maxStopsCheckbox   = findViewById(R.id.maxStopsCheckbox);
+        maxDurationInput   = findViewById(R.id.maxDurationInput);
+        maxStopsInput      = findViewById(R.id.maxStopsInput);
+        textViewIntermediatePlaces = findViewById(R.id.textViewIntermediatePlaces);
+        listViewPlaces     = findViewById(R.id.listPlacesChosen);
+        mBtnDeletePlace    = findViewById(R.id.btnDeletePlace);
+        mBtnEmptyList      = findViewById(R.id.btnTrashPlaces);
+
+        textViewIntermediatePlaces.setAdapter(iPlacesArrayAdapter);
+        listViewPlaces.setAdapter(selectedArrayAdapter);
         /* I setting seguenti servono a mantenere le informazioni selezionate dall'utente */
         /* inizializzazione dei valori per la durata massima del viaggio */
         initMaxDurationSection(customTrip);
@@ -55,7 +101,7 @@ public class FilterActivity extends AppCompatActivity {
                        /* se l'utente deseleziona l'opzione viene risettato il valore di default */
                        maxDurationInput.setHint(R.string.maxDurationInputHint);
                        customTrip = CustomTrip.newCustomTrip(customTrip)
-                               .withMaxDurationMinutes(70)
+                               .withMaxDurationMinutes(MAX_TRIP_DURATION)
                                .build();
                    }
                    customTrip = CustomTrip.newCustomTrip(customTrip)
@@ -103,7 +149,6 @@ public class FilterActivity extends AppCompatActivity {
            }
         );
 
-
         maxStopsInput.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -121,9 +166,66 @@ public class FilterActivity extends AppCompatActivity {
                         .build();
             }
         });
+
+        listViewPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    mPlaceSelected = position;
+                    mBtnDeletePlace.setEnabled(true);
+
+            }
+        });
+
+        // Aggiungo una tappa solo se non è già presente nell'elenco delle tappe
+        textViewIntermediatePlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Place place = (Place) textViewIntermediatePlaces.getAdapter().getItem(position);
+
+                if (!mPlacesToCustomTrip.contains(place)) {
+                    selectedArrayAdapter.add(place);
+                }
+
+                textViewIntermediatePlaces.setText("");
+
+                // Tolgo la tastiera
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(textViewIntermediatePlaces.getWindowToken(), 0);
+            }
+        });
+
+        // Tolgo la tastiera dopo aver aggiunto una tappa
+        textViewIntermediatePlaces.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    // hide virtual keyboard
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(textViewIntermediatePlaces.getWindowToken(), 0);
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mBtnDeletePlace.setEnabled(false);
     }
 
     public void apply(View view) {
+
+        customTrip = CustomTrip.newCustomTrip(customTrip)
+                .withIntermediatePlaces(mPlacesToCustomTrip)
+                .build();
+
         if(!fromActivity.equals("Slider")) {
             Intent intent = new Intent(FilterActivity.this, PresetActivity.class);
             intent.putExtra("customTrip", customTrip);
@@ -156,5 +258,132 @@ public class FilterActivity extends AppCompatActivity {
             maxStopsInput.setEnabled(false);
             maxStopsInput.setHint(R.string.maxStopsInputHint);
         }
+    }
+
+    public void deletePlace(View view) {
+
+        if (mPlaceSelected != -1) {
+
+            Place selected = (Place) listViewPlaces.getItemAtPosition(mPlaceSelected);
+
+            selectedArrayAdapter.remove(selected);
+            selectedArrayAdapter.notifyDataSetChanged();
+
+            mPlaceSelected = -1;
+        }
+    }
+
+    public void emptyPlaces(View view) {
+        if (iPlacesArrayAdapter.getCount() > 0) {
+            selectedArrayAdapter.clear();
+        }
+    }
+
+    private List<Place> loadIntermediatePlaces(Context context, InputStream resource) {
+
+        List<Place> result = new ArrayList<>();
+        String name = "";
+        double latitude, longitude;
+
+        String jsonStr = readFromFile(context, resource);
+        JSONObject jsonObject=null;
+        try {
+            jsonObject = new JSONObject((jsonStr));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray jArray = null;
+        JSONArray jElements = null;
+        JSONObject jTags = null;
+        String type;
+        JSONObject obj;
+
+        try {
+
+            jElements = jsonObject.getJSONArray("elements");
+
+            for (int i = 0; i < jElements.length(); ++i) {
+
+                obj = jElements.getJSONObject(i);
+                type = obj.getString("type");
+                jTags = obj.getJSONObject("tags");
+                name = jTags.getString("name");
+
+                if (type.equals("node")) {
+                    latitude = Double.parseDouble(obj.getString("lat"));
+                    longitude = Double.parseDouble(obj.getString("lon"));
+                }
+                else {
+                    JSONObject bounds = obj.getJSONObject("bounds");
+                    latitude = getGeometricalCenterLatitude(bounds.getDouble("minlat"), bounds.getDouble("maxlat"));
+                    longitude = getGeometricalCenterLongitude(bounds.getDouble("minlon"), bounds.getDouble("maxlon"));
+                }
+
+                Place newPlace = new Place(name, latitude, longitude);
+
+                if (!result.contains(newPlace)) {
+                    result.add(newPlace);
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("IPC", "Founded " + result.size() + " features");
+
+        for (Place p : result)
+            Log.d("IPC", "Added: " + p.getName() + "(" + p.getLat() + ", " + p.getLng() + ")");
+
+        return result;
+    }
+
+    private double getGeometricalCenterLatitude(double lowerLeftLatitude, double upperRightLatitude) {
+
+        return (lowerLeftLatitude + upperRightLatitude) / 2;
+    }
+
+    private double getGeometricalCenterLongitude(double lowerLeftLongitude, double upperRightLongitude) {
+        return (lowerLeftLongitude + upperRightLongitude) / 2;
+    }
+
+    private String readFromFile(Context context, InputStream resource) {
+
+        String      ret         = "";
+        InputStream inputStream = null;
+
+        try {
+
+            inputStream = resource;
+
+            if ( inputStream != null ) {
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader    = new BufferedReader(inputStreamReader);
+                String            receiveString     = "";
+                StringBuilder     stringBuilder     = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
     }
 }

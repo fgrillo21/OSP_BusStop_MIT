@@ -162,7 +162,9 @@
                 android:layout_toStartOf="@id/separator"
                 android:layout_toLeftOf="@id/separator"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                android:spinnerMode="dialog">
+                android:spinnerMode="dialog"
+                android:singleLine="false"
+                android:ellipsize="none">
 
             </Spinner>
 
