@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -121,7 +122,8 @@ public class FilterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int maxDuration = maxDurationCheckbox.isChecked() ? Integer.parseInt(maxDurationInput.getText().toString()) : customTrip.getMaxStops();
+                int durationNumber = TextUtils.isEmpty(maxDurationInput.getText().toString()) ? customTrip.getMaxStops() : Integer.parseInt(maxDurationInput.getText().toString());
+                int maxDuration = maxDurationCheckbox.isChecked() ? durationNumber : customTrip.getMaxStops();
                 customTrip = CustomTrip.newCustomTrip(customTrip)
                         .withMaxDurationMinutes(maxDuration)
                         .build();
@@ -160,7 +162,8 @@ public class FilterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int maxStops = maxStopsCheckbox.isChecked() ? Integer.parseInt(maxStopsInput.getText().toString()) : customTrip.getMaxStops();
+                int stopsNumber = TextUtils.isEmpty(maxStopsInput.getText().toString()) ? customTrip.getMaxStops() : Integer.parseInt(maxStopsInput.getText().toString());
+                int maxStops = maxStopsCheckbox.isChecked() ? stopsNumber : customTrip.getMaxStops();
                 customTrip = CustomTrip.newCustomTrip(customTrip)
                         .withMaxStops(maxStops)
                         .build();
