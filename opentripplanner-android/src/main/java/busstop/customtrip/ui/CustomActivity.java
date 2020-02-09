@@ -50,9 +50,10 @@ public class CustomActivity extends AppCompatActivity implements AdapterView.OnI
 
         //Add Listener For Grid View Item Click
         //gridview.setOnItemClickListener(this);
-        //(R.layout.tmp_layout);
 
         /* --------------------------------------------------------------------------------*/
+
+        setContentView(R.layout.tmp_layout);
 
         seekBar = findViewById(R.id.seekBar1);
 
@@ -92,9 +93,6 @@ public class CustomActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-        //Show Name Of The Flower
-        Toast.makeText(CustomActivity.this, dataGrid.get(position).getPhotoName(),
-                Toast.LENGTH_SHORT).show();
     }
 
     private ArrayList<DataGrid> prepareDataSet() {

@@ -29,7 +29,7 @@
     <SeekBar
         android:id="@+id/seekBar1"
         android:layout_below="@+id/image"
-        android:layout_width="fill_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:progress="0"
         android:max="1000" />
