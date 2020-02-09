@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import edu.usf.cutr.opentripplanner.android.R;
 public class CustomActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
 
     ArrayList<DataGrid> dataGrid = new ArrayList<>();
+    private SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,23 +31,63 @@ public class CustomActivity extends AppCompatActivity implements AdapterView.OnI
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        setContentView(R.layout.activity_custom);
+        /* le seguenti righe commentate sono relative alla griglia con le 3 immagini
+        * per ora il test viene fatto su un layout temporaneo con una solo foto */
+
+        //setContentView(R.layout.activity_custom);
 
         //Prepare DataSet
-        dataGrid = prepareDataSet();
+        //dataGrid = prepareDataSet();
 
         //Initialize Grid View for programming
-        GridView gridview = findViewById(R.id.gridView);
+        //GridView gridview = findViewById(R.id.gridView);
 
         //Connect DataSet to Adapter
-        ImageGridAdapter imageGridAdapter = new ImageGridAdapter(this, dataGrid);
+        //ImageGridAdapter imageGridAdapter = new ImageGridAdapter(this, dataGrid);
 
         //Now Connect Adapter To GridView
-        gridview.setAdapter(imageGridAdapter);
+        //gridview.setAdapter(imageGridAdapter);
 
         //Add Listener For Grid View Item Click
-        gridview.setOnItemClickListener(this);
+        //gridview.setOnItemClickListener(this);
+        //(R.layout.tmp_layout);
+
+        /* --------------------------------------------------------------------------------*/
+
+        seekBar = findViewById(R.id.seekBar1);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            int progress = 0;
+
+            @Override
+
+            public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+                FrameLayout target = (FrameLayout) findViewById(R.id.target);
+
+                progress = progresValue;
+
+                ViewGroup.LayoutParams lp = target.getLayoutParams();
+                lp.height = progress;
+                target.setLayoutParams(lp);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
+
+    /* metodo seguente da non considerare, relativo alla griglia (nel layout grid_item.xml) che per ora non è usata
+    * non cancellare potrebbe servire una volta implementata la logica su una foto, per riadattarla alla griglia con tre foto
+    *  */
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
