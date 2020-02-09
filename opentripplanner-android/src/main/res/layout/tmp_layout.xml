@@ -17,7 +17,7 @@
     <FrameLayout
         android:id="@+id/target"
         android:layout_width="600dp"
-        android:layout_height="150dp">
+        android:layout_height="0dp">
         <ImageView
             android:id="@+id/imageb"
             android:layout_width="600dp"
