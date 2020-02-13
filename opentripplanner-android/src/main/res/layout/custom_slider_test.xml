@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="busstop.customtrip.ui.CustomActivityTest"
+    >
+
+    <View
+        android:id="@+id/viewHistoric"
+        android:layout_width="110dp"
+        android:layout_height="330dp"
+        android:background="@drawable/slider_historic_progress" />
+
+    <View
+        android:id="@+id/viewGreen"
+        android:layout_width="110dp"
+        android:layout_height="330dp"
+        android:background="@drawable/slider_green_progress"/>
+
+    <View
+        android:id="@+id/viewOpen"
+        android:layout_width="110dp"
+        android:layout_height="330dp"
+        android:background="@drawable/slider_open_progress" />
+
+</LinearLayout>
+

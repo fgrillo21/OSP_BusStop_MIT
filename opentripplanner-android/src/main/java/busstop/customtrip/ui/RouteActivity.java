@@ -30,4 +30,9 @@ public class RouteActivity extends AppCompatActivity {
         Intent intent = new Intent(RouteActivity.this, MyActivity.class);
         startActivity(intent);
     }
+
+    public void custom_slider_test(View view) {
+        Intent intent = new Intent(RouteActivity.this, CustomActivityTest.class);
+        startActivity(intent);
+    }
 }
