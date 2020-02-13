@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <item android:drawable="@drawable/monuments_bw"/>
+    <item android:drawable="@drawable/monuments_bw" />
     <item android:drawable="@drawable/slider_historic_clip" />
 
 </layer-list>
