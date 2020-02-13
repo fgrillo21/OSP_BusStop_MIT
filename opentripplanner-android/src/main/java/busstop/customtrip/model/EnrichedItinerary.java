@@ -592,6 +592,14 @@ public class EnrichedItinerary  implements Serializable {
 
     public String getName() { return name; }
 
+    public int getTransfersCount() {
+        return transfersCount;
+    }
+
+    public void setTransfersCount(int transfersCount) {
+        this.transfersCount = transfersCount;
+    }
+
     public static final class EnrichedItineraryBuilder {
         private Itinerary     itinerary;
         private List<LatLng>  itineraryDecoded;
@@ -602,6 +610,7 @@ public class EnrichedItinerary  implements Serializable {
         private Element[]     greenFeatures;
         private Element[]     panoramicFeatures;
         private String        name;
+
         private int           transfersCount;
 
         public EnrichedItineraryBuilder withItinerary(Itinerary itinerary) {

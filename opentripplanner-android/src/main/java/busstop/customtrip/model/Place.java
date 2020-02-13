@@ -21,6 +21,19 @@ public class Place implements Serializable {
     private final double lat;
     private final double lng;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Place place = (Place) o;
+        return name.equals(place.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
     public Place(String name, double lat, double lng) {
         this.name = name;
         this.lat = lat;
@@ -44,18 +57,4 @@ public class Place implements Serializable {
         return name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Place place = (Place) o;
-        return Double.compare(place.lat, lat) == 0 &&
-                Double.compare(place.lng, lng) == 0 &&
-                name.equals(place.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, lat, lng);
-    }
 }

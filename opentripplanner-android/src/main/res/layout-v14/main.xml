@@ -139,16 +139,19 @@
             </View>
 
             <Spinner
-                    android:id="@+id/itinerarySelection"
-                    android:layout_toLeftOf="@id/separator"
-                    android:layout_toStartOf="@id/separator"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:spinnerMode="dialog"
-                    android:layout_margin="4dp"
-                    android:singleLine="false"
-                    android:ellipsize="none">
-            </Spinner>
+                android:id="@+id/itinerarySelection"
+                style="@android:style/Widget.DeviceDefault.Spinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_toStartOf="@id/separator"
+                android:layout_toLeftOf="@id/separator"
+                android:ellipsize="none"
+                android:singleLine="false"
+                android:spinnerMode="dialog"></Spinner>
 
         </RelativeLayout>
 

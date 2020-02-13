@@ -152,7 +152,8 @@ public class Query {
         query += ") -> .panoramic;";
 
         query += outCount;
-        query += " (.monuments;.green;.panoramic;); " + outFeatures;
+
+        query += " (.monuments;.green;.panoramic;); >;" + outFeatures;
     }
 
     public void buildHistoricQuery() {
@@ -293,7 +294,7 @@ public class Query {
         outCount = ".monuments out count;" +
               ".green     out count;" +
               ".panoramic out count;";
-        outFeatures = "out geom;";
+        outFeatures = " out geom;";
         historicTags = new HashMap<>();
         greenTags = new HashMap<>();
         panoramicTags = new HashMap<>();

@@ -155,7 +155,8 @@
                     android:layout_margin="4dp"
                 android:spinnerMode="dialog"
                 android:singleLine="false"
-                android:ellipsize="none">
+                android:ellipsize="none"
+                style="@android:style/Widget.DeviceDefault.Spinner">
             </Spinner>
 
         </RelativeLayout>

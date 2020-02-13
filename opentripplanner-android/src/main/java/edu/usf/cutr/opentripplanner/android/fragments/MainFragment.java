@@ -50,8 +50,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -2267,7 +2265,7 @@ public class MainFragment extends Fragment implements
      * Updates server to the new one set in preferences and also makes some UI changes (camera
      * movements) if specified.
      *
-     * @param updateUI also updateUI, not useful if changes should occur on background
+     * @param updateUI also updateUI, not useful if changes should occur on slider_green_clip
      */
     public void updateSelectedServer(boolean updateUI) {
         long serverId;
@@ -2961,8 +2959,7 @@ public class MainFragment extends Fragment implements
     }
 
     @Override
-    public void onTripRequestComplete(List<EnrichedItinerary> enrichedItineraries,
-            String currentRequestString) {
+    public void onTripRequestComplete(List<EnrichedItinerary> enrichedItineraries, String currentRequestString) {
 
         if (getActivity() != null) {
             ConversionUtils.fixTimezoneOffsets(enrichedItineraries,
@@ -3010,6 +3007,18 @@ public class MainFragment extends Fragment implements
     }
 
     private void fillItinerariesSpinner(List<EnrichedItinerary> itineraryList) {
+
+        String[] itinerarySummaryList  = formatItinerarySummary(itineraryList);
+
+        ArrayAdapter<String> itineraryAdapter = new ArrayAdapter<String>(this.getActivity(),
+                android.R.layout.simple_spinner_item, itinerarySummaryList);
+
+        itineraryAdapter.setDropDownViewResource(R.layout.custom_item);
+        mItinerarySelectionSpinner.setAdapter(itineraryAdapter);
+    }
+
+    private String[] formatItinerarySummary(List<EnrichedItinerary> itineraryList) {
+
         String[] itinerarySummaryList = new String[itineraryList.size()];
         long tripDuration;
 
@@ -3023,11 +3032,11 @@ public class MainFragment extends Fragment implements
                     itinerarySummaryList[i] = ConversionUtils
                             .getTimeWithContext(mApplicationContext, leg.agencyTimeZoneOffset,
                                     Long.parseLong(leg.startTime), false).toString();
-                    itinerarySummaryList[i] += ". " + ConversionUtils
-                            .getRouteShortNameSafe(leg.routeShortName,leg.routeLongName,
-                                    mApplicationContext);
+//                    itinerarySummaryList[i] += ". " + ConversionUtils
+//                            .getRouteShortNameSafe(leg.routeShortName,leg.routeLongName,
+//                                    mApplicationContext);
 
-                    itinerarySummaryList[i] += "(" + composeItineraryLongName(it) + ")";
+                    itinerarySummaryList[i] += "Bus " + composeItineraryLongName(it);
 
                     itinerarySummaryList[i] += " - " + ConversionUtils
                             .getFormattedDurationTextNoSeconds(tripDuration, false,
@@ -3039,9 +3048,19 @@ public class MainFragment extends Fragment implements
                     break;
                 }
             }
+
+            if (isTransitIsTagSet) {
+                final int transfers = getItineraryTransfersCount(it);
+
+                if (transfers > 0) {
+                    itinerarySummaryList[i] += " - " + transfers + ((transfers > 0) ? " Cambio" : " Cambi");
+                }
+            }
+
             if (!isTransitIsTagSet) {
-                itinerarySummaryList[i] = Integer.toString(i + 1)
-                        + ".   ";//Shown index is i + 1, to use 1-based indexes for the UI instead of 0-based
+//                itinerarySummaryList[i] = Integer.toString(i + 1)
+//                        + ".   ";//Shown index is i + 1, to use 1-based indexes for the UI instead of 0-based
+                itinerarySummaryList[i] += "A piedi ";
                 itinerarySummaryList[i] +=
                         ConversionUtils.getFormattedDistance(it.walkDistance, mApplicationContext)
                                 + " " + "-" + " " + ConversionUtils
@@ -3049,37 +3068,34 @@ public class MainFragment extends Fragment implements
                                         mApplicationContext);
             }
 
-            itinerarySummaryList[i] += " - Cambi: " + getItineraryTransfersCount(it);
+            EnrichedItinerary enrichedItinerary = itineraryList.get(i);
 
+            int   historic           = enrichedItinerary.getHistoricAggregatedCount();
+            int   green              = enrichedItinerary.getGreenAggregatedCount();
+            int   open               = enrichedItinerary.getPanoramicAggregatedCount();
+            float historicPercentage = (float) historic / (historic + green + open) * 100;
+            float greenPercentage    = (float) green    / (historic + green + open) * 100;
+            float openPercentage     = (float) open     / (historic + green + open) * 100;
+            boolean preset = (customTrip.getMonuments()  == CustomTrip.MAX) ||
+                    (customTrip.getGreenAreas() == CustomTrip.MAX) ||
+                    (customTrip.getOpenSpaces() == CustomTrip.MAX);
+            if (preset) {
+                if (customTrip.getMonuments()  == CustomTrip.MAX)
+                    itinerarySummaryList[i] += " (Monumenti: " + Math.round(historicPercentage) + "%)";
+                else if (customTrip.getGreenAreas()  == CustomTrip.MAX)
+                    itinerarySummaryList[i] += " (Aree verdi: " + Math.round(greenPercentage) + "%)";
+                else if (customTrip.getOpenSpaces()  == CustomTrip.MAX)
+                    itinerarySummaryList[i] += " (Piazze: " + Math.round(openPercentage) + "%)";
+            }
+            else {
+                itinerarySummaryList[i] += " (" +
+                        Math.round(historicPercentage * 100) / 100.0f + "%, " +
+                        Math.round(greenPercentage * 100) / 100.0f + "%, " +
+                        Math.round(openPercentage * 100) / 100.0f + "%)";
+            }
         }
 
-        ArrayAdapter<String> itineraryAdapter = new ArrayAdapter<String>(this.getActivity(),
-                android.R.layout.simple_spinner_item, itinerarySummaryList)
-//                {
-//                    @Override
-//                    public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//        //                View v = super.getDropDownView(position, convertView, parent);
-//                        if (convertView == null) {
-//                            convertView = new TextView(getContext());
-//                        }
-//
-//                        TextView item = (TextView) convertView;
-////                        item.setText(mItinerarySelectionSpinner.)
-//                        final TextView finalItem = item;
-//                        item.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                finalItem.setSingleLine(false);
-//                            }
-//                        });
-//
-//                        return item;
-//                    }
-//                }
-                ;
-
-        itineraryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mItinerarySelectionSpinner.setAdapter(itineraryAdapter);
+        return itinerarySummaryList;
     }
 
     public static int getItineraryTransfersCount(Itinerary itinerary) {
@@ -3095,7 +3111,7 @@ public class MainFragment extends Fragment implements
             }
         }
 
-        return changes;
+        return changes - 1;
     }
 
     public String composeItineraryLongName(Itinerary itinerary) {
@@ -4216,17 +4232,22 @@ public class MainFragment extends Fragment implements
 
         String[] description = {"", "", ""};
 
-        if (feature.tags.containsKey("name")) {
-            description[0] = feature.tags.get("name");
-        }
+        if (feature.tags != null) {
 
-        if (feature.tags.containsKey("description"))
-            description[1] += feature.tags.get("description") + "\n";
-        if (feature.tags.containsKey("inscription"))
-            description[1] +=  feature.tags.get("inscription") + "\n";
-        if (feature.tags.containsKey("wikipedia")) {
-            description[1] += R.string.map_markers_wikipedia + feature.tags.get("wikipedia");
-            description[2] = feature.tags.get("wikipedia");
+            if (feature.tags.containsKey("name")) {
+                description[0] = feature.tags.get("name");
+            }
+
+            if (feature.tags.containsKey("description"))
+                description[1] += feature.tags.get("description") + "\n";
+
+            if (feature.tags.containsKey("inscription"))
+                description[1] += feature.tags.get("inscription") + "\n";
+
+            if (feature.tags.containsKey("wikipedia")) {
+                description[1] += R.string.map_markers_wikipedia + feature.tags.get("wikipedia");
+                description[2] = feature.tags.get("wikipedia");
+            }
         }
 
         return description;

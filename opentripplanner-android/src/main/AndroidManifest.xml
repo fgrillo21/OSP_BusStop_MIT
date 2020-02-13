@@ -62,6 +62,10 @@
             android:label="@string/advancedFilters"
             android:theme="@style/MyThemeDark"></activity>
         <activity
+            android:name="busstop.customtrip.ui.CustomActivityTest"
+            android:label="@string/advancedFilters"
+            android:theme="@style/MyThemeDark"></activity>
+        <activity
             android:name=".SettingsActivity"
             android:theme="@style/MyThemeDark"
             android:windowSoftInputMode="stateHidden" />
