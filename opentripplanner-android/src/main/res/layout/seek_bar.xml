@@ -1,83 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     tools:context="busstop.customtrip.ui.SeekBarActivity">
 
-    <SeekBar
-        android:id="@+id/seekBar0"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="39dp"
-        android:max="100"
-        android:progress="0"
-        />
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="0,1,2"
+        android:padding="5dp">
 
-    <SeekBar
-        android:id="@+id/seekBar1"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar0"
-        android:layout_marginTop="38dp"
-        android:max="100"
-        android:progress="0"
-        />
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            >
 
-    <SeekBar
-        android:id="@+id/seekBar2"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar1"
-        android:layout_marginTop="38dp"
-        android:max="100"
-        android:progress="0"
-        />
+        <busstop.customtrip.ui.CustomView
+            android:id="@+id/viewHistoric"
+            android:layout_width="110dp"
+            android:layout_height="330dp"
+            android:background="@drawable/slider_historic_progress"
+            android:layout_marginEnd="5dp"/>
 
-    <TextView
-        android:id="@+id/textView0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/seekBar0"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="19dp"
-        android:text="" />
+        <busstop.customtrip.ui.CustomView
+            android:id="@+id/viewGreen"
+            android:layout_width="110dp"
+            android:layout_height="330dp"
+            android:background="@drawable/slider_green_progress"
+            android:layout_marginEnd="5dp"/>
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar0"
-        android:layout_marginTop="19dp"
-        android:text=""  />
+        <busstop.customtrip.ui.CustomView
+            android:id="@+id/viewOpen"
+            android:layout_width="110dp"
+            android:layout_height="330dp"
+            android:background="@drawable/slider_open_progress" />
+        </TableRow>
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar1"
-        android:layout_marginTop="19dp"
-        android:text=""  />
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
 
-    <Button
-        android:id="@+id/end_button"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="145dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/seekBar2"
-        android:layout_marginTop="19dp"
-        android:onClick="end_button"
-        android:text="@string/end" />
+            <TextView
+                android:layout_span="3"
+                android:id="@+id/myTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="Personalizza la quantità di feature che vorresti nel tuo percorso"
+                style="?attr/textViewPresetStyle"/>
 
+        </TableRow>
 
-</RelativeLayout>
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
+            <TextView
+                android:layout_span="3"
+                android:id="@+id/textView0"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text=""
+                style="?attr/textViewPresetStyle"/>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
+            <TextView
+                android:layout_span="3"
+                android:id="@+id/textView1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text=""
+                style="?attr/textViewPresetStyle"/>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
+            <TextView
+                android:layout_span="3"
+                android:id="@+id/textView2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text=""
+                style="?attr/textViewPresetStyle"/>
+        </TableRow>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/end_button"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="19dp"
+                    android:onClick="end_button"
+                    android:text="@string/end" />
+        </LinearLayout>
+    </TableLayout>
+</LinearLayout>
