@@ -42,10 +42,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="busstop.customtrip.ui.CustomActivity"
-            android:label="@string/custom"
-            android:theme="@style/MyThemeDark"></activity>
-        <activity
             android:name="busstop.customtrip.ui.PresetActivity"
             android:label="@string/preset"
             android:theme="@style/MyThemeDark"></activity>
@@ -59,10 +55,6 @@
             android:theme="@style/MyThemeDark"></activity>
         <activity
             android:name="busstop.customtrip.ui.FilterActivity"
-            android:label="@string/advancedFilters"
-            android:theme="@style/MyThemeDark"></activity>
-        <activity
-            android:name="busstop.customtrip.ui.CustomActivityTest"
             android:label="@string/advancedFilters"
             android:theme="@style/MyThemeDark"></activity>
         <activity
