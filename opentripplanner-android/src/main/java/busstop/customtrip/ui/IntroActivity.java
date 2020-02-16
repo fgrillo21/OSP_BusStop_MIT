@@ -7,16 +7,16 @@ import android.view.View;
 
 import edu.usf.cutr.opentripplanner.android.R;
 
-public class RouteActivity extends AppCompatActivity {
+public class IntroActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_route);
+        setContentView(R.layout.activity_intro);
     }
 
     public void preset(View view) {
-        Intent intent = new Intent(RouteActivity.this, PresetActivity.class);
+        Intent intent = new Intent(IntroActivity.this, PresetActivity.class);
         startActivity(intent);
     }
 }

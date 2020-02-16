@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="busstop.customtrip.ui.RouteActivity">
+    tools:context="busstop.customtrip.ui.IntroActivity">
 
         <Button
             android:id="@+id/preset"
@@ -16,5 +16,5 @@
             android:layout_gravity="center_horizontal|center"
             android:layout_marginBottom="20dp"
             android:onClick="preset"
-            android:text="@string/preset" />
+            android:text="@string/start" />
 </LinearLayout>
