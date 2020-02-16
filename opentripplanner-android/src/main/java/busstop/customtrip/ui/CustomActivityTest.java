@@ -1,5 +1,6 @@
 package busstop.customtrip.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class CustomActivityTest extends AppCompatActivity {
     private int   mOpenGraphicPercentage     = 33;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
