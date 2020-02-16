@@ -4,7 +4,5 @@
     android:layout_height="match_parent"
     android:drawable="@drawable/openspaces"
     android:clipOrientation="vertical"
-    android:gravity="bottom"
-    android:background="@drawable/slider_borders"
-    >
+    android:gravity="bottom">
 </clip>

@@ -3,23 +3,14 @@ package busstop.customtrip.ui;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class CustomActivityTest extends AppCompatActivity {
 
-    ArrayList<DataGrid> dataGrid = new ArrayList<>();
-    private View viewHistoric, viewGreen, viewOpen;
+    private CustomView viewHistoric, viewGreen, viewOpen;
 
     private float mHistoricRealPercentage    = 100 / 3.0f;
     private int   mHistoricGraphicPercentage = 33;
@@ -27,6 +18,7 @@ public class CustomActivityTest extends AppCompatActivity {
     private int   mGreenGraphicPercentage    = 33;
     private float mOpenRealPercentage        = 100 / 3.0f;
     private int   mOpenGraphicPercentage     = 33;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +48,7 @@ public class CustomActivityTest extends AppCompatActivity {
                 mHistoricGraphicPercentage = (int) Math.ceil(mHistoricRealPercentage);
 
                 viewHistoric.getBackground().setLevel(10000 - mHistoricGraphicPercentage * 100);
-                actionBar.setTitle("Historic " + String.valueOf(100 - mHistoricRealPercentage));
+
                 return true;
             }
 
@@ -70,7 +62,7 @@ public class CustomActivityTest extends AppCompatActivity {
                 mGreenGraphicPercentage = (int) Math.ceil(mGreenRealPercentage);
 
                 viewGreen.getBackground().setLevel(10000 - mGreenGraphicPercentage * 100);
-                actionBar.setTitle("Green " + String.valueOf(100 - mGreenRealPercentage));
+
                 return true;
             }
         });
@@ -83,12 +75,10 @@ public class CustomActivityTest extends AppCompatActivity {
                 mOpenGraphicPercentage = (int) Math.ceil(mOpenRealPercentage);
 
                 viewOpen.getBackground().setLevel(10000 - mOpenGraphicPercentage * 100);
-                actionBar.setTitle("Open " + String.valueOf(100 - mOpenRealPercentage));
+
                 return true;
             }
         });
-
-
     }
 
     private float getPercentage(View v, MotionEvent event) {

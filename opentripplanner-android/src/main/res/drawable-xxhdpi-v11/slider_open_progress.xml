@@ -4,7 +4,6 @@
     android:layout_height="match_parent">
 
     <item android:drawable="@drawable/openspaces_bw" />
-
     <item android:drawable="@drawable/slider_open_clip" />
 
 

@@ -5,5 +5,6 @@
     android:drawable="@drawable/monuments"
     android:clipOrientation="vertical"
     android:gravity="bottom"
-    android:id="@+id/clipH">
+    android:id="@+id/clipH"
+   >
 </clip>

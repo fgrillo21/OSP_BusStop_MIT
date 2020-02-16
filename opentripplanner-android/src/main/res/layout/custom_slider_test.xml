@@ -9,28 +9,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
-            <View
+        <busstop.customtrip.ui.CustomView
             android:id="@+id/viewHistoric"
             android:layout_width="110dp"
             android:layout_height="330dp"
             android:background="@drawable/slider_historic_progress"
             android:layout_marginRight="5dp"
-            android:padding="2dp"
-            android:scaleType="centerCrop"
-            />
+            android:padding="2dp"/>
 
-
-
-            <View
+            <busstop.customtrip.ui.CustomView
                 android:id="@+id/viewGreen"
                 android:layout_width="110dp"
                 android:layout_height="330dp"
                 android:background="@drawable/slider_green_progress"
                 android:layout_marginRight="5dp"/>
 
-            <View
+            <busstop.customtrip.ui.CustomView
                 android:id="@+id/viewOpen"
                 android:layout_width="110dp"
                 android:layout_height="330dp"
@@ -40,8 +34,7 @@
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <TextView
             android:layout_span="3"
@@ -54,35 +47,17 @@
 
     </TableRow>
 
+    <TableRow>
+
+        <Button
+            android:layout_span="3"
+            android:gravity="center_horizontal|center"
+            style="?android:buttonStyleSmall"
+            android:width="145dp"
+            android:text="@string/choose">
+
+        </Button>
+
+    </TableRow>
 
 </TableLayout>
-
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context="busstop.customtrip.ui.CustomActivityTest"-->
-<!--    >-->
-
-<!--    -->
-
-<!--    <View-->
-<!--        android:id="@+id/viewHistoric"-->
-<!--        android:layout_width="110dp"-->
-<!--        android:layout_height="330dp"-->
-<!--        android:background="@drawable/slider_historic_progress" />-->
-
-<!--    <View-->
-<!--        android:id="@+id/viewGreen"-->
-<!--        android:layout_width="110dp"-->
-<!--        android:layout_height="330dp"-->
-<!--        android:background="@drawable/slider_green_progress"/>-->
-
-<!--    <View-->
-<!--        android:id="@+id/viewOpen"-->
-<!--        android:layout_width="110dp"-->
-<!--        android:layout_height="330dp"-->
-<!--        android:background="@drawable/slider_open_progress" />-->
-
-<!--</LinearLayout>-->

@@ -308,7 +308,9 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             // Inizio la selezione fra gli itinerari trovati.
             // Now we have three itineraries among we have to choose the best one based on the features requested
-            itinerariesSelected = selectTripByFeatures(itinerariesToSelect, customTrip);
+
+//                itinerariesSelected = selectTripByFeatures(itinerariesToSelect, customTrip);
+
             itinerariesSelected = sortItinerariesList(itinerariesToSelect, customTrip);
             // Dopo questa chiamata itinerariesSelected contiene la porzione di itinerariesToSelect
             // che è coerente con le percentuali specificate (preset o custom) mentre itinerariesRemaining,
@@ -764,23 +766,27 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
         for (EnrichedItinerary it : list) {
 
+            // Usare itXCount volendo privilegiare il numero maggiore di feature
+            // Usare itXPerentage se si vuole l'itinerario con la composizione più aderente
+
+            final int   itHistoricCount       = it.getHistoricAggregatedCount();
+            final int   itGreenCount          = it.getGreenAggregatedCount();
+            final int   itPanoramicCount      = it.getPanoramicAggregatedCount();
+            final int   itTotalFeatures       = itHistoricCount + itGreenCount + itPanoramicCount;
+            final float itHistoricPercentage  = (float) itHistoricCount  * 100 / itTotalFeatures;
+            final float itGreenPercentage     = (float) itGreenCount     * 100 / itTotalFeatures;
+            final float itPanoramicPercentage = (float) itPanoramicCount * 100 / itTotalFeatures;
+
             if (preset) {
                 if (customTrip.getMonuments() == CustomTrip.MAX) {
-                    value = (double) it.getHistoricAggregatedCount();
+                    value = (double) itHistoricPercentage;
                 } else if (customTrip.getGreenAreas() == CustomTrip.MAX) {
-                    value = (double) it.getGreenAggregatedCount();
+                    value = (double) itGreenPercentage;
                 } else if (customTrip.getOpenSpaces() == CustomTrip.MAX) {
-                    value = (double) it.getPanoramicAggregatedCount();
+                    value = (double) itPanoramicPercentage;
                 }
             }
             else {
-                final int   itHistoricCount       = it.getHistoricAggregatedCount();
-                final int   itGreenCount          = it.getGreenAggregatedCount();
-                final int   itPanoramicCount      = it.getPanoramicAggregatedCount();
-                final int   itTotalFeatures       = itHistoricCount + itGreenCount + itPanoramicCount;
-                final float itHistoricPercentage  = (float) itHistoricCount  * 100 / itTotalFeatures;
-                final float itGreenPercentage     = (float) itGreenCount     * 100 / itTotalFeatures;
-                final float itPanoramicPercentage = (float) itPanoramicCount * 100 / itTotalFeatures;
 
                 scarto[0] = Math.abs(customTrip.getMonuments()  - itHistoricPercentage);
                 scarto[1] = Math.abs(customTrip.getGreenAreas() - itGreenPercentage);
