@@ -27,7 +27,7 @@ public class CustomView extends android.support.v7.widget.AppCompatImageView {
         super.onDraw(canvas);
 
         int level = getBackground().getLevel(); // 10000 - mOpenGraphicPercentage * 100
-        int y     = 1320 - getHeight() * level / 10000;
+        int y     = getHeight() - getHeight() * level / 10000;
 
         Log.d("SDR", "Heigth=" + getHeight() + " Level=" + level);
 
