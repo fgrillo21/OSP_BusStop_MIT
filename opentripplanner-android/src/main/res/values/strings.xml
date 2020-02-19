@@ -598,5 +598,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."</strin
     <string name="maxStopsInputHint">Es. 0 (Default: 2)</string>
     <string name="spaceTitleTextView">Digita i percorsi intermedi</string>
     <string name="spaceTitleHint">Es. Piazza maggiore</string>
-    <string name="clearButtonText">Pulisci selezione</string>
+    <string name="clearButtonText">Svuota elenco</string>
 </resources>
