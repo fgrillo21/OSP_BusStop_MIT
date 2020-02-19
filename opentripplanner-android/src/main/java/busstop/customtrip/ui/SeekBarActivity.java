@@ -140,6 +140,13 @@ public class SeekBarActivity extends AppCompatActivity {
             startActivity(intent);
     }
 
+    public void filter(View view) {
+        Intent intent = new Intent(SeekBarActivity.this, FilterActivity.class);
+        intent.putExtra("customTrip", customTrip);
+        intent.putExtra("fromActivity", "Preset");
+        startActivity(intent);
+    }
+
     private float getPercentage(View v, MotionEvent event) {
 
         float yTouch = event.getY();

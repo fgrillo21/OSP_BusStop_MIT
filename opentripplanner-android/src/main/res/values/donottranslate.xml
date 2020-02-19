@@ -15,8 +15,8 @@
  the License.
 -->
 <resources>
-    <string name="app_name">OpenTripPlanner</string>
-    <string name="busStop">BusStop</string>
+    <string name="app_name">Bus Stop</string>
+    <string name="busStop">Bus Stop</string>
     <string name="custom">Custom</string>
     <string name="start">Inizia</string>
     <string name="servers_spreadsheet_url"><![CDATA[https://spreadsheets.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=0AgWy8ujaGosCdDhxTC04cUZNeHo0eGFBQTBpU2dxN0E&single=true&gid=0&output=csv]]></string>

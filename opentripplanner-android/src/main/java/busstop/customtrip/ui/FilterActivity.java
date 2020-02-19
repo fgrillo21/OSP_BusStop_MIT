@@ -20,6 +20,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -50,13 +51,14 @@ public class FilterActivity extends AppCompatActivity {
     CheckBox maxDurationCheckbox;
     CheckBox maxStopsCheckbox;
     ImageButton mBtnDeletePlace;
-    Button mBtnEmptyList;
+    ImageButton mBtnEmptyList;
     EditText maxDurationInput;
     EditText maxStopsInput;
     AutoCompleteTextView textViewIntermediatePlaces;
     ListView listViewPlaces;
     List<Place> mPlacesToCustomTrip = new ArrayList<>();
-    ArrayAdapter<Place> iPlacesArrayAdapter, selectedArrayAdapter;
+    ArrayAdapter<Place> iPlacesArrayAdapter;
+    ArrayAdapter<Place> selectedArrayAdapter;
     int mPlaceSelected;
 
     @Override
@@ -72,7 +74,8 @@ public class FilterActivity extends AppCompatActivity {
         intermediatePlaces = loadIntermediatePlaces(getApplicationContext(), getResources().openRawResource(R.raw.places));
 
         iPlacesArrayAdapter = new ArrayAdapter<Place>(this, android.R.layout.simple_dropdown_item_1line, intermediatePlaces);
-        selectedArrayAdapter = new ArrayAdapter<Place>(this, android.R.layout.simple_dropdown_item_1line, mPlacesToCustomTrip);
+//        selectedArrayAdapter = new ArrayAdapter<Place>(this, android.R.layout.simple_dropdown_item_1line, mPlacesToCustomTrip);
+        selectedArrayAdapter = new CustomPlacesAdapter(this, android.R.layout.simple_dropdown_item_1line, mPlacesToCustomTrip);
 
         maxDurationCheckbox = findViewById(R.id.maxDurationCheckbox);
         maxStopsCheckbox   = findViewById(R.id.maxStopsCheckbox);
@@ -80,11 +83,11 @@ public class FilterActivity extends AppCompatActivity {
         maxStopsInput      = findViewById(R.id.maxStopsInput);
         textViewIntermediatePlaces = findViewById(R.id.textViewIntermediatePlaces);
         listViewPlaces     = findViewById(R.id.listPlacesChosen);
-        mBtnDeletePlace    = findViewById(R.id.btnDeletePlace);
         mBtnEmptyList      = findViewById(R.id.btnTrashPlaces);
 
         textViewIntermediatePlaces.setAdapter(iPlacesArrayAdapter);
         listViewPlaces.setAdapter(selectedArrayAdapter);
+
         /* I setting seguenti servono a mantenere le informazioni selezionate dall'utente */
         /* inizializzazione dei valori per la durata massima del viaggio */
         initMaxDurationSection(customTrip);
@@ -220,8 +223,6 @@ public class FilterActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        mBtnDeletePlace.setEnabled(false);
     }
 
     public void apply(View view) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,6 +31,10 @@
         android:imeOptions="actionDone"
         android:inputType="number"/>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="18dp" />
+
     <CheckBox
         android:id="@+id/maxStopsCheckbox"
         android:layout_width="match_parent"
@@ -47,6 +51,10 @@
         android:digits="0123456789"
         android:imeOptions="actionDone"
         android:inputType="number" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="18dp" />
 
     <TextView
         android:id="@+id/spaceTitle"
@@ -69,51 +77,87 @@
         android:imeOptions="actionSearch"
         android:inputType="textAutoComplete|textAutoCorrect" />
 
-    <ListView
-        android:id="@+id/listPlacesChosen"
+
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="193dp"
-        android:choiceMode="singleChoice"
-        android:listSelector="#666666"
-        android:minHeight="22dp"
-        android:scrollbarAlwaysDrawHorizontalTrack="false"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical" />
-
-    <Button
-        android:id="@+id/btnTrashPlaces"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="false"
-        android:drawableStart="@android:drawable/ic_menu_delete"
-        android:onClick="emptyPlaces"
-        android:text="@string/clearButtonText"
-        android:textSize="10sp"/>
-
-    <ImageButton
-        android:id="@+id/btnDeletePlace"
-        android:layout_width="46dp"
-        android:layout_height="36dp"
-        android:clickable="false"
-        android:onClick="deletePlace"
-        app:srcCompat="@android:drawable/ic_delete" />
+        android:layout_height="18dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center|bottom"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
 
+        <TextView
+            android:id="@+id/intermediateChosenTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="5dp"
+            android:text="@string/intermediate_places_list_view_title"
+            style="?attr/textViewPresetStyle"
+            tools:ignore="RtlSymmetry"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom|center"
+            android:orientation="horizontal"
+            android:weightSum="5"
+            android:layout_weight="1"
+            android:padding="8dp">
+
+            <ListView
+                android:id="@+id/listPlacesChosen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="@drawable/listview_places_style"
+                android:choiceMode="singleChoice"
+                android:listSelector="#666666"
+
+                android:scrollbarAlwaysDrawHorizontalTrack="false"
+                android:scrollbarStyle="insideOverlay"
+                android:scrollbars="vertical" />
+
+            <Space
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/btnTrashPlaces"
+                android:layout_width="54dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="0dp"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:onClick="emptyPlaces"
+                android:textSize="10sp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:background="@color/sysGrayFaded"
+                app:srcCompat="@android:drawable/ic_menu_delete" />
+
+        </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:gravity="center">
         <Button
             android:id="@+id/buttom_apply"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="145dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center"
             android:onClick="apply"
-            android:text="@string/apply" />
+            android:text="@string/apply"/>
+</LinearLayout>
+<!--        </LinearLayout>-->
 
     </LinearLayout>
-
 </LinearLayout>
