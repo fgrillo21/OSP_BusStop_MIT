@@ -187,6 +187,7 @@ public class OTPApp extends Application {
 
     public static final String BUNDLE_KEY_CUSTOM_SERVER_METADATA = "custom server metadata";
 
+
     public static final int COLOR_ROUTE_LINE = 0x7F0000FF;
 
     /**
@@ -255,6 +256,8 @@ public class OTPApp extends Application {
     public static final String PREFERENCE_KEY_ABOUT = "about";
 
     public static final String PREFERENCE_KEY_ABOUT_CATEGORY = "about_category";
+
+    public static final String BUNDLE_KEY_CUSTOM_TRIP = "customTrip";
 
     private static Server selectedServer;
 

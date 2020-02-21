@@ -18,6 +18,7 @@ import java.util.List;
 
 import busstop.customtrip.model.CustomTrip;
 import edu.usf.cutr.opentripplanner.android.MyActivity;
+import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class PresetActivity extends AppCompatActivity {
@@ -32,6 +33,20 @@ public class PresetActivity extends AppCompatActivity {
     private ImageView[] dots;
 
     private int pageSelected = 0;
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        fromActivity = (String) intent.getSerializableExtra("fromActivity");
+
+        if(fromActivity == null) {
+            /* solo la prima volta che si arriva in questa activity il custom trip viene inizializzato con i valori di default */
+            customTrip = CustomTrip.getCustomTripDefaultValues();
+        } else {
+            /* per adesso qui ci si arriva solo dopo aver applicato i filter (da FilterActivity) */
+            customTrip = (CustomTrip) intent.getSerializableExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +67,7 @@ public class PresetActivity extends AppCompatActivity {
             customTrip = CustomTrip.getCustomTripDefaultValues();
         } else {
             /* per adesso qui ci si arriva solo dopo aver applicato i filter (da FilterActivity) */
-            customTrip = (CustomTrip) intent.getSerializableExtra("customTrip");
+            customTrip = (CustomTrip) intent.getSerializableExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP);
         }
 
         layout_dot = findViewById(R.id.layout_dot);
@@ -160,26 +175,29 @@ public class PresetActivity extends AppCompatActivity {
             }
             case 3: {
                 customTrip = CustomTrip.newCustomTrip(customTrip)
-                        .withMonuments(34)
-                        .withGreenAreas(33)
-                        .withOpenSpaces(33)
+                        .withMonuments(100.0f/3)
+                        .withGreenAreas(100.0f/3)
+                        .withOpenSpaces(100.0f/3)
                         .build();
             }
         }
         if(pageSelected == 3) {
             Intent intent = new Intent(PresetActivity.this, SeekBarActivity.class);
-            intent.putExtra("customTrip", customTrip);
+            intent.putExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP, customTrip);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         } else {
             Intent intent = new Intent(PresetActivity.this, MyActivity.class);
-            intent.putExtra("customTrip", customTrip);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP, customTrip);
             startActivity(intent);
         }
     }
 
     public void filter(View view) {
         Intent intent = new Intent(PresetActivity.this, FilterActivity.class);
-        intent.putExtra("customTrip", customTrip);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.putExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP, customTrip);
         intent.putExtra("fromActivity", "Preset");
         startActivity(intent);
     }

@@ -38,6 +38,7 @@ import java.util.List;
 
 import busstop.customtrip.model.CustomTrip;
 import busstop.customtrip.model.Place;
+import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class FilterActivity extends AppCompatActivity {
@@ -62,14 +63,28 @@ public class FilterActivity extends AppCompatActivity {
     int mPlaceSelected;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+
+        fromActivity = (String) intent.getSerializableExtra("fromActivity");
+
+        if(fromActivity == null) {
+            /* solo la prima volta che si arriva in questa activity il custom trip viene inizializzato con i valori di default */
+            customTrip = CustomTrip.getCustomTripDefaultValues();
+        } else {
+            /* per adesso qui ci si arriva solo dopo aver applicato i filter (da FilterActivity) */
+            customTrip = (CustomTrip) intent.getSerializableExtra("customTrip");
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
 
         /* Get here the info about custom trip*/
         Intent intent = getIntent();
-        customTrip = (CustomTrip) intent.getSerializableExtra("customTrip");
-        fromActivity = (String) intent.getSerializableExtra("fromActivity");
+        customTrip    = (CustomTrip) intent.getSerializableExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP);
+        fromActivity  = (String) intent.getSerializableExtra("fromActivity");
 
         intermediatePlaces = loadIntermediatePlaces(getApplicationContext(), getResources().openRawResource(R.raw.places));
 
@@ -94,6 +109,8 @@ public class FilterActivity extends AppCompatActivity {
 
         /* inizializzazione dei valori per il numero minimo di cambi */
         initMaxStopsSection(customTrip);
+
+        initIntermediatePlaces(customTrip);
 
         maxDurationCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                @Override
@@ -180,7 +197,6 @@ public class FilterActivity extends AppCompatActivity {
 
                     mPlaceSelected = position;
                     mBtnDeletePlace.setEnabled(true);
-
             }
         });
 
@@ -193,6 +209,7 @@ public class FilterActivity extends AppCompatActivity {
 
                 if (!mPlacesToCustomTrip.contains(place)) {
                     selectedArrayAdapter.add(place);
+                    selectedArrayAdapter.notifyDataSetChanged();
                 }
 
                 textViewIntermediatePlaces.setText("");
@@ -233,12 +250,14 @@ public class FilterActivity extends AppCompatActivity {
 
         if(!fromActivity.equals("Slider")) {
             Intent intent = new Intent(FilterActivity.this, PresetActivity.class);
-            intent.putExtra("customTrip", customTrip);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP, customTrip);
             intent.putExtra("fromActivity", "Filter");
             startActivity(intent);
         } else {
             Intent intent = new Intent(FilterActivity.this, SeekBarActivity.class);
-            intent.putExtra("customTrip", customTrip);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP, customTrip);
             startActivity(intent);
         }
     }
@@ -262,6 +281,17 @@ public class FilterActivity extends AppCompatActivity {
         } else {
             maxStopsInput.setEnabled(false);
             maxStopsInput.setHint(R.string.maxStopsInputHint);
+        }
+    }
+
+    private void initIntermediatePlaces(CustomTrip customTrip) {
+        List<Place> chosen = customTrip.getIntermediatePlaces();
+
+        if(chosen.size() > 0) {
+            for (Place place : chosen) {
+                selectedArrayAdapter.add(place);
+                selectedArrayAdapter.notifyDataSetChanged();
+            }
         }
     }
 

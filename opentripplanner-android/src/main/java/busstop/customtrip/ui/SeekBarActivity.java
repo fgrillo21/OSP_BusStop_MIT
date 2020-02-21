@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import busstop.customtrip.model.CustomTrip;
 import edu.usf.cutr.opentripplanner.android.MyActivity;
+import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
 
 public class SeekBarActivity extends AppCompatActivity {
@@ -26,6 +27,21 @@ public class SeekBarActivity extends AppCompatActivity {
     private int[] graphicProgress;
 
     private CustomTrip customTrip;
+    String fromActivity;
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        fromActivity = (String) intent.getSerializableExtra("fromActivity");
+
+        if(fromActivity == null) {
+            /* solo la prima volta che si arriva in questa activity il custom trip viene inizializzato con i valori di default */
+            customTrip = CustomTrip.getCustomTripDefaultValues();
+        } else {
+            /* per adesso qui ci si arriva solo dopo aver applicato i filter (da FilterActivity) */
+            customTrip = (CustomTrip) intent.getSerializableExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP);
+        }
+    }
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     @Override
@@ -40,7 +56,7 @@ public class SeekBarActivity extends AppCompatActivity {
         setContentView(R.layout.seek_bar);
 
         Intent i = getIntent();
-        customTrip = (CustomTrip) i.getSerializableExtra("customTrip");
+        customTrip = (CustomTrip) i.getSerializableExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP);
         graphicProgress = new int[]{Math.round(customTrip.getMonuments()), Math.round(customTrip.getGreenAreas()), Math.round(customTrip.getOpenSpaces())};
 
         /* inizializzazione default */
@@ -129,21 +145,23 @@ public class SeekBarActivity extends AppCompatActivity {
 
     public void end_button(View view) {
         customTrip = CustomTrip.newCustomTrip(customTrip)
-            .withMonuments(graphicProgress[0])
-            .withGreenAreas(graphicProgress[1])
-            .withOpenSpaces(graphicProgress[2])
+            .withMonuments(realProgress[0])
+            .withGreenAreas(realProgress[1])
+            .withOpenSpaces(realProgress[2])
             .build();
 
         Intent intent = new Intent(SeekBarActivity.this, MyActivity.class);
-            intent.putExtra("customTrip", customTrip);
-            intent.putExtra("fromActivity", "Slider");
-            startActivity(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.putExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP, customTrip);
+        intent.putExtra("fromActivity", "Slider");
+        startActivity(intent);
     }
 
     public void filter(View view) {
         Intent intent = new Intent(SeekBarActivity.this, FilterActivity.class);
-        intent.putExtra("customTrip", customTrip);
-        intent.putExtra("fromActivity", "Preset");
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.putExtra(OTPApp.BUNDLE_KEY_CUSTOM_TRIP, customTrip);
+        intent.putExtra("fromActivity", "Slider");
         startActivity(intent);
     }
 
