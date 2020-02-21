@@ -18,7 +18,6 @@ package edu.usf.cutr.opentripplanner.android.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.opentripplanner.api.model.Itinerary;
 import org.opentripplanner.api.model.Leg;
 
 import java.io.Serializable;
