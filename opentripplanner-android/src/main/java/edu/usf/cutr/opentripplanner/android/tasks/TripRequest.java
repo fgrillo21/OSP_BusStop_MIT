@@ -111,6 +111,8 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
     static int tripRequest = 0;
 
+    private boolean userCanceled = false;
+
     public TripRequest(WeakReference<Activity> activity, Context context, Resources resources,
                        Server selectedServer, TripRequestCompleteListener callback, CustomTrip customTrip) {
         this.activity = activity;
@@ -152,8 +154,20 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             progressDialog.setCancelable(true);
             Activity activityRetrieved = activity.get();
             if (activityRetrieved != null) {
-                progressDialog = ProgressDialog.show(activityRetrieved, "",
-                        resources.getText(R.string.task_progress_tripplanner_progress), true);
+                progressDialog = ProgressDialog.show(
+                        activityRetrieved,
+                        "",
+                        resources.getText(R.string.task_progress_tripplanner_progress),
+                        true,
+                        false,
+                        new DialogInterface.OnCancelListener(){
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                userCanceled = true;
+                                progressDialog.setMessage(resources.getText(R.string.task_progress_tripplanner_canceled));
+                                TripRequest.this.cancel(true);
+                            }
+                        });
             }
         }
     }
@@ -262,12 +276,20 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     Log.d(osmTag, greenCount.toString());
                     Log.d(osmTag, panoramicCount.toString());
 
+                    if (isCancelled()) {
+                        break;
+                    }
+
                     Log.d(osmTag, "Start retrieving HISTORICAL features");
                     countFeaturesQuery.buildHistoricQuery();
                     response           = executeOverpassQuery(countFeaturesQuery);
                     body               = response.body();
                     Element[] historic = body.elements;
                     Log.d(osmTag, "HISTORICAL features successfully retrieved");
+
+                    if (isCancelled()) {
+                        break;
+                    }
 
                     Log.d(osmTag, "Start retrieving GREEN features");
                     countFeaturesQuery.buildGreenQuery();
@@ -276,12 +298,20 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     Element[] green = body.elements;
                     Log.d(osmTag, "GREEN features successfully retrieved");
 
+                    if (isCancelled()) {
+                        break;
+                    }
+
                     Log.d(osmTag, "Start retrieving PANORAMIC features");
                     countFeaturesQuery.buildPanoramicQuery();
                     response            = executeOverpassQuery(countFeaturesQuery);
                     body                = response.body();
                     Element[] panoramic = body.elements;
                     Log.d(osmTag, "PANORAMIC features successfully retrieved");
+
+                    if (isCancelled()) {
+                        break;
+                    }
 
                     enrichedItinerary = EnrichedItinerary.newEnrichedItinerary()
                             .withItinerary(itineraries.get(j))
@@ -307,23 +337,25 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             }
 
             // Inizio la selezione fra gli itinerari trovati.
-            // Now we have three itineraries among we have to choose the best one based on the features requested
+            if (!isCancelled()) {
+                // Now we have three itineraries among we have to choose the best one based on the features requested
+                // itinerariesSelected = selectTripByFeatures(itinerariesToSelect, customTrip);
 
-//                itinerariesSelected = selectTripByFeatures(itinerariesToSelect, customTrip);
+                itinerariesSelected = sortItinerariesList(itinerariesToSelect, customTrip);
 
-            itinerariesSelected = sortItinerariesList(itinerariesToSelect, customTrip);
-            // Dopo questa chiamata itinerariesSelected contiene la porzione di itinerariesToSelect
-            // che è coerente con le percentuali specificate (preset o custom) mentre itinerariesRemaining,
-            // che all'inizio è uguale a itinerariesToSelect, conterrà la porzione di itinerari non selezionata
-            // ma comunque disponibile.
+                // Dopo questa chiamata itinerariesSelected contiene la porzione di itinerariesToSelect
+                // che è coerente con le percentuali specificate (preset o custom) mentre itinerariesRemaining,
+                // che all'inizio è uguale a itinerariesToSelect, conterrà la porzione di itinerari non selezionata
+                // ma comunque disponibile.
+            }
         }
-
-
 
         tripRequest += 1;
 
         return totalSize;
     }
+
+
 
     private retrofit2.Response<OverpassResponse> executeOverpassQuery(Query query) throws RuntimeException, IOException {
 
@@ -359,8 +391,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         return responseR;
     }
 
-    protected void onCancelled(Long result) {
-
+    private void dismissProgressDialog() {
         try {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -368,6 +399,18 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         } catch (Exception e) {
             Log.e(OTPApp.TAG, "Error in TripRequest Cancelled dismissing dialog: " + e);
         }
+    }
+
+
+    protected void onCancelled(Long result) {
+
+        if (userCanceled) {
+            callback.onTripRequestCanceled();
+            dismissProgressDialog();
+            return;
+        }
+
+        dismissProgressDialog();
 
         Activity activityRetrieved = activity.get();
         if (activityRetrieved != null) {
@@ -388,14 +431,9 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
     }
 
     protected void onPostExecute(Long result) {
+
         if (activity.get() != null) {
-            try {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-            } catch (Exception e) {
-                Log.e(OTPApp.TAG, "Error in TripRequest PostExecute dismissing dialog: " + e);
-            }
+            dismissProgressDialog();
         }
 
         if (response != null && response.getPlan() != null

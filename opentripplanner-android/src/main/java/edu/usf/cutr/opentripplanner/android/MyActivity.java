@@ -269,6 +269,11 @@ public class MyActivity extends AppCompatActivity implements OtpFragment {
         if (!mainFragment.isShowButtonVisible()) {
             mainFragment.showButtonVisible(true);
         }
+
+        // Da chiamare rigorosamente dopo setFeatures
+        if (mainFragment.isShowFeaturesEnabled()) {
+            mainFragment.toggleFeaturesOnMap(true);
+        }
     }
 
     @Override

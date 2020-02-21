@@ -141,6 +141,7 @@
     <string name="task_progress_server_checker_progress">Getting region info. Please wait&#8230;</string>
     <string name="task_progress_geocoding_progress">Finding points-of-interest. Please wait&#8230;</string>
     <string name="task_progress_metadata_progress">Finding transit service. Please wait&#8230;</string>
+    <string name="task_progress_tripplanner_canceled">Canceling trip research&#8230;</string>
 
     <!-- Routes drop-down pop-up dialog (menu will be rendered this way prior to API level 15) -->
     <string name="tripplanner_results_title">Planning Results</string>

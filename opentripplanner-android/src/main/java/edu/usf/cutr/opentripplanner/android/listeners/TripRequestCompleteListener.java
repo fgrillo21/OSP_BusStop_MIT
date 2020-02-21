@@ -29,4 +29,5 @@ import busstop.customtrip.model.EnrichedItinerary;
 public interface TripRequestCompleteListener {
 
     public void onTripRequestComplete(List<EnrichedItinerary> itineraries, String currentRequestString);
+    public void onTripRequestCanceled();
 }

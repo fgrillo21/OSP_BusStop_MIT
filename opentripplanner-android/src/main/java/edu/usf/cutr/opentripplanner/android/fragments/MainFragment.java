@@ -1245,6 +1245,7 @@ public class MainFragment extends Fragment implements
                 if (mFragmentListener.getCurrentItinerary() != null){
                     if (mFragmentListener.getCurrentItineraryIndex() != position) {
                         mFragmentListener.onItinerarySelected(position, 2);
+
                     }
                 }
             }
@@ -1266,9 +1267,11 @@ public class MainFragment extends Fragment implements
                 if (button.isSelected()){
                     button.setSelected(false);
                     toggleFeaturesOnMap(false);
+                    showFeatures = false;
                 } else {
                     button.setSelected(true);
                     toggleFeaturesOnMap(true);
+                    showFeatures = true;
                 }
             }
 
@@ -2081,10 +2084,8 @@ public class MainFragment extends Fragment implements
     public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
 
-        Log.d("TRQ", "MainFragmentSAVEINSTANCESTATE");
-
         bundle.putBoolean(OTPApp.BUNDLE_KEY_MAP_FAILED, mMapFailed);
-        OTPBundle otpBundlee;
+
         if (!mMapFailed) {
             bundle.putParcelable(OTPApp.BUNDLE_KEY_MAP_CAMERA, mMap.getCameraPosition());
             bundle.putParcelable(OTPApp.BUNDLE_KEY_MAP_START_MARKER_POSITION, mStartMarkerPosition);
@@ -2136,7 +2137,6 @@ public class MainFragment extends Fragment implements
             bundle.putSerializable(OTPApp.BUNDLE_KEY_PREVIOUS_OPTIMIZATION, previousOptimization);
 
             if (!mFragmentListener.getCurrentItineraryList().isEmpty()) {
-                Log.d("TRQ", "putSerializable()");
                 OTPBundle otpBundle = new OTPBundle();
                 otpBundle.setFromText(mResultTripStartLocation);
                 otpBundle.setToText(mResultTripEndLocation);
@@ -2144,10 +2144,11 @@ public class MainFragment extends Fragment implements
                 otpBundle.setCurrentItineraryIndex(mFragmentListener.getCurrentItineraryIndex());
                 otpBundle.setCurrentItinerary(mFragmentListener.getCurrentItinerary());
                 bundle.putSerializable(OTPApp.BUNDLE_KEY_OTP_BUNDLE, otpBundle);
-                Log.d("TRQ", "Fine putSerializable()");
 
             }
             bundle.putSerializable(OTPApp.BUNDLE_KEY_CUSTOM_SERVER_METADATA, mCustomServerMetadata);
+
+            bundle.putSerializable(OTPApp.BUNDLE_KEY_CUSTOM_TRIP, customTrip);
         }
 
     }
@@ -2962,6 +2963,9 @@ public class MainFragment extends Fragment implements
     public void onTripRequestComplete(List<EnrichedItinerary> enrichedItineraries, String currentRequestString) {
 
         if (getActivity() != null) {
+
+
+
             ConversionUtils.fixTimezoneOffsets(enrichedItineraries,
                     mPrefs.getBoolean(OTPApp.PREFERENCE_KEY_USE_DEVICE_TIMEZONE, false));
             fillItinerariesSpinner(enrichedItineraries);
@@ -3004,6 +3008,13 @@ public class MainFragment extends Fragment implements
             removeFocus(true);
             removeFocus(false);
         }
+    }
+
+    @Override
+    public void onTripRequestCanceled() {
+        restartMap();
+        restartTextBoxes();
+        Toast.makeText(mApplicationContext, "TR", Toast.LENGTH_SHORT).show();
     }
 
     private void fillItinerariesSpinner(List<EnrichedItinerary> itineraryList) {
@@ -4100,7 +4111,10 @@ public class MainFragment extends Fragment implements
         return null;
     }
 
-
+    public void tripRequestCanceled() {
+        restartMap();
+        restartTextBoxes();
+    }
 
     private double getGeometricalCenterLatitude(double lowerLeftLatitude, double upperRightLatitude) {
 
