@@ -20,7 +20,7 @@
         android:id="@+id/btnDeleteRow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_delete"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
         android:layout_gravity="center_vertical"
         android:padding="5dp"
         android:layout_weight="0"/>
