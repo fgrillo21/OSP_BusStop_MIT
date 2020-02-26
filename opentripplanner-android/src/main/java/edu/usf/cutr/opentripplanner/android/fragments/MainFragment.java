@@ -26,6 +26,7 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -3012,9 +3013,11 @@ public class MainFragment extends Fragment implements
 
     @Override
     public void onTripRequestCanceled() {
+
+        Log.d(OTPApp.TAG, "Cancello");
+
         restartMap();
         restartTextBoxes();
-        Toast.makeText(mApplicationContext, "TR", Toast.LENGTH_SHORT).show();
     }
 
     private void fillItinerariesSpinner(List<EnrichedItinerary> itineraryList) {

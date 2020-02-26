@@ -83,7 +83,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
     private Response response;
 
-    private ProgressDialog progressDialog;
+    private ProgressDialog progressDialog, progressDialogCancel;
 
     private WeakReference<Activity> activity;
 
@@ -159,13 +159,20 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                         "",
                         resources.getText(R.string.task_progress_tripplanner_progress),
                         true,
-                        false,
+                        true,
                         new DialogInterface.OnCancelListener(){
                             @Override
                             public void onCancel(DialogInterface dialog) {
                                 userCanceled = true;
-                                progressDialog.setMessage(resources.getText(R.string.task_progress_tripplanner_canceled));
-                                TripRequest.this.cancel(true);
+
+                                 progressDialogCancel = ProgressDialog.show(
+                                        activity.get(),
+                                        "",
+                                        resources.getText(R.string.task_progress_tripplanner_canceled),
+                                        true,
+                                        false);
+
+                                 TripRequest.this.cancel(true);
                             }
                         });
             }
@@ -404,9 +411,16 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
     protected void onCancelled(Long result) {
 
+
+
         if (userCanceled) {
+
             callback.onTripRequestCanceled();
+
             dismissProgressDialog();
+
+            progressDialogCancel.dismiss();
+
             return;
         }
 
@@ -436,75 +450,61 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             dismissProgressDialog();
         }
 
+        // Esiste almeno un percorso disponibile
         if (response != null && response.getPlan() != null
                 && response.getPlan().getItinerary().get(0) != null) {
 
+            // Esistono percorsi da selezionare ma la selezione è vuota: criteri troppo restrittivi
             if (itinerariesSelected == null || itinerariesSelected.size() == 0) {
 
-                Activity activityRetrieved = activity.get();
+                createMessage(R.string.tripplanner_error_dialog_title, R.string.customtrip_tripplanner_error_not_defined);
 
-                if (activityRetrieved != null) {
-
-                    AlertDialog.Builder feedback = new AlertDialog.Builder(activityRetrieved);
-                    feedback.setTitle(resources.getString(R.string.tripplanner_error_dialog_title));
-                    feedback.setNeutralButton(resources.getString(android.R.string.ok), null);
-
-                    String msg = resources.getString(R.string.customtrip_tripplanner_error_not_defined);
-
-                    PlannerError error = response.getError();
-
-                    if (error != null) {
-                        int errorCode = error.getId();
-
-                        if (response != null && response.getError() != null
-                                && errorCode != Message.PLAN_OK
-                                .getId()) {
-
-                            msg = getErrorMessage(response.getError().getId());
-                            if (msg == null) {
-                                msg = response.getError().getMsg();
-                            }
-                        }
-                    }
-                    feedback.setMessage(msg);
-                    feedback.create().show();
-                }
-
-                Log.e(filterTag, "No custom route to display!");
+                Log.e(filterTag, "None of the itineraries matches filters.");
             }
 
             callback.onTripRequestComplete(itinerariesSelected, currentRequestString);
         }
         else {
-            Activity activityRetrieved = activity.get();
-            if (activityRetrieved != null) {
-                AlertDialog.Builder feedback = new AlertDialog.Builder(activityRetrieved);
-                feedback.setTitle(resources
-                        .getString(R.string.tripplanner_error_dialog_title));
-                feedback.setNeutralButton(resources.getString(android.R.string.ok),
-                        null);
-                String msg = resources
-                        .getString(R.string.tripplanner_error_not_defined);
 
-                PlannerError error = response.getError();
-                if (error != null) {
-                    int errorCode = error.getId();
-
-                    if (response != null && response.getError() != null
-                            && errorCode != Message.PLAN_OK
-                            .getId()) {
-
-                        msg = getErrorMessage(response.getError().getId());
-                        if (msg == null) {
-                            msg = response.getError().getMsg();
-                        }
-                    }
-                }
-                feedback.setMessage(msg);
-                feedback.create().show();
-            }
+            createMessage(R.string.tripplanner_error_dialog_title, R.string.tripplanner_error_not_defined);
 
             Log.e(OTPApp.TAG, "No route to display!");
+        }
+    }
+
+    private void createMessage(int titleId, int msgId) {
+
+        Activity activityRetrieved = activity.get();
+
+        if (activityRetrieved != null) {
+
+            AlertDialog.Builder feedback = new AlertDialog.Builder(activityRetrieved);
+
+            feedback.setTitle(resources.getString(titleId));
+            feedback.setNeutralButton(resources.getString(android.R.string.ok), null);
+
+            String msg = resources.getString(msgId);
+
+            PlannerError error = response.getError();
+
+            if (error != null) {
+
+
+                int errorCode = error.getId();
+
+                if (response != null && response.getError() != null
+                        && errorCode != Message.PLAN_OK
+                        .getId()) {
+                    msg = getErrorMessage(response.getError().getId());
+
+                    if (msg == null) {
+                        msg = response.getError().getMsg();
+                    }
+                }
+            }
+
+            feedback.setMessage(msg);
+            feedback.create().show();
         }
     }
 
@@ -707,8 +707,12 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
+                boolean transferConstraint = itinerary.getTransfersCount()     <= maxStops;
+                boolean durationConstraint = itinerary.getItinerary().duration <= (customTrip.getMaxDurationMinutes() * 60);
+
                 if (itinerary.getHistoricAggregatedCount() == maxHistoricFounded && maxHistoricFounded > 0) {
-                    if (itinerary.getTransfersCount() <= maxStops) {
+
+                    if (transferConstraint && durationConstraint) {
                         selectedItineraries.add(itinerary);
                     }
                 }
@@ -718,8 +722,11 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
+                boolean transferConstraint = itinerary.getTransfersCount()     <= maxStops;
+                boolean durationConstraint = itinerary.getItinerary().duration <= (customTrip.getMaxDurationMinutes() * 60);
+
                 if (itinerary.getGreenAggregatedCount() == maxGreenFounded && maxGreenFounded > 0) {
-                    if(itinerary.getTransfersCount() <= maxStops) {
+                    if(transferConstraint && durationConstraint) {
                         selectedItineraries.add(itinerary);
                     }
                 }
@@ -729,8 +736,11 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             for (EnrichedItinerary itinerary : enrichedItineraries) {
 
+                boolean transferConstraint = itinerary.getTransfersCount()     <= maxStops;
+                boolean durationConstraint = itinerary.getItinerary().duration <= (customTrip.getMaxDurationMinutes() * 60);
+
                 if (itinerary.getPanoramicAggregatedCount() == maxPanoramicFounded && maxPanoramicFounded > 0) {
-                    if (itinerary.getTransfersCount() <= maxStops) {
+                    if (transferConstraint && durationConstraint) {
                         selectedItineraries.add(itinerary);
                     }
                 }
@@ -778,7 +788,10 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             for (i = 0; i < numItineraries; ++i) {
 
-                if ((Math.abs(eNorms[i] - min) <= threshold) && (enrichedItineraries.get(i).getTransfersCount() <= maxStops)) {
+                boolean transferConstraint = enrichedItineraries.get(i).getTransfersCount()     <= maxStops;
+                boolean durationConstraint = enrichedItineraries.get(i).getItinerary().duration <= (customTrip.getMaxDurationMinutes() * 60);
+
+                if ((Math.abs(eNorms[i] - min) <= threshold) && transferConstraint && durationConstraint) {
                     selectedItineraries.add(enrichedItineraries.get(i));
                     Log.d(selectionTag, "Added " + enrichedItineraries.get(i).getName() + "(Norm = " + eNorms[i] + ")");
                 }
@@ -833,7 +846,13 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                 value = euclideanNorm(scarto);
             }
 
-            toOrder.add(new Pair<Double, EnrichedItinerary>(value, it));
+            final int     maxStops           = customTrip.getMaxStops();
+            final boolean transferConstraint = it.getTransfersCount()     <= maxStops;
+            final boolean durationConstraint = it.getItinerary().duration <= (customTrip.getMaxDurationMinutes() * 60);
+
+            if (transferConstraint && durationConstraint) {
+                toOrder.add(new Pair<Double, EnrichedItinerary>(value, it));
+            }
         }
 
         int extremeIndex;

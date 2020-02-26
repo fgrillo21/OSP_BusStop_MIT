@@ -203,6 +203,8 @@
 
                 <!-- Title -->
                 <string name="tripplanner_error_dialog_title">Percorso non tovato</string>
+                <string name="task_progress_tripplanner_progress">Ricerca percorsi. Attendi...</string>
+                <string name="task_progress_tripplanner_canceled">Annullamento ricerca...</string>
 
                 <!-- Errors -->
                 <!--<string name="tripplanner_error_not_defined">Sorry, something went wrong.  Please try again.</string>-->
@@ -224,7 +226,7 @@
 
                 <!-- Custom Trip Errors -->
                 <string name="customtrip_tripplanner_error_not_defined">Impossibile trovare un percorso con i criteri specificati. Riprova modificando partenza, arrivo o parametri avanzati.</string>
-
+                <string name="tripplanner_results_title">Itinerari trovati</string>
                 <!-- Play services error dialog -->
 
                     <!-- Title -->

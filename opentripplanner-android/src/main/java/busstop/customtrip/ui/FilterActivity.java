@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +62,7 @@ public class FilterActivity extends AppCompatActivity {
     ArrayAdapter<Place> iPlacesArrayAdapter;
     ArrayAdapter<Place> selectedArrayAdapter;
     int mPlaceSelected;
+    InputMethodManager inputMethodManager;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -104,28 +106,45 @@ public class FilterActivity extends AppCompatActivity {
         listViewPlaces.setAdapter(selectedArrayAdapter);
 
         /* I setting seguenti servono a mantenere le informazioni selezionate dall'utente */
+
         /* inizializzazione dei valori per la durata massima del viaggio */
         initMaxDurationSection(customTrip);
 
-        /* inizializzazione dei valori per il numero minimo di cambi */
+        /* inizializzazione dei valori per il numero massimo di cambi */
         initMaxStopsSection(customTrip);
 
+        /* inizializzazione tappe intermedie */
         initIntermediatePlaces(customTrip);
+
+        inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
         maxDurationCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                @Override
                public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+
                    if(isChecked) {
-                       maxDurationInput.setEnabled(true);
+                       maxDurationInput.setFocusable(true);
+                       maxDurationInput.setFocusableInTouchMode(true);
                        maxDurationInput.requestFocus();
-                   } else {
-                       maxDurationInput.setEnabled(false);
+
+                       inputMethodManager.showSoftInput(maxDurationInput, InputMethodManager.SHOW_IMPLICIT);
+                   }
+                   else {
+                       maxDurationInput.setFocusable(false);
+                       maxDurationInput.setFocusableInTouchMode(false);
+                       maxDurationInput.clearFocus();
+
+                       inputMethodManager.hideSoftInputFromWindow(maxDurationInput.getWindowToken(), 0);
+
                        /* se l'utente deseleziona l'opzione viene risettato il valore di default */
                        maxDurationInput.setHint(R.string.maxDurationInputHint);
+                       maxDurationInput.setText("");
+
                        customTrip = CustomTrip.newCustomTrip(customTrip)
                                .withMaxDurationMinutes(MAX_TRIP_DURATION)
                                .build();
                    }
+
                    customTrip = CustomTrip.newCustomTrip(customTrip)
                            .withIsMaxDurationOn(isChecked)
                            .build();
@@ -151,20 +170,50 @@ public class FilterActivity extends AppCompatActivity {
             }
         });
 
+        maxDurationInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!maxDurationCheckbox.isChecked()) {
+                    maxDurationCheckbox.setChecked(true);
+                }
+            }
+        });
+
+        maxStopsInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!maxStopsCheckbox.isChecked()) {
+                    maxStopsCheckbox.setChecked(true);
+                }
+            }
+        });
+
         maxStopsCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                @Override
                public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
                    if(isChecked) {
-                       maxStopsInput.setEnabled(true);
+                       maxStopsInput.setFocusable(true);
+                       maxStopsInput.setFocusableInTouchMode(true);
                        maxStopsInput.requestFocus();
+
+                       inputMethodManager.showSoftInput(maxStopsInput, InputMethodManager.SHOW_IMPLICIT);
+
                    } else {
-                       maxStopsInput.setEnabled(false);
+                       maxStopsInput.setFocusable(false);
+                       maxStopsInput.setFocusableInTouchMode(false);
+                       maxStopsInput.clearFocus();
+
+                       inputMethodManager.hideSoftInputFromWindow(maxStopsInput.getWindowToken(), 0);
+
                        /* se l'utente deseleziona l'opzione viene risettato il valore di default */
                        maxStopsInput.setHint(R.string.maxStopsInputHint);
+                       maxStopsInput.setText("");
+
                        customTrip = CustomTrip.newCustomTrip(customTrip)
                                .withMaxStops(2)
                                .build();
                    }
+
                    customTrip = CustomTrip.newCustomTrip(customTrip)
                            .withIsMaxStopsOn(isChecked)
                            .build();
@@ -215,8 +264,7 @@ public class FilterActivity extends AppCompatActivity {
                 textViewIntermediatePlaces.setText("");
 
                 // Tolgo la tastiera
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(textViewIntermediatePlaces.getWindowToken(), 0);
+                inputMethodManager.hideSoftInputFromWindow(textViewIntermediatePlaces.getWindowToken(), 0);
             }
         });
 
@@ -227,8 +275,7 @@ public class FilterActivity extends AppCompatActivity {
 
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     // hide virtual keyboard
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(textViewIntermediatePlaces.getWindowToken(), 0);
+                    inputMethodManager.hideSoftInputFromWindow(textViewIntermediatePlaces.getWindowToken(), 0);
                     return true;
                 }
 
@@ -248,6 +295,18 @@ public class FilterActivity extends AppCompatActivity {
                 .withIntermediatePlaces(mPlacesToCustomTrip)
                 .build();
 
+        if (maxDurationCheckbox.isChecked() && maxDurationInput.getText().equals("")) {
+            customTrip = CustomTrip.newCustomTrip(customTrip)
+                    .withIsMaxDurationOn(false)
+                    .build();
+        }
+
+        if (maxStopsCheckbox.isChecked() && maxStopsInput.getText().equals("")) {
+            customTrip = CustomTrip.newCustomTrip(customTrip)
+                    .withIsMaxStopsOn(false)
+                    .build();
+        }
+
         if(!fromActivity.equals("Slider")) {
             Intent intent = new Intent(FilterActivity.this, PresetActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -265,10 +324,12 @@ public class FilterActivity extends AppCompatActivity {
     private void initMaxDurationSection(CustomTrip customTrip) {
         maxDurationCheckbox.setChecked(customTrip.isMaxDurationOn());
         if(customTrip.isMaxDurationOn()) {
-            maxDurationInput.setEnabled(true);
+            maxDurationInput.setFocusable(true);
+            maxDurationInput.setFocusableInTouchMode(true);
             maxDurationInput.setHint(String.valueOf(customTrip.getMaxDurationMinutes()));
         } else {
-            maxDurationInput.setEnabled(false);
+            maxDurationInput.setFocusable(false);
+            maxDurationInput.setFocusableInTouchMode(false);
             maxDurationInput.setHint(R.string.maxDurationInputHint);
         }
     }
@@ -276,10 +337,9 @@ public class FilterActivity extends AppCompatActivity {
     private void initMaxStopsSection(CustomTrip customTrip) {
         maxStopsCheckbox.setChecked(customTrip.isMaxStopsOn());
         if(customTrip.isMaxStopsOn()) {
-            maxStopsInput.setEnabled(true);
+            maxStopsInput.setFocusable(true);
             maxStopsInput.setHint(String.valueOf(customTrip.getMaxStops()));
         } else {
-            maxStopsInput.setEnabled(false);
             maxStopsInput.setHint(R.string.maxStopsInputHint);
         }
     }

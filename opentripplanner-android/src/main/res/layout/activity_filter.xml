@@ -24,12 +24,14 @@
         android:id="@+id/maxDurationInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="20"
-        android:enabled="false"
-        android:hint="@string/maxDurationInputHint"
         android:digits="0123456789"
+        android:ems="20"
+        android:enabled="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="@string/maxDurationInputHint"
         android:imeOptions="actionDone"
-        android:inputType="number"/>
+        android:inputType="number" />
 
     <Space
         android:layout_width="match_parent"
@@ -46,7 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="20"
-        android:enabled="false"
+        android:focusable="false"
+        android:enabled="true"
         android:hint="@string/maxStopsInputHint"
         android:digits="0123456789"
         android:imeOptions="actionDone"
