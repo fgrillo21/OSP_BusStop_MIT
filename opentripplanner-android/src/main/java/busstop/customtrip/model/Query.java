@@ -294,7 +294,7 @@ public class Query {
         outCount = ".monuments out count;" +
               ".green     out count;" +
               ".panoramic out count;";
-        outFeatures = " out geom;";
+        outFeatures = " out count; out geom;";
         historicTags = new HashMap<>();
         greenTags = new HashMap<>();
         panoramicTags = new HashMap<>();

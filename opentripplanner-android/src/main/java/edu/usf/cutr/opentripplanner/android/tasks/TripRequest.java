@@ -47,6 +47,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -204,6 +205,10 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             List<Itinerary> itineraries = response.getPlan().getItinerary();
 
+            int totalProgress = 100;
+            int stepProgress  = totalProgress / (itineraries.size() * 3);
+            int currentProgress = 0;
+
             // ******** Begin Filtering ********
             // Itinerary comparison based on feature selection
 
@@ -217,6 +222,8 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             List<String> busName = new ArrayList<>();
             List<LatLng> legPoints;
             List<List<LatLng>> itinerariesDecoded = new ArrayList<>();
+
+            publishProgress(0);
 
             for (Itinerary it : itineraries) {
 
@@ -259,6 +266,8 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             }
 
             Log.d(osmTag, "** Start features control with OSM **");
+            currentProgress += stepProgress;
+            publishProgress(currentProgress);
 
             EnrichedItinerary enrichedItinerary;
             itinerariesToSelect = new ArrayList<>();
@@ -272,17 +281,6 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                 retrofit2.Response<OverpassResponse> response = null;
 
                 try {
-                    Log.d(osmTag, "Start retrieving features COUNT");
-                    countFeaturesQuery.buildCountQuery();
-                    response = executeOverpassQuery(countFeaturesQuery);
-                    body     = response.body();
-                    FeaturesCount historicCount  = OverpassParser.parseHistoricToCount(body.elements);
-                    FeaturesCount greenCount     = OverpassParser.parseGreenToCount(body.elements);
-                    FeaturesCount panoramicCount = OverpassParser.parsePanoramicToCount(body.elements);
-                    Log.d(osmTag, historicCount.toString());
-                    Log.d(osmTag, greenCount.toString());
-                    Log.d(osmTag, panoramicCount.toString());
-
                     if (isCancelled()) {
                         break;
                     }
@@ -291,8 +289,12 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     countFeaturesQuery.buildHistoricQuery();
                     response           = executeOverpassQuery(countFeaturesQuery);
                     body               = response.body();
-                    Element[] historic = body.elements;
+                    FeaturesCount historicCount = OverpassParser.parseHistoricToCount(body.elements);
+                    Element[] historic = Arrays.copyOfRange(body.elements, 1, body.elements.length);
                     Log.d(osmTag, "HISTORICAL features successfully retrieved");
+
+                    currentProgress += stepProgress;
+                    publishProgress(currentProgress);
 
                     if (isCancelled()) {
                         break;
@@ -302,8 +304,12 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     countFeaturesQuery.buildGreenQuery();
                     response        = executeOverpassQuery(countFeaturesQuery);
                     body            = response.body();
-                    Element[] green = body.elements;
+                    FeaturesCount greenCount = OverpassParser.parseElementsToCount(body.elements);
+                    Element[] green = Arrays.copyOfRange(body.elements,1, body.elements.length);
                     Log.d(osmTag, "GREEN features successfully retrieved");
+
+                    currentProgress += stepProgress;
+                    publishProgress(currentProgress);
 
                     if (isCancelled()) {
                         break;
@@ -313,8 +319,13 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                     countFeaturesQuery.buildPanoramicQuery();
                     response            = executeOverpassQuery(countFeaturesQuery);
                     body                = response.body();
-                    Element[] panoramic = body.elements;
+                    FeaturesCount panoramicCount = OverpassParser.parseElementsToCount(body.elements);
+                    Element[] panoramic = Arrays.copyOfRange(body.elements, 1, body.elements.length);
                     Log.d(osmTag, "PANORAMIC features successfully retrieved");
+
+                    Log.d(osmTag, historicCount.toString());
+                    Log.d(osmTag, greenCount.toString());
+                    Log.d(osmTag, panoramicCount.toString());
 
                     if (isCancelled()) {
                         break;
@@ -335,9 +346,15 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
                     itinerariesToSelect.add(enrichedItinerary);
 
+                    currentProgress += stepProgress;
+                    publishProgress(currentProgress);
+
+
                 } catch (Exception e) {
+                    e.getMessage();
                     e.printStackTrace();
-                    Log.d(osmTag, response.errorBody().toString());
+
+                    Log.e(osmTag, response.errorBody().toString());
                 }
 
                 j += 1;
@@ -470,6 +487,11 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             Log.e(OTPApp.TAG, "No route to display!");
         }
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        progressDialog.setMessage(resources.getString(R.string.task_progress_tripplanner_progress) + " Completamento: " + values[0] + "%");
     }
 
     private void createMessage(int titleId, int msgId) {

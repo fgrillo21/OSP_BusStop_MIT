@@ -17,6 +17,7 @@
 
 package busstop.customtrip.util;
 
+import busstop.customtrip.model.BadCountElement;
 import busstop.customtrip.model.FeaturesCount;
 import nice.fontaine.overpass.models.response.geometries.Element;
 
@@ -71,7 +72,23 @@ public final class OverpassParser {
         return featuresCount;
     }
 
-//    public static Features parseFeaturesToFeatures(Element[] elements) {
-//
-//    }
+    public static FeaturesCount parseElementsToCount(Element[] elements) throws BadCountElement {
+
+        int n = 0;
+        int w = 0;
+        int r = 0;
+
+        if (!elements[0].type.equals("count")) {
+            throw new BadCountElement("Wrong response element founded during count parsing.");
+        }
+
+        // Monuments count
+        n = Integer.parseInt(elements[0].tags.get("nodes"));
+        w = Integer.parseInt(elements[0].tags.get("ways"));
+        r = Integer.parseInt(elements[0].tags.get("relations"));
+
+        FeaturesCount featuresCount = new FeaturesCount(n, w, r);
+
+        return featuresCount;
+    }
 }
