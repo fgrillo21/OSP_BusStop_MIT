@@ -173,6 +173,8 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                                         true,
                                         false);
 
+                                 progressDialogCancel.setCanceledOnTouchOutside(false);
+
                                  TripRequest.this.cancel(true);
                             }
                         });

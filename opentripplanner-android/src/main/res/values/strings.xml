@@ -467,10 +467,12 @@
     <!-- App desctiption -->
 
     <!-- App name -->
-    <string name="about_screen_app_full_name">OpenTripPlanner for Android</string>
+    <string name="about_screen_app_full_name">BusStop for Android</string>
+    <string name="about_opentripplanner_screen_app_full_name">OpenTripPlanner for Android</string>
 
     <!-- App description -->
-    <string name="about_screen_app_description">An Android app for multi-modal trip planning and navigation using any OpenTripPlanner server.
+    <string name="about_screen_app_description">An Android app for turistic trip planning and navigation using any OpenTripPlanner server. Based on OpenTripPlanner for Android.</string>
+    <string name="about_screen_opentripplanner_app_description">An Android app for multi-modal trip planning and navigation using any OpenTripPlanner server.
 See more details at <a href="https://github.com/CUTR-at-USF/OpenTripPlanner-for-Android/wiki">GitHub project page</a>.
 </string>
 
@@ -582,23 +584,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."</strin
     <string name="connector_before_route">Route</string>
 
     <!-- BusStop new labels -->
-    <string name="choose">Scegli</string>
-    <string name="apply">Applica</string>
-    <string name="end">Fine</string>
-    <string name="map">Mappa</string>
-    <string name="advancedFilters">Filtri Avanzati</string>
-    <string name="personalizza">Personalizza</string>
-    <string name="description_monuments">Cerca un percorso ricco di edifici e monumenti storici di Bologna</string>
-    <string name="description_greenareas">Cerca un percorso ricco di zone verdi o parchi di Bologna</string>
-    <string name="description_openspaces">Cerca un percorso ricco di piazze di Bologna</string>
-    <string name="description_choose_percentage"> Crea un percorso personalizzato selezionando la percentuale preferita per ogni categoria</string>
+    <string name="choose">Choose</string>
+    <string name="apply">Apply</string>
+    <string name="preset">Choose a preset</string>
+    <string name="end">End</string>
+    <string name="map">Map</string>
+    <string name="advancedFilters">Advanced Filters</string>
+    <string name="personalizza">Customize feature quantity</string>
+    <string name="description_monuments">Search a trip with many buildings and historical places in Bologna</string>
+    <string name="description_greenareas">Search a trip with many parks and green areas in Bologna</string>
+    <string name="description_openspaces">Search a trip with many open areas in Bologna</string>
+    <string name="description_choose_percentage">Create a custom trip by selecting the quantity of each feature you want in your trip</string>
     <string name="filter_button">Filter button</string>
-    <string name="maxDurationCheckboxText"> Modifica durata massima del viaggio</string>
-    <string name="maxDurationInputHint">Es. 30 (Default: 70 min)</string>
-    <string name="maxStopsCheckboxText"> Modifica numero massimo di cambi</string>
-    <string name="maxStopsInputHint">Es. 0 (Default: 2)</string>
-    <string name="spaceTitleTextView">Cerca tappe da aggiungere all\'itinerario</string>
-    <string name="intermediate_places_list_view_title">Tappe aggiunte</string>
-    <string name="spaceTitleHint">Es. Piazza maggiore</string>
-    <string name="clearButtonText">Svuota elenco</string>
+    <string name="maxDurationCheckboxText">Limit the maximum trip duration</string>
+    <string name="maxDurationInputHint">Eg. 30 (Default: 70 min)</string>
+    <string name="maxStopsCheckboxText">Limit the maximum transfer number</string>
+    <string name="maxStopsInputHint">Eg. 0 (Default: 2)</string>
+    <string name="spaceTitleTextView">Search intermediate places to add to your trip</string>
+    <string name="intermediate_places_list_view_title">Added places</string>
+    <string name="spaceTitleHint">Eg. Piazza Maggiore</string>
+    <string name="clearButtonText">Clear list</string>
+    <string name="slider_description">Customize the feature quantity you want in your trip</string>
+    <string name="intro_subtitle">Now you can find bus trip to suit your needs!</string>
+    <string name="intro_preset">Decide wich features you want in your trip choosing a preset among monuments, green areas and open spaces</string>
+    <string name="intro_custom">Or have fun while mixing each feature quantity using sliders</string>
+    <string name="intro_filter_1">And don\'t forget to tap the \"Filter\" icon to refine your search</string>
+    <string name="slider_subtitle">Customize the amount of features in the trip search</string>
 </resources>

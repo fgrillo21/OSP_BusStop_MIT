@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,14 +14,16 @@
         android:layout_height="40dp"
         android:gravity="end"
         android:orientation="horizontal">
+
         <ImageButton
             android:id="@+id/filter_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/filter_icon_black"
+            android:src="?attr/filter_icon"
             android:onClick="filter"
             android:contentDescription="@string/filter_button">
         </ImageButton>
+
     </LinearLayout>
 
     <android.support.v4.view.ViewPager
@@ -49,6 +52,7 @@
             android:gravity="center"
             android:text="@string/description_monuments"
             style="?attr/textViewPresetStyle"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -65,6 +69,7 @@
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/buttom_choose"
             style="?android:attr/buttonStyleSmall"
@@ -73,6 +78,7 @@
             android:layout_gravity="center_horizontal|center"
             android:onClick="choose"
             android:text="@string/choose" />
+
     </LinearLayout>
 
 </LinearLayout>

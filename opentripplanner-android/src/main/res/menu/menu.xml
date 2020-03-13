@@ -25,9 +25,10 @@
             android:title="@string/menu_button_server_info"
             android:icon="@android:drawable/ic_menu_info_details"></item>
     <item
-            android:id="@+id/feedback"
-            android:title="@string/menu_button_feedback"
-            android:icon="@android:drawable/ic_menu_send"></item>
+        android:id="@+id/feedback"
+        android:icon="@android:drawable/ic_menu_send"
+        android:title="@string/menu_button_feedback"
+        android:visible="false"></item>
     <item
             android:id="@+id/settings"
             android:title="@string/menu_button_settings"

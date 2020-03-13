@@ -582,5 +582,30 @@
 
         <!-- Used to introduce route names in itineraries drop down (map view and step-by-step) and map mode markers popups -->
         <string name="connector_before_route">Percorso</string>
-
+    <string name="intro_subtitle">Ora puoi selezionare i percorsi dei mezzi pubblici in base alle tue esigenze!</string>
+    <string name="intro_preset">Decidi le feature che vuoi nel tuo percorso usando uno dei preset per monumenti, aree verdi o piazze</string>
+    <string name="intro_custom">Oppure divertiti a personalizzare la quantità delle feature con gli slider</string>
+    <string name="intro_filter_1">E non dimenticare di premere sull\'icona \"Filtro\" per raffinare la tua ricerca</string>
+    <string name="slider_subtitle">Personalizza la quantità di feature che vorresti nel tuo percorso</string>
+    <string name="choose">Scegli</string>
+    <string name="apply">Applica</string>
+    <string name="preset">Scegli un preset</string>
+    <string name="end">Fine</string>
+    <string name="map">Mappa Itinerari</string>
+    <string name="advancedFilters">Filtri Avanzati</string>
+    <string name="personalizza">Personalizza feature</string>
+    <string name="description_monuments">Cerca un percorso ricco di edifici e monumenti storici di Bologna</string>
+    <string name="description_greenareas">Cerca un percorso ricco di zone verdi o parchi di Bologna</string>
+    <string name="description_openspaces">Cerca un percorso ricco di piazze di Bologna</string>
+    <string name="description_choose_percentage"> Crea un percorso personalizzato selezionando la percentuale preferita per ogni categoria</string>
+    <string name="filter_button">Filter button</string>
+    <string name="maxDurationCheckboxText"> Modifica durata massima del viaggio</string>
+    <string name="maxDurationInputHint">Es. 30 (Default: 70 min)</string>
+    <string name="maxStopsCheckboxText"> Modifica numero massimo di cambi</string>
+    <string name="maxStopsInputHint">Es. 0 (Default: 2)</string>
+    <string name="spaceTitleTextView">Cerca tappe da aggiungere all\'itinerario</string>
+    <string name="intermediate_places_list_view_title">Tappe aggiunte</string>
+    <string name="spaceTitleHint">Es. Piazza Maggiore</string>
+    <string name="clearButtonText">Svuota elenco</string>
+    <string name="slider_description">Personalizza la quantità di feature che vorresti nel tuo percorso</string>
 </resources>

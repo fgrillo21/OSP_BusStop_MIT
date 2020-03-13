@@ -175,6 +175,9 @@ public class FilterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!maxDurationCheckbox.isChecked()) {
                     maxDurationCheckbox.setChecked(true);
+                    customTrip = CustomTrip.newCustomTrip(customTrip)
+                            .withIsMaxDurationOn(true)
+                            .build();
                 }
             }
         });
@@ -184,6 +187,33 @@ public class FilterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!maxStopsCheckbox.isChecked()) {
                     maxStopsCheckbox.setChecked(true);
+                    customTrip = CustomTrip.newCustomTrip(customTrip)
+                            .withIsMaxStopsOn(true)
+                            .build();
+                }
+            }
+        });
+
+        maxStopsInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+
+                if (!hasFocus) {
+                    if (TextUtils.isEmpty(maxStopsInput.getText().toString())) {
+                        maxStopsCheckbox.setChecked(false);
+                    }
+                }
+            }
+        });
+
+        maxDurationInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+
+                if (!hasFocus) {
+                    if (TextUtils.isEmpty(maxDurationInput.getText().toString())) {
+                        maxDurationCheckbox.setChecked(false);
+                    }
                 }
             }
         });
