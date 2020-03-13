@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import busstop.customtrip.model.CustomTrip;
+import edu.usf.cutr.opentripplanner.android.AboutActivity;
 import edu.usf.cutr.opentripplanner.android.MyActivity;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
@@ -25,7 +27,7 @@ public class PresetActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     LinearLayout layout_dot;
-    List<Integer> imageId = Arrays.asList(R.drawable.monuments, R.drawable.greenareas, R.drawable.openspaces, R.drawable.mixed_elements);
+    List<Integer> imageId = Arrays.asList(R.drawable.monuments_preset, R.drawable.greenareas_preset, R.drawable.open_preset, R.drawable.mixed_elements);
     CustomTrip customTrip;
     String fromActivity;
 
@@ -135,14 +137,26 @@ public class PresetActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
+
+        if (item.getItemId() == R.id.simple_menu_about) {
+            Intent intent = new Intent(PresetActivity.this, AboutActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.simple_menu,menu);
+
         return true;
     }
 

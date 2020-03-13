@@ -1,6 +1,10 @@
 package busstop.customtrip.ui;
 
+
+
+
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,10 +42,19 @@ public class PresetPagerAdapter extends PagerAdapter {
 
         //finding id
         ImageView imageView =  view.findViewById(R.id.image);
+
         //setting data
-        imageView.setBackgroundResource(imagesArray.get(position));
+        imageView.setImageDrawable(ContextCompat.getDrawable(context, imagesArray.get(position)));
+
+        if (position != 3) {
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
+        else {
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        }
 
         container.addView(view);
+
         return view;
     }
 

@@ -1,10 +1,13 @@
 package busstop.customtrip.ui;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -15,6 +18,7 @@ import busstop.customtrip.model.CustomTrip;
 import edu.usf.cutr.opentripplanner.android.MyActivity;
 import edu.usf.cutr.opentripplanner.android.OTPApp;
 import edu.usf.cutr.opentripplanner.android.R;
+import edu.usf.cutr.opentripplanner.android.fragments.MainFragment;
 
 public class SeekBarActivity extends AppCompatActivity {
     private CustomView viewHistoric, viewGreen, viewOpen;
@@ -73,23 +77,20 @@ public class SeekBarActivity extends AppCompatActivity {
         textProgress1 = findViewById(R.id.textView1);
         textProgress2 = findViewById(R.id.textView2);
 
-        textProgress0.setText("Monumenti: " + graphicProgress[0] + " %");
-        textProgress1.setText("Aree verdi: " + graphicProgress[1] + " %");
-        textProgress2.setText("Spazi aperti: " + graphicProgress[2] + " %");
+       /* updatePercentages(); */
 
         /*---------------------------------------*/
         viewHistoric.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                realProgress[0] = getPercentage(viewHistoric, event);
-                graphicProgress[0] = (int) Math.ceil(realProgress[0]);
+                float percentage = getPercentage(viewHistoric, event);
+                realProgress[0] = 100.0f - percentage;
+                graphicProgress[0] = (int) Math.ceil(percentage);
 
-                viewHistoric.getBackground().setLevel(10000 - graphicProgress[0] * 100);
+                viewHistoric.getBackground().setLevel(10000 - (graphicProgress[0]) * 100);
 
-                textProgress0.setText("Monumenti: " + graphicProgress[0] + " %");
-                textProgress1.setText("Aree verdi: " + graphicProgress[1] + " %");
-                textProgress2.setText("Spazi aperti: " + graphicProgress[2] + " %");
+                updatePercentages();
 
                 return true;
             }
@@ -100,14 +101,13 @@ public class SeekBarActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                realProgress[1] = getPercentage(viewGreen, event);
-                graphicProgress[1] = (int) Math.ceil(realProgress[1]);
+                float percentage = getPercentage(viewGreen, event);
+                realProgress[1] = 100.0f - percentage;
+                graphicProgress[1] = (int) Math.ceil(percentage);
 
-                viewGreen.getBackground().setLevel(10000 - graphicProgress[1] * 100);
+                viewGreen.getBackground().setLevel(10000 - (graphicProgress[1]) * 100);
 
-                textProgress0.setText("Monumenti: " + graphicProgress[0] + " %");
-                textProgress1.setText("Aree verdi: " + graphicProgress[1] + " %");
-                textProgress2.setText("Spazi aperti: " + graphicProgress[2] + " %");
+                updatePercentages();
 
                 return true;
             }
@@ -117,18 +117,23 @@ public class SeekBarActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                realProgress[2] = getPercentage(viewOpen, event);
-                graphicProgress[2] = (int) Math.ceil(realProgress[2]);
+                float percentage = getPercentage(viewOpen, event);
+                realProgress[2] = 100.0f - percentage;
+                graphicProgress[2] = (int) Math.ceil(percentage);
 
-                viewOpen.getBackground().setLevel(10000 - graphicProgress[2] * 100);
+                viewOpen.getBackground().setLevel(10000 - (graphicProgress[2]) * 100);
 
-                textProgress0.setText("Monumenti: " + graphicProgress[0] + " %");
-                textProgress1.setText("Aree verdi: " + graphicProgress[1] + " %");
-                textProgress2.setText("Spazi aperti: " + graphicProgress[2] + " %");
+                updatePercentages();
 
                 return true;
             }
         });
+    }
+
+    private void updatePercentages() {
+        textProgress0.setText("Monumenti: "    + realProgress[0] + " %");
+        textProgress1.setText("Aree verdi: "   + realProgress[1] + " %");
+        textProgress2.setText("Spazi aperti: " + realProgress[2] + " %");
     }
 
     @Override
@@ -145,10 +150,20 @@ public class SeekBarActivity extends AppCompatActivity {
 
     public void end_button(View view) {
         customTrip = CustomTrip.newCustomTrip(customTrip)
-            .withMonuments(realProgress[0])
-            .withGreenAreas(realProgress[1])
-            .withOpenSpaces(realProgress[2])
+            .withMonuments(getFinalHistoricPercentage())
+            .withGreenAreas(getFinalGreenPercentage())
+            .withOpenSpaces(getFinalOpenPercentage())
             .build();
+
+//        AlertDialog.Builder builder = new AlertDialog.Builder(
+//                this);
+//
+//        builder.setTitle("Percentuali");
+//        builder.setMessage("Monumenti: " + getFinalHistoricPercentage() + "\nGreen: " + getFinalGreenPercentage() + "\nOpen: " + getFinalOpenPercentage());
+//
+//        AlertDialog alert = builder.create();
+//        alert.show();
+
 
         Intent intent = new Intent(SeekBarActivity.this, MyActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -180,5 +195,37 @@ public class SeekBarActivity extends AppCompatActivity {
         }
 
         return touchPercentage;
+    }
+
+    private float getFinalHistoricPercentage() {
+        float sum = getPercentagesSum();
+
+        if (sum > 0.0f)
+            return realProgress[0] * 100 / sum;
+
+        return 0.0f;
+    }
+
+    private float getFinalGreenPercentage() {
+        float sum = getPercentagesSum();
+
+        if (sum > 0.0f)
+            return realProgress[1] * 100 / sum;
+
+        return 0.0f;
+    }
+
+    private float getFinalOpenPercentage() {
+        float sum = getPercentagesSum();
+
+        if (sum > 0.0f)
+            return realProgress[2] * 100 / sum;
+
+        return 0.0f;
+    }
+
+    private float getPercentagesSum() {
+        // Sempre aggiornati tramite getPercentage
+        return realProgress[0] + realProgress[1] + realProgress[2];
     }
 }

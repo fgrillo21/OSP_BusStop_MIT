@@ -19,7 +19,7 @@ public class CustomView extends android.support.v7.widget.AppCompatImageView {
         currentPaint.setStyle(Paint.Style.STROKE);
         currentPaint.setStrokeJoin(Paint.Join.ROUND);
         currentPaint.setStrokeCap(Paint.Cap.ROUND);
-        currentPaint.setStrokeWidth(2);
+        currentPaint.setStrokeWidth(3.0f);
     }
 
     @Override

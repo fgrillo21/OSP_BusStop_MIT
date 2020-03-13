@@ -4,7 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <item android:drawable="@drawable/monuments_bw" />
+    <item>
+        <bitmap android:src="@drawable/monuments_bw"
+                android:gravity="clip_vertical|clip_horizontal" />
+    </item>
+
     <item android:drawable="@drawable/slider_historic_clip" />
 
 </layer-list>
