@@ -608,4 +608,5 @@
     <string name="spaceTitleHint">Es. Piazza Maggiore</string>
     <string name="clearButtonText">Svuota elenco</string>
     <string name="slider_description">Personalizza la quantità di feature che vorresti nel tuo percorso</string>
+    <string name="search">Cerca percorsi</string>
 </resources>

@@ -21,6 +21,7 @@
             android:layout_height="40dp"
             android:src="?attr/filter_icon"
             android:onClick="filter"
+            android:scaleType="fitXY"
             android:contentDescription="@string/filter_button">
         </ImageButton>
 
@@ -71,7 +72,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/buttom_choose"
+            android:id="@+id/button_choose"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="145dp"
             android:layout_height="wrap_content"

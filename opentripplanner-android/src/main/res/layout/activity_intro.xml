@@ -142,7 +142,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:src="@drawable/filter_icon_light"
+                android:src="?attr/filter_icon"
+                android:scaleType="fitXY"
                 android:layout_gravity="center"
                 android:padding="5dp"/>
 

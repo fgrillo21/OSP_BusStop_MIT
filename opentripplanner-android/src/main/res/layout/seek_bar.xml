@@ -19,8 +19,9 @@
             android:id="@+id/filter_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/filter_icon_black"
+            android:src="?attr/filter_icon"
             android:onClick="filter"
+            android:scaleType="fitXY"
             android:contentDescription="@string/filter_button">
         </ImageButton>
 
@@ -143,7 +144,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="19dp"
                     android:onClick="end_button"
-                    android:text="@string/end" />
+                    android:text="@string/search" />
 
         </LinearLayout>
 

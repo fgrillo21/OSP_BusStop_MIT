@@ -11,7 +11,7 @@
         <item name="btnBackground">@drawable/button_layout_dark</item>
         <item name="btnBottomBackground">@drawable/button_bottom_layout_dark</item>
         <item name="textViewPresetStyle">@style/PresetTextViewFontDark</item>
-        <item name="filter_icon">@drawable/filter_icon_light</item>
+        <item name="filter_icon">@drawable/filter_icon_dark</item>
     </style>
 
     <style name="BlackTextDark" parent="BaseThemeDark">
@@ -44,7 +44,7 @@
         <item name="btnBackground">@drawable/button_layout</item>
         <item name="btnBottomBackground">@drawable/button_bottom_layout</item>
         <item name="textViewPresetStyle">@style/PresetTextViewFontLight</item>
-        <item name="filter_icon">@drawable/filter_icon_black</item>
+        <item name="filter_icon">@drawable/filter_icon_light</item>
     </style>
 
     <style name="MyThemeDark"  parent="BaseThemeDark" />

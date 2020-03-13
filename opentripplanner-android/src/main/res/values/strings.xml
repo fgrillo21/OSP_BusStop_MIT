@@ -610,4 +610,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."</strin
     <string name="intro_custom">Or have fun while mixing each feature quantity using sliders</string>
     <string name="intro_filter_1">And don\'t forget to tap the \"Filter\" icon to refine your search</string>
     <string name="slider_subtitle">Customize the amount of features in the trip search</string>
+    <string name="search">Search itineraries</string>
 </resources>
