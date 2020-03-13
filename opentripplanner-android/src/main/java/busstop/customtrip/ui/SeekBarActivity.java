@@ -90,7 +90,7 @@ public class SeekBarActivity extends AppCompatActivity {
 
                 viewHistoric.getBackground().setLevel(10000 - (graphicProgress[0]) * 100);
 
-                updatePercentages();
+//                updatePercentages();
 
                 return true;
             }
@@ -107,7 +107,7 @@ public class SeekBarActivity extends AppCompatActivity {
 
                 viewGreen.getBackground().setLevel(10000 - (graphicProgress[1]) * 100);
 
-                updatePercentages();
+//                updatePercentages();
 
                 return true;
             }
@@ -123,7 +123,7 @@ public class SeekBarActivity extends AppCompatActivity {
 
                 viewOpen.getBackground().setLevel(10000 - (graphicProgress[2]) * 100);
 
-                updatePercentages();
+//                updatePercentages();
 
                 return true;
             }
