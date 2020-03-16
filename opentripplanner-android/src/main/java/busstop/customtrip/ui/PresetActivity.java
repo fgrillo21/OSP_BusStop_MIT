@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ public class PresetActivity extends AppCompatActivity {
     List<Integer> imageId = Arrays.asList(R.drawable.monuments_preset, R.drawable.greenareas_preset, R.drawable.open_preset, R.drawable.mixed_elements);
     CustomTrip customTrip;
     String fromActivity;
+    Button button;
 
     private int dotscount;
     private ImageView[] dots;
@@ -74,6 +76,7 @@ public class PresetActivity extends AppCompatActivity {
 
         layout_dot = findViewById(R.id.layout_dot);
         viewPager = findViewById(R.id.viewpager);
+        button = findViewById(R.id.button_choose);
         PresetPagerAdapter adapter = new PresetPagerAdapter(getApplicationContext(),imageId);
         viewPager.setAdapter(adapter);
         viewPager.setPageMargin(60);
@@ -112,18 +115,22 @@ public class PresetActivity extends AppCompatActivity {
                     default:
                     case 0: {
                         myTitleText.setText(R.string.description_monuments);
+                        button.setText(R.string.choose);
                         break;
                     }
                     case 1: {
                         myTitleText.setText(R.string.description_greenareas);
+                        button.setText(R.string.choose);
                         break;
                     }
                     case 2: {
                         myTitleText.setText(R.string.description_openspaces);
+                        button.setText(R.string.choose);
                         break;
                     }
                     case 3: {
                         myTitleText.setText(R.string.description_choose_percentage);
+                        button.setText(R.string.customize);
                     }
                 }
             }
