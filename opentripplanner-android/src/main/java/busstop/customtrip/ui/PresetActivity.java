@@ -32,6 +32,7 @@ public class PresetActivity extends AppCompatActivity {
     CustomTrip customTrip;
     String fromActivity;
     Button button;
+    TextView tTitle;
 
     private int dotscount;
     private ImageView[] dots;
@@ -56,9 +57,10 @@ public class PresetActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActionBar actionBar = getSupportActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.preset_title_historic);
         }
 
         setContentView(R.layout.activity_preset);
@@ -66,6 +68,7 @@ public class PresetActivity extends AppCompatActivity {
         /* Get here the info about custom trip*/
         Intent intent = getIntent();
         fromActivity = (String) intent.getSerializableExtra("fromActivity");
+
         if(fromActivity == null) {
             /* solo la prima volta che si arriva in questa activity il custom trip viene inizializzato con i valori di default */
             customTrip = CustomTrip.getCustomTripDefaultValues();
@@ -75,8 +78,9 @@ public class PresetActivity extends AppCompatActivity {
         }
 
         layout_dot = findViewById(R.id.layout_dot);
-        viewPager = findViewById(R.id.viewpager);
-        button = findViewById(R.id.button_choose);
+        viewPager  = findViewById(R.id.viewpager);
+        button     = findViewById(R.id.button_choose);
+
         PresetPagerAdapter adapter = new PresetPagerAdapter(getApplicationContext(),imageId);
         viewPager.setAdapter(adapter);
         viewPager.setPageMargin(60);
@@ -110,27 +114,31 @@ public class PresetActivity extends AppCompatActivity {
                 dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
                 /* Initialization different descriptions related to different sections */
-                final TextView myTitleText = findViewById(R.id.myTitle);
+                final TextView myTitleText = findViewById(R.id.myDescription);
                 switch (position) {
                     default:
                     case 0: {
                         myTitleText.setText(R.string.description_monuments);
                         button.setText(R.string.choose);
+                        actionBar.setTitle(R.string.preset_title_historic);
                         break;
                     }
                     case 1: {
                         myTitleText.setText(R.string.description_greenareas);
                         button.setText(R.string.choose);
+                        actionBar.setTitle(R.string.preset_title_green);
                         break;
                     }
                     case 2: {
                         myTitleText.setText(R.string.description_openspaces);
                         button.setText(R.string.choose);
+                        actionBar.setTitle(R.string.preset_title_open);
                         break;
                     }
                     case 3: {
                         myTitleText.setText(R.string.description_choose_percentage);
                         button.setText(R.string.customize);
+                        actionBar.setTitle(R.string.preset_title_custom);
                     }
                 }
             }

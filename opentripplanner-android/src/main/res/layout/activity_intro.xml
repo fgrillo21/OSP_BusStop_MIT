@@ -29,7 +29,8 @@
             android:text="Benvenuto in BusStop"
             android:textSize="18sp"
             android:layout_weight="0"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            android:textColor="@color/sysWhite"/>
 
         <TextView
             android:layout_weight="0"

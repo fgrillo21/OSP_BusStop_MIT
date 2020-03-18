@@ -13,12 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:gravity="end"
+        android:weightSum="1"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/filter_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_weight="0"
             android:src="?attr/filter_icon"
             android:onClick="filter"
             android:scaleType="fitXY"
@@ -47,7 +49,7 @@
         android:paddingTop="5dp">
 
         <TextView
-            android:id="@+id/myTitle"
+            android:id="@+id/myDescription"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:gravity="center"

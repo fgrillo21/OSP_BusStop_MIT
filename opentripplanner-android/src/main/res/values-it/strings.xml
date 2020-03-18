@@ -203,8 +203,12 @@
 
                 <!-- Title -->
                 <string name="tripplanner_error_dialog_title">Percorso non tovato</string>
-                <string name="task_progress_tripplanner_progress">Ricerca percorsi. Attendi...</string>
-                <string name="task_progress_tripplanner_canceled">Annullamento ricerca...</string>
+                <string name="task_progress_tripplanner_progress">Ricerca percorsi. Attendi&#8230;</string>
+                <string name="task_progress_server_selector_progress">Ricerca server in corso. Attendi&#8230;</string>
+                <string name="task_progress_server_checker_progress">Ricezione delle informazioni sulla città. Attendi&#8230;</string>
+                <string name="task_progress_geocoding_progress">Ricerca punti d\'interesse. Attendi&#8230;</string>
+                <string name="task_progress_metadata_progress">Ricerca server in corso. Attendi&#8230;</string>
+                <string name="task_progress_tripplanner_canceled">Annullamento ricerca&#8230;</string>
 
                 <!-- Errors -->
                 <!--<string name="tripplanner_error_not_defined">Sorry, something went wrong.  Please try again.</string>-->
@@ -583,17 +587,17 @@
         <!-- Used to introduce route names in itineraries drop down (map view and step-by-step) and map mode markers popups -->
         <string name="connector_before_route">Percorso</string>
     <string name="intro_subtitle">Ora puoi selezionare i percorsi dei mezzi pubblici in base alle tue esigenze!</string>
-    <string name="intro_preset">Decidi le feature che vuoi nel tuo percorso usando uno dei preset per monumenti, aree verdi o piazze</string>
+    <string name="intro_preset">Decidi le feature che vuoi nel tuo percorso usando uno dei predefiniti per monumenti, aree verdi o piazze</string>
     <string name="intro_custom">Oppure divertiti a personalizzare la quantità delle feature con gli slider</string>
     <string name="intro_filter_1">E non dimenticare di premere sull\'icona \"Filtro\" per raffinare la tua ricerca</string>
     <string name="slider_subtitle">Personalizza la quantità di feature che vorresti nel tuo percorso</string>
     <string name="choose">Scegli</string>
     <string name="apply">Applica</string>
-    <string name="preset">Scegli un preset</string>
+    <string name="preset">Scegli feature da includere</string>
     <string name="end">Fine</string>
     <string name="map">Mappa Itinerari</string>
     <string name="advancedFilters">Filtri Avanzati</string>
-    <string name="personalizza">Personalizza feature</string>
+    <string name="personalizza">Personalizza Feature</string>
     <string name="description_monuments">Cerca un percorso ricco di edifici e monumenti storici di Bologna</string>
     <string name="description_greenareas">Cerca un percorso ricco di zone verdi o parchi di Bologna</string>
     <string name="description_openspaces">Cerca un percorso ricco di piazze di Bologna</string>
@@ -609,4 +613,9 @@
     <string name="clearButtonText">Svuota elenco</string>
     <string name="slider_description">Personalizza la quantità di feature che vorresti nel tuo percorso</string>
     <string name="search">Cerca percorsi</string>
+    <string name="customize">Personalizza</string>
+    <string name="preset_title_historic">Percorso Storico</string>
+    <string name="preset_title_green">Percorso Verde</string>
+    <string name="preset_title_open">Percorso Open</string>
+    <string name="preset_title_custom">Percorso Personalizzato</string>
 </resources>
