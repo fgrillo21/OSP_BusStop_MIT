@@ -621,7 +621,7 @@ public class MainFragment extends Fragment implements
                     Log.d(tripTag, "setMarker_Start addInterface");
                     setMarker(true, latlng, true, true);
                 } else {
-                    Log.d(tripTag, "setMarker_Start addInterface elkse");
+                    Log.d(tripTag, "setMarker_Start addInterface else");
                     setMarker(false, latlng, true, true);
                 }
                 Log.d(tripTag, "onMapClickListener");
@@ -3074,7 +3074,7 @@ public class MainFragment extends Fragment implements
             if (!isTransitIsTagSet) {
 //                itinerarySummaryList[i] = Integer.toString(i + 1)
 //                        + ".   ";//Shown index is i + 1, to use 1-based indexes for the UI instead of 0-based
-                itinerarySummaryList[i] += "A piedi ";
+                itinerarySummaryList[i] = "A piedi ";
                 itinerarySummaryList[i] +=
                         ConversionUtils.getFormattedDistance(it.walkDistance, mApplicationContext)
                                 + " " + "-" + " " + ConversionUtils

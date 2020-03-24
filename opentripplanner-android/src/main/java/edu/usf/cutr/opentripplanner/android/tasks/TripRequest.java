@@ -227,9 +227,22 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
             publishProgress(0);
 
+            int itIndex = 0;
+
             for (Itinerary it : itineraries) {
 
                 Log.d(filterTag, "** Analyzing itinerary " + i);
+
+                int  transfersCount = MainFragment.getItineraryTransfersCount(it);
+                long tripDuration   = it.duration;
+
+                boolean transferConstraint = transfersCount <= customTrip.getMaxStops();
+                boolean durationConstraint = tripDuration   <= (customTrip.getMaxDurationMinutes() * 60);
+
+                if (!transferConstraint || !durationConstraint) {
+                    itinerariesSelected = new ArrayList<>();
+                    return totalSize;
+                }
 
                 strLog = new StringBuilder();
                 legsDecoded = new ArrayList<>();
@@ -477,6 +490,8 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
             if (itinerariesSelected == null || itinerariesSelected.size() == 0) {
 
                 createMessage(R.string.tripplanner_error_dialog_title, R.string.customtrip_tripplanner_error_not_defined);
+
+                callback.onTripRequestCanceled();
 
                 Log.e(filterTag, "None of the itineraries matches filters.");
             }
