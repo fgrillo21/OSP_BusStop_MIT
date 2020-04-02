@@ -6,7 +6,7 @@
         <item name="btnMyLocationPicture">@drawable/device_access_location_found_dark</item>
         <item name="btnDisplayDirPicture">@drawable/location_directions_dark</item>
         <item name="btnSwapOrDestPicture">@drawable/ic_action_import_export_dark</item>
-        <item name="btnDateDialogPicture">@drawable/location_directions_dark</item>
+        <item name="btnDateDialogPicture">@drawable/device_access_time</item>
         <item name="btnShowFeaturesPicture">@drawable/show_features_selector_dark</item>
         <item name="btnBackground">@drawable/button_layout_dark</item>
         <item name="btnBottomBackground">@drawable/button_bottom_layout_dark</item>
@@ -39,7 +39,7 @@
         <item name="btnMyLocationPicture">@drawable/device_access_location_found</item>
         <item name="btnDisplayDirPicture">@drawable/location_directions</item>
         <item name="btnSwapOrDestPicture">@drawable/ic_action_import_export</item>
-        <item name="btnDateDialogPicture">@drawable/location_directions</item>
+        <item name="btnDateDialogPicture">@drawable/device_access_time</item>
         <item name="btnShowFeaturesPicture">@drawable/show_features_selector</item>
         <item name="btnBackground">@drawable/button_layout</item>
         <item name="btnBottomBackground">@drawable/button_bottom_layout</item>
