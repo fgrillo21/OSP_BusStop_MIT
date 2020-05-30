@@ -37,6 +37,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.util.Pair;
 import android.util.Log;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -151,9 +152,12 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
 
     protected void onPreExecute() {
         if (activity.get() != null) {
+
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(true);
-            Activity activityRetrieved = activity.get();
+
+            final Activity activityRetrieved = activity.get();
+
             if (activityRetrieved != null) {
                 progressDialog = ProgressDialog.show(
                         activityRetrieved,
@@ -161,23 +165,42 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
                         resources.getText(R.string.task_progress_tripplanner_progress),
                         true,
                         true,
-                        new DialogInterface.OnCancelListener(){
+                        new DialogInterface.OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialog) {
+                                Log.d("ABT", "onCancel");
                                 userCanceled = true;
+                                progressDialog.setMessage(resources.getText(R.string.task_progress_tripplanner_canceled));
+//                                TripRequest.this.cancel(true);
 
-                                 progressDialogCancel = ProgressDialog.show(
-                                        activity.get(),
-                                        "",
-                                        resources.getText(R.string.task_progress_tripplanner_canceled),
-                                        true,
-                                        false);
 
-                                 progressDialogCancel.setCanceledOnTouchOutside(false);
 
-                                 TripRequest.this.cancel(true);
+//                                 progressDialogCancel = ProgressDialog.show(
+//                                        activity.get(),
+//                                        "",
+//                                        resources.getText(R.string.task_progress_tripplanner_canceled),
+//                                        true,
+//                                        true);
+//
+//                                 progressDialogCancel.setCanceledOnTouchOutside(false);
+
+
                             }
                         });
+
+                progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        Log.d("ABT", "onDismiss");
+
+                        if (userCanceled) {
+                            TripRequest.this.cancel(true);
+                            dismissProgressDialog();
+                            callback.onTripRequestCanceled();
+                        }
+                    }
+
+                });
             }
         }
     }
@@ -431,6 +454,7 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
     }
 
     private void dismissProgressDialog() {
+        Log.d("ABT", "dismissProgressDialog()");
         try {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -440,18 +464,39 @@ public class TripRequest extends AsyncTask<Request, Integer, Long> {
         }
     }
 
+    @Override
+    protected void onCancelled() {
 
-    protected void onCancelled(Long result) {
-
-
+        Log.d("ABT", "onCancelled");
 
         if (userCanceled) {
 
+            Log.d("ABT", "User Canceled");
+//
             callback.onTripRequestCanceled();
 
             dismissProgressDialog();
 
-            progressDialogCancel.dismiss();
+//            progressDialogCancel.dismiss();
+
+            return;
+        }
+    }
+
+    @Override
+    protected void onCancelled(Long result) {
+
+        Log.d("ABT", "onCancelled");
+
+        if (userCanceled) {
+
+            Log.d("ABT", "User Canceled");
+//
+            callback.onTripRequestCanceled();
+
+            dismissProgressDialog();
+
+//            progressDialogCancel.dismiss();
 
             return;
         }

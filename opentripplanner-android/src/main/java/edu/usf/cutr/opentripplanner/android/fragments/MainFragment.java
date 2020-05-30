@@ -16,6 +16,7 @@
 
 package edu.usf.cutr.opentripplanner.android.fragments;
 
+import android.Manifest;
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -43,6 +44,8 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -51,6 +54,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -129,6 +133,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -1104,6 +1109,10 @@ public class MainFragment extends Fragment implements
             public void onClick(View arg0) {
                 LatLng mCurrentLatLng = getLastLocation();
 
+//                Address current = getCurrentLocation();
+
+//                Log.d("GPS", current.toString());
+
                 if (mCurrentLatLng == null) {
                     Toast.makeText(mApplicationContext,
                             mApplicationContext.getResources()
@@ -1277,6 +1286,20 @@ public class MainFragment extends Fragment implements
             }
 
         });
+
+        GoogleMap.OnMarkerClickListener onMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+//                if (marker.isInfoWindowShown()) {
+//                    marker.hideInfoWindow();
+//                    return true;
+//                }
+
+                return false;
+            }
+        };
+
+        mMap.setOnMarkerClickListener(onMarkerClickListener);
     }
 
     /**
@@ -3374,6 +3397,58 @@ public class MainFragment extends Fragment implements
         }
         return null;
     }
+//
+//    public Address getCurrentLocation() {
+//
+//        Location gpsLoc = null;
+//        double latitude = 0.0, longitude = 0.0;
+//        String userCountry, userAddress;
+//        LatLng result;
+//        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+//
+//
+//        if (ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//            && ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//            && ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_NETWORK_STATE)   != PackageManager.PERMISSION_GRANTED) {
+//
+//            return null;
+//        }
+//
+//        try {
+//
+//            gpsLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (gpsLoc != null) {
+//            latitude = gpsLoc.getLatitude();
+//            longitude = gpsLoc.getLongitude();
+//        }
+//
+//        ActivityCompat.requestPermissions(this.getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE}, 1);
+//        List<Address> addresses = null;
+//        try {
+//
+//            Geocoder geocoder = new Geocoder(mApplicationContext, Locale.getDefault());
+//
+//            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+//
+//            if (addresses != null && addresses.size() > 0) {
+//                userCountry = addresses.get(0).getCountryName();
+//                userAddress = addresses.get(0).getAddressLine(0);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (addresses.size() > 0)
+//            return addresses.get(0);
+//
+//        return null;
+//    }
 
     /*
                              * Called by Location Services if the attempt to
@@ -4024,31 +4099,50 @@ public class MainFragment extends Fragment implements
             if (useServerCenter) {
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getServerCenter(selectedServer),
-                                getServerInitialZoom(selectedServer)));
+                        getServerInitialZoom(selectedServer)));
 
                 latLng = getServerCenter(selectedServer);
                 setMarker(true, latLng, false, true);
-            }
-            else {
+            } else {
 
                 latLng = getLastLocation();
 
-                // Voglio usare la posizione dell'utente ma è nulla: uso Bologna Centrale
-                if (latLng != null) {
-                    insideServerBounds = LocationUtil.checkPointInBoundingBox(latLng, mOTPApp.getSelectedServer());
-                }
+                if (Build.VERSION.SDK_INT >= 23) {
+                    String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
+                    final int REQUEST = 112;
 
-                if (latLng == null || !insideServerBounds) {
-                    // Uso GeoCoder per trovare Bologna Centrale sulla mappa e piazzare il marker per la partenza
-                    CustomAddress customAddress = LocationUtil.processGeocoding(mApplicationContext, selectedServer, false, "Bologna centrale").get(0);
-                    latLng = new LatLng(customAddress.getLatitude(), customAddress.getLongitude());
-                }
+                    if (!hasPermissions(mApplicationContext, PERMISSIONS)) {
+                        ActivityCompat.requestPermissions(getActivity(), PERMISSIONS, REQUEST);
+                    }
 
-                setMarker(true, latLng, false, true);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, getServerInitialZoom(selectedServer)));
+                    // Voglio usare la posizione dell'utente ma è nulla: uso Bologna Centrale
+                    if (latLng != null) {
+                        insideServerBounds = LocationUtil.checkPointInBoundingBox(latLng, mOTPApp.getSelectedServer());
+                    }
+
+                    if (latLng == null || !insideServerBounds) {
+                        // Uso GeoCoder per trovare Bologna Centrale sulla mappa e piazzare il marker per la partenza
+                        CustomAddress customAddress = LocationUtil.processGeocoding(mApplicationContext, selectedServer, false, "Bologna centrale").get(0);
+                        latLng = new LatLng(customAddress.getLatitude(), customAddress.getLongitude());
+                    }
+
+                    setMarker(true, latLng, false, true);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, getServerInitialZoom(selectedServer)));
+                }
             }
         }
     }
+
+        private boolean hasPermissions(Context context, String... permissions){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+                for (String permission : permissions) {
+                    if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
     private void setInitialCameraLocation(boolean useServerCenter, Server selectedServer) {
 
@@ -4117,6 +4211,7 @@ public class MainFragment extends Fragment implements
     public void tripRequestCanceled() {
         restartMap();
         restartTextBoxes();
+        setStartMarkerLocation( false, mOTPApp.getSelectedServer());
     }
 
     private double getGeometricalCenterLatitude(double lowerLeftLatitude, double upperRightLatitude) {
@@ -4262,7 +4357,7 @@ public class MainFragment extends Fragment implements
                 description[1] += feature.tags.get("inscription") + "\n";
 
             if (feature.tags.containsKey("wikipedia")) {
-                description[1] += R.string.map_markers_wikipedia + feature.tags.get("wikipedia");
+                description[1] += getResources().getString(R.string.map_markers_wikipedia) + " Wikipedia " + feature.tags.get("wikipedia");
                 description[2] = feature.tags.get("wikipedia");
             }
         }

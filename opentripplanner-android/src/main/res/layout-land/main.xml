@@ -98,7 +98,7 @@
                 android:id="@+id/btnMyLocation"
                 android:layout_height="55dp"
                 android:layout_width="55dp"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentRight="false"
                 android:layout_above="@+id/panelDisplayDirection"
                 android:src="?attr/btnMyLocationPicture"
                 android:background="?attr/btnBackground">
@@ -109,7 +109,7 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_above="@+id/panelDisplayDirection"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentRight="false"
             android:layout_marginBottom="56dp"
             android:background="?attr/btnBackground"
             android:src="?attr/btnShowFeaturesPicture"
