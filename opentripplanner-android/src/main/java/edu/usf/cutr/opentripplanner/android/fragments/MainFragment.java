@@ -3381,74 +3381,84 @@ public class MainFragment extends Fragment implements
      * @return a LatLng object with the most updated user coordinates
      */
     public LatLng getLastLocation() {
-        if (mGoogleApiClient != null) {
-            if (mGoogleApiClient.isConnected()) {
-                Location loc = FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-                if (loc != null) {
-                    LatLng mCurrentLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
-                    mSavedLastLocation = mCurrentLocation;
-                    return mCurrentLocation;
-                }
-            }
-            if (mSavedLastLocation != null) {
-                return mSavedLastLocation;
-            }
+        Address currentAddress = getCurrentAddress();
+        LatLng latLng = null;
+
+        if (currentAddress != null) {
+            latLng = new LatLng(currentAddress.getLatitude(), currentAddress.getLongitude());
         }
+
+        return latLng;
+
+//        if (mGoogleApiClient != null) {
+//            if (mGoogleApiClient.isConnected()) {
+//                Location loc = FusedLocationApi.getLastLocation(mGoogleApiClient);
+//
+//                if (loc != null) {
+//                    LatLng mCurrentLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
+//                    mSavedLastLocation = mCurrentLocation;
+//                    return mCurrentLocation;
+//                }
+//            }
+//            if (mSavedLastLocation != null) {
+//                return mSavedLastLocation;
+//            }
+//        }
+//        return null;
+    }
+
+    public Address getCurrentAddress() {
+
+        Location gpsLoc = null;
+        double latitude = 0.0, longitude = 0.0;
+        String userCountry, userAddress;
+        LatLng result;
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+
+        if (ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_NETWORK_STATE)   != PackageManager.PERMISSION_GRANTED) {
+
+            return null;
+        }
+
+        try {
+
+            gpsLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (gpsLoc != null) {
+            latitude = gpsLoc.getLatitude();
+            longitude = gpsLoc.getLongitude();
+        }
+
+        ActivityCompat.requestPermissions(this.getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE}, 1);
+        List<Address> addresses = null;
+        try {
+
+            Geocoder geocoder = new Geocoder(mApplicationContext, Locale.getDefault());
+
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+            if (addresses != null && addresses.size() > 0) {
+                userCountry = addresses.get(0).getCountryName();
+                userAddress = addresses.get(0).getAddressLine(0);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (addresses.size() > 0)
+            return addresses.get(0);
+
         return null;
     }
-//
-//    public Address getCurrentLocation() {
-//
-//        Location gpsLoc = null;
-//        double latitude = 0.0, longitude = 0.0;
-//        String userCountry, userAddress;
-//        LatLng result;
-//        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-//
-//
-//        if (ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-//            && ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-//            && ActivityCompat.checkSelfPermission(mApplicationContext, Manifest.permission.ACCESS_NETWORK_STATE)   != PackageManager.PERMISSION_GRANTED) {
-//
-//            return null;
-//        }
-//
-//        try {
-//
-//            gpsLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (gpsLoc != null) {
-//            latitude = gpsLoc.getLatitude();
-//            longitude = gpsLoc.getLongitude();
-//        }
-//
-//        ActivityCompat.requestPermissions(this.getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE}, 1);
-//        List<Address> addresses = null;
-//        try {
-//
-//            Geocoder geocoder = new Geocoder(mApplicationContext, Locale.getDefault());
-//
-//            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-//
-//            if (addresses != null && addresses.size() > 0) {
-//                userCountry = addresses.get(0).getCountryName();
-//                userAddress = addresses.get(0).getAddressLine(0);
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (addresses.size() > 0)
-//            return addresses.get(0);
-//
-//        return null;
-//    }
 
     /*
                              * Called by Location Services if the attempt to
@@ -4105,7 +4115,7 @@ public class MainFragment extends Fragment implements
                 setMarker(true, latLng, false, true);
             } else {
 
-                latLng = getLastLocation();
+
 
                 if (Build.VERSION.SDK_INT >= 23) {
                     String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
@@ -4114,6 +4124,15 @@ public class MainFragment extends Fragment implements
                     if (!hasPermissions(mApplicationContext, PERMISSIONS)) {
                         ActivityCompat.requestPermissions(getActivity(), PERMISSIONS, REQUEST);
                     }
+
+                    latLng = getLastLocation();
+
+//                    if (address != null) {
+//                        latLng = new LatLng(address.getLatitude(), address.getLongitude());
+//                    }
+//                    else {
+//                        latLng = null;
+//                    }
 
                     // Voglio usare la posizione dell'utente ma è nulla: uso Bologna Centrale
                     if (latLng != null) {
